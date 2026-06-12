@@ -1,0 +1,6 @@
+# Generated at runtime when the script is run in-place — never commit these.
+base.png
+wallpaper.bmp
+*.png
+*.bmp
+Update now.cmd

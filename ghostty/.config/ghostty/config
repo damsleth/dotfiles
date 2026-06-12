@@ -1,0 +1,28 @@
+
+# >>> ghostty-installer:theme-picker (managed: do not edit between markers) >>>
+# Theme picker (fzf TUI w/ live preview, swaps active light/dark slot, auto-reloads)
+keybind = super+shift+t=text:~/.config/ghostty/ghostty-set-theme/ghostty-pick-theme\x0d
+command-palette-entry = title:"Pick Theme...",description:"Switch theme via fzf picker (active slot only).",action:text:~/.config/ghostty/ghostty-set-theme/ghostty-pick-theme\x0d
+# <<< ghostty-installer:theme-picker <<<
+
+# >>> ghostty-installer:hotkey-show-hide (managed: do not edit between markers) >>>
+# Show/hide Ghostty globally (like iTerm hotkey, no quake dropdown)
+keybind = global:alt+space=toggle_visibility
+# <<< ghostty-installer:hotkey-show-hide <<<
+
+# >>> ghostty-installer:hotkey-transparency (managed: do not edit between markers) >>>
+# Transparency toggle (like iTerm's cmd+u)
+background-opacity = 0.90
+background-blur-radius = 10
+keybind = super+u=toggle_background_opacity
+# <<< ghostty-installer:hotkey-transparency <<<
+
+font-family = "Hack Nerd Font Mono"
+# font-family = "DepartureMono Nerd Font"
+# font-family = "CascaydiaCove Nerd Font"
+font-size = 18
+
+theme = light:Alabaster,dark:12-bit Rainbow
+macos-titlebar-style = tabs
+window-padding-y = 10
+window-padding-x = 10

@@ -1,0 +1,4 @@
+# Global hotkeys (skhd) — https://github.com/koekeishiya/skhd
+
+# opt+space: show/hide kitty
+alt - space : ~/.config/kitty/toggle-kitty.sh

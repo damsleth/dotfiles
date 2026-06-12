@@ -1,0 +1,10 @@
+# pipx-packages.txt - third-party pipx packages to install from PyPI.
+#
+# Self-written tools (cognitive-ledger, yaams, owa-tools, owa-piggy) are NOT
+# here: they are editable-installed from their ~/code clones by tools-restore.sh
+# (see local-tools.txt) so the working tree is always the running version.
+#
+# Refresh from current machine state: _scripts/lang-restore.sh --dump
+# (note: --dump will re-add the editable tools; prune them back out before commit).
+
+mark

@@ -1,0 +1,236 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+  {
+    "key": "shift+cmd+[Period]",
+    "command": "-breadcrumbs.focus",
+    "when": "breadcrumbsPossible"
+  },
+  {
+    "key": "shift+cmd+[Period]",
+    "command": "-cosmosDB.executeAllMongoCommands",
+    "when": "editorTextFocus && editorLangId == 'mongo'"
+  },
+  {
+    "key": "shift+cmd+u",
+    "command": "-workbench.action.output.toggleOutput",
+    "when": "workbench.panel.output.active"
+  },
+  {
+    "key": "shift+cmd+o",
+    "command": "-workbench.action.gotoSymbol"
+  },
+  {
+    "key": "cmd+t",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "ctrl+shift+[Equal]",
+    "command": "-workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "shift+cmd+r",
+    "command": "workbench.action.focusLeftGroup"
+  },
+  {
+    "key": "cmd+k cmd+left",
+    "command": "-workbench.action.focusLeftGroup"
+  },
+  {
+    "key": "alt+cmd+l",
+    "command": "bookmarks.toggle",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+k",
+    "command": "-bookmarks.toggle",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+k",
+    "command": "bookmarks.jumpToPrevious",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+j",
+    "command": "-bookmarks.jumpToPrevious",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+j",
+    "command": "bookmarks.jumpToNext",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+l",
+    "command": "-bookmarks.jumpToNext",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+j",
+    "command": "-editor.action.insertSnippet",
+    "when": "editorTextFocus && editorLangId == 'powershell'"
+  },
+  {
+    "key": "shift+cmd+g",
+    "command": "workbench.scm.focus"
+  },
+  {
+    "key": "ctrl+enter",
+    "command": "-github.copilot.generate",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+alt+cmd+o",
+    "command": "editor.action.inlineSuggest.showNext"
+  },
+  {
+    "key": "ctrl+alt+cmd+u",
+    "command": "editor.action.inlineSuggest.showPrevious"
+  },
+  {
+    "key": "shift+cmd+[Period]",
+    "command": "editor.action.inlineSuggest.trigger"
+  },
+  {
+    "key": "ctrl+enter",
+    "command": "github.copilot.generate"
+  },
+  {
+    "key": "ctrl+alt+cmd+enter",
+    "command": "editor.action.inlineSuggest.commit",
+    "when": "inlineSuggestionVisible && !editorTabMovesFocus && !inlineSuggestionHasIndentation"
+  },
+  {
+    "key": "ctrl+alt+cmd+i",
+    "command": "editor.action.inlineSuggest.trigger"
+  },
+  {
+    "key": "shift+cmd+o",
+    "command": "workbench.action.gotoSymbol"
+  },
+  {
+    "key": "ctrl+alt+cmd+r",
+    "command": "github.copilot.openPanelForRange"
+  },
+  {
+    "key": "alt+cmd+b",
+    "command": "workbench.action.toggleAuxiliaryBar"
+  },
+  {
+    "key": "shift+cmd+a",
+    "command": "-workbench.view.extension.azure"
+  },
+  {
+    "key": "shift+cmd+a",
+    "command": "workbench.action.toggleActivityBarVisibility"
+  },
+  {
+    "key": "cmd+u",
+    "command": "-cursorUndo",
+    "when": "textInputFocus"
+  },
+  // Toggle between terminal and editor focus
+  {
+    "key": "cmd+j",
+    "command": "workbench.action.terminal.focus"
+  },
+  {
+    "key": "cmd+j",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "alt+cmd+f",
+    "command": "editor.action.startFindReplaceAction"
+  },
+  {
+    "key": "alt+cmd+f",
+    "command": "-editor.action.startFindReplaceAction",
+    "when": "editorFocus || editorIsOpen"
+  },
+  {
+    "key": "shift+cmd+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+  },
+  {
+    "key": "cmd+b",
+    "command": "-workbench.action.toggleSidebarVisibility"
+  },
+  {
+    "key": "shift+cmd+b",
+    "command": "-workbench.action.tasks.build",
+    "when": "taskCommandsRegistered"
+  },
+  {
+    "key": "cmd+u",
+    "command": "inlineChat.quickVoice.start",
+    "when": "editorFocus && hasSpeechProvider && !inlineChat.quickChatInProgress"
+  },
+  {
+    "key": "cmd+u",
+    "command": "inlineChat.quickVoice.stop",
+    "when": "hasSpeechProvider && inlineChat.quickChatInProgress"
+  },
+  {
+    "key": "shift+cmd+c",
+    "command": "-workbench.action.terminal.openNativeConsole",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "f8",
+    "command": "-PowerShell.RunSelection",
+    "when": "editorTextFocus && editorLangId == 'powershell'"
+  },
+  {
+    "key": "shift+cmd+c",
+    "command": "workbench.panel.chat.view.edits.focus"
+  },
+  {
+    "key": "cmd+k cmd+k",
+    "command": "-editor.action.defineKeybinding",
+    "when": "resource == 'vscode-userdata:${userHome}/Library/Application%20Support/Code%20-%20Insiders/User/keybindings.json'"
+  },
+  {
+    "key": "cmd+k cmd+k",
+    "command": "-editor.action.selectFromAnchorToCursor",
+    "when": "editorTextFocus && selectionAnchorSet"
+  },
+  {
+    "key": "shift+cmd+i",
+    "command": "inlineChat.start",
+    "when": "editorFocus && inlineChatHasEditsAgent && inlineChatPossible && !editorReadonly && !editorSimpleInput || editorFocus && inlineChatHasProvider && inlineChatPossible && !editorReadonly && !editorSimpleInput"
+  },
+  {
+    "key": "cmd+i",
+    "command": "-inlineChat.start",
+    "when": "editorFocus && inlineChatHasEditsAgent && inlineChatPossible && !editorReadonly && !editorSimpleInput || editorFocus && inlineChatHasProvider && inlineChatPossible && !editorReadonly && !editorSimpleInput"
+  },
+  {
+    "key": "alt+cmd+r",
+    "command": "-workbench.action.terminal.toggleFindRegex",
+    "when": "terminalFindVisible && terminalHasBeenCreated || terminalFindVisible && terminalProcessSupported"
+  },
+  {
+    "key": "alt+cmd+r",
+    "command": "-toggleFindRegex",
+    "when": "editorFocus"
+  },
+  {
+    "key": "alt+cmd+r",
+    "command": "-toggleSearchRegex",
+    "when": "searchViewletFocus"
+  },
+  {
+    "key": "alt+cmd+r",
+    "command": "-toggleSearchEditorRegex",
+    "when": "inSearchEditor && searchInputBoxFocus"
+  },
+  {
+    "key": "ctrl+alt+cmd+b",
+    "command": "workbench.action.toggleMaximizedAuxiliaryBar"
+  },
+  {
+    "key": "ctrl+alt+cmd+g",
+    "command": "agentSessions.toggleAgentSessionsSidebar"
+  }
+]

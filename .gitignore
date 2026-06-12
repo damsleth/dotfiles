@@ -1,0 +1,108 @@
+# OS
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Secrets and credentials — NEVER commit these
+.env
+*.env
+.env.*
+!.env.example
+.netrc
+.npmrc
+.pypirc
+*_token
+*-token
+*token.json
+*secret*
+# Exception: holds only op:// references (names, not values) — safe to track.
+!zsh/.zsh/secrets.zsh
+*password*
+*credentials*
+*_key
+*.pem
+*.p12
+*.pfx
+
+# SSH — deny-by-default, allowlist safe files.
+# Private keys, known_hosts, agent sockets, and controlmaster state must NEVER be committed.
+# Even in a private repo: leaking the repo (or cloning it onto a borrowed/compromised
+# machine) would otherwise hand over every credential at once.
+ssh/.ssh/*
+!ssh/.ssh/config
+!ssh/.ssh/*.pub
+!ssh/.ssh/allowed_signers
+!ssh/.ssh/config.d/
+!ssh/.ssh/*-askpass.sh
+
+# Tool configs that bundle secrets/tokens or runtime sockets
+**/.config/gh/hosts.yml
+**/.config/op/op-daemon.sock
+**/.config/op/config
+**/.config/1Password/
+**/.config/copilot/
+**/.config/github-copilot/
+**/.config/owa-piggy/
+**/.config/owa-cal/
+**/.config/timereg-cli/
+**/.config/xledger-cli/
+**/.config/cognitive-ledger/
+**/.config/wtf/config.yml
+**/.config/auth0/
+**/.config/spotifyd/
+**/.config/spotify-tui/
+**/.config/spotify-player/
+
+# Generated/state under common .config tools
+**/.config/*/cache/
+**/.config/*/Cache/
+**/.config/*/logs/
+**/.config/*/*.log
+**/.config/lvim/lazy-lock.json
+**/.config/ranger/plugins/
+
+# Compiled/derived artifacts inside .config packages
+**/.config/*/__pycache__/
+
+# Zsh internals — generated/runtime files
+zsh/.zsh/.env
+zsh/.zsh/plugins/*
+!zsh/.zsh/plugins/.gitkeep
+zsh/.zsh/__pycache__/
+zsh/.zsh/dtop/target/
+*.zwc
+*.zcompdump*
+.zsh_history
+.zsh_sessions/
+.zsh_history.*
+
+# Editor state
+.viminfo
+*.swp
+*.swo
+.vim/undo/
+.vim/backup/
+.vim/swap/
+nvim/.config/nvim/lazy-lock.json
+
+# Logs and caches
+*.log
+.cache/
+btop/.config/btop/btop.log
+
+# Karabiner backups (auto-generated)
+karabiner/.config/karabiner/automatic_backups/
+
+# Warp (synced separately or machine-specific)
+warp/.warp/keybindings.yaml
+
+# headroom-specific
+.serena/
+headroom_memory.db
+
+# Private overlay — personal packages, hosts, secrets-touching helpers.
+# Kept on disk, layered on top of the public dotfiles, never published.
+# (Track it as its own private git repo if you want history/sync.)
+private/
+# overlay symlink -> ../dotfiles-private/private (never track in public)
+/private
