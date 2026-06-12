@@ -1,0 +1,576 @@
+// LAST UPDATED 2024-08-22 by @damsleth
+{
+  "breadcrumbs.enabled": true,
+  "editor.comments.insertSpace": true,
+  "editor.cursorWidth": 4,
+  "editor.parameterHints.cycle": true,
+  "editor.renderControlCharacters": false,
+  "editor.suggest.localityBonus": true,
+  "editor.tabCompletion": "on",
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.inputValidationLength": 140,
+  "js/ts.format.semicolons": "remove",
+  "terminal.external.osxExec": "/bin/zsh",
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "bash",
+      "args": [
+        "-l"
+      ],
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "/bin/zsh",
+      "args": [
+        "-l"
+      ]
+    },
+    "fish": {
+      "path": "fish",
+      "args": [
+        "-l"
+      ]
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "a pwsh",
+      "icon": "terminal-powershell"
+    },
+    "posh": {
+      "path": "a pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
+  "xmlTools.xmlFormatterImplementation": "v2",
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/node_modules": true,
+    "dist/": false,
+    "docs/": false,
+    "Icon": true,
+    "InstallScripts/": false,
+    "misc/": false
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true
+  },
+  "editor.largeFileOptimizations": true,
+  "files.defaultLanguage": "JavaScript",
+  "editor.renderWhitespace": "none",
+  "workbench.quickOpen.closeOnFocusLost": true,
+  "editor.lightbulb.enabled": "on",
+  "editor.fontLigatures": "'calt', 'liga', 'dlig','ss02','ss01','zero','onum','lnum','tn",
+  // "editor.fontLigatures": true,
+  // good fonts, listed by niceness
+  // 'MonaspiceKr Nerd Font Propo',
+  // 'ProggyVector',
+  // 'Hurmit Nerd Font mono',
+  // 'BitStromWera Nerd Font Mono',
+  // 'OperatorMono Nerd Font',
+  // 'MonaSpiceAr Nerd Font Propo',
+  // '0xProto Nerd Font Mono',
+  // 'CodeNewRoman Nerd Font Propo',
+  // 'Hack Nerd Font',
+  // 'GohuFont uni14 Nerd Font Mono',
+  // 'Mononoki Nerd Font Mono',
+  // 'MesloLGS NF',
+  // 'BigBlueTerm437 Nerd Font Propo',
+  // 'Iosevka extended',
+  // 'ProggyClean Nerd Font Mono',
+  // --------------------------------- //
+  // all fonts
+  "editor.fontVariations": true,
+  "editor.fontFamily": "'departuremono nerd font','ProggyClean CE Nerd Font','BitStromWera Nerd Font Mono','0xProto nerd font mono','tamzen','GohuFont uni14 Nerd Font Mono','departuremono nerd font','ProggyClean CE Nerd Font','GohuFont 11 Nerd Font','Tamzen','Monaspace krypton','Hasklug Nerd Font Mono','0xProto Nerd Font mono','Hurmit Nerd Font Mono','Hasklug Nerd Font Mono','MonaspiceKr Nerd Font Propo','0xProto nerd font mono','GohuFont uni14 Nerd Font Mono','Tamzen','Proggyvector','terminess Nerd Font Mono','ProggyVector','Agave Nerd Font Mono','CamingoCode Nerd Font','Monaspicekr nerd font','Monaspace Krypton','ProggyVector','Hurmit Nerd Font Mono','SpaceMono Nerd Font','M PLUS Code Latin'",
+  "editor.fontWeight": "normal",
+  "editor.fontSize": 17,
+  "editor.allowVariableLineHeights": true,
+  "editor.lineHeight": 1.4,
+  "editor.letterSpacing": -0.4, // USE THIS WITH TAMZEN
+  "chat.editor.fontSize": 16,
+  "chat.editor.fontFamily": "default",
+  "chat.editor.wordWrap": "on",
+  "terminal.integrated.fontFamily": "'ProggyClean CE Nerd Font','proggyclean','departuremono nerd font','GohuFont 11 Nerd Font','0xproto Nerd Font Mono','MesloLGS NF','GohuFont uni14 Nerd Font Mono','Hack Nerd Font Propo','MesloLGS NF','Meslo LG M for Powerline','Operator Mono',Hack,'Inconsolata-dz for Powerline'",
+  "terminal.integrated.fontSize": 20,
+  "workbench.list.defaultFindMode": "filter",
+  "xmlTools.enableXmlTreeViewCursorSync": true,
+  "xmlTools.enableXmlTreeView": false,
+  "editor.accessibilitySupport": "off",
+  "gitlens.blame.highlight.enabled": true,
+  "workbench.startupEditor": "none",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "explorer.confirmDragAndDrop": false,
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "vscode-edge-devtools.defaultUrl": "localhost",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.mouseWheelScrollSensitivity": 0.5,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[zsh]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "files.associations": {
+    "*.txt": "html",
+    "*.json": "jsonc"
+  },
+  "gitlens.advanced.messages": {
+    "suppressLineUncommittedWarning": true
+  },
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "html.format.contentUnformatted": "pre,code,textarea, %@",
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.tsserver.log": "off",
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "hediet.vscode-drawio.local-storage": "eyIuZHJhd2lvLWNvbmZpZyI6IntcImxhbmd1YWdlXCI6XCJcIixcImN1c3RvbUZvbnRzXCI6W10sXCJsaWJyYXJpZXNcIjpcImdlbmVyYWxcIixcImN1c3RvbUxpYnJhcmllc1wiOltcIkwuc2NyYXRjaHBhZFwiXSxcInBsdWdpbnNcIjpbXSxcInJlY2VudENvbG9yc1wiOltdLFwiZm9ybWF0V2lkdGhcIjpcIjI0MFwiLFwiY3JlYXRlVGFyZ2V0XCI6ZmFsc2UsXCJwYWdlRm9ybWF0XCI6e1wieFwiOjAsXCJ5XCI6MCxcIndpZHRoXCI6ODI3LFwiaGVpZ2h0XCI6MTE2OX0sXCJzZWFyY2hcIjp0cnVlLFwic2hvd1N0YXJ0U2NyZWVuXCI6dHJ1ZSxcImdyaWRDb2xvclwiOlwiI2QwZDBkMFwiLFwiZGFya0dyaWRDb2xvclwiOlwiIzZlNmU2ZVwiLFwiYXV0b3NhdmVcIjp0cnVlLFwicmVzaXplSW1hZ2VzXCI6bnVsbCxcIm9wZW5Db3VudGVyXCI6MCxcInZlcnNpb25cIjoxOCxcInVuaXRcIjoxLFwiaXNSdWxlck9uXCI6ZmFsc2UsXCJ1aVwiOlwiXCJ9In0=",
+  "explorer.openEditors.visible": 10,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.lineNumbers": "on",
+    "editor.quickSuggestions": {
+      "comments": "on",
+      "strings": "on",
+      "other": "on"
+    },
+    "editor.wrappingIndent": "none",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
+    "{hexdiff}:/**/*.*": "hexEditor.hexedit",
+    "*.ipynb": "jupyter-notebook",
+    "*.gltf": "glbViewer.customEditor",
+    "*.svg": "scratchSvgEditor.paint"
+  },
+  "security.workspace.trust.untrustedFiles": "open",
+  "editor.minimap.maxColumn": 20,
+  "editor.scrollbar.verticalScrollbarSize": 20,
+  "editor.minimap.scale": 1,
+  "editor.minimap.renderCharacters": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.highlightActiveBracketPair": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.matchBrackets": "always",
+  "editor.detectIndentation": false,
+  "i18n-ally.extract.autoDetect": true,
+  "gulp.autoDetect": "on",
+  "azure.resourceFilter": [],
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "xmlTools.ignoreDefaultNamespace": false,
+  "xmlTools.splitXmlnsOnFormat": false,
+  "editor.inlineSuggest.enabled": true,
+  "workbench.list.smoothScrolling": true,
+  "editor.smoothScrolling": true,
+  "[shellscript]": {
+    "editor.defaultFormatter": "shakram02.bash-beautify"
+  },
+  "[shfmt]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[powershell]": {
+    "editor.defaultFormatter": "ms-vscode.powershell"
+  },
+  "debug.console.fontSize": 0,
+  "githubPullRequests.pullBranch": "never",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "materialTheme.accent": "Bright Teal",
+  "workbench.editor.highlightModifiedTabs": true,
+  "window.autoDetectColorScheme": true,
+  "githubPullRequests.createOnPublishBranch": "never",
+  "[python]": {
+    "editor.formatOnType": true
+  },
+  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.shellIntegration.enabled": true,
+  "hexeditor.columnWidth": 16,
+  "hexeditor.showDecodedText": true,
+  "hexeditor.defaultEndianness": "little",
+  "hexeditor.inspectorType": "aside",
+  "explorer.confirmDelete": false,
+  "diffEditor.maxComputationTime": 0,
+  "synthwave84.brightness": 1,
+  "indentRainbow.indicatorStyle": "light",
+  "bookmarks.sideBar.countBadge": "off",
+  "testing.gutterEnabled": false,
+  "editor.guides.indentation": false,
+  "vsicons.dontShowNewVersionMessage": true,
+  "settingsSync.ignoredExtensions": [
+    "ktiays.aicursor",
+    "github.copilot-chat",
+    "github.copilot"
+  ],
+  "inference.model": "deepseek-coder:6.7b-base-q5_K_M",
+  "inference.maxTokens": 512,
+  "inference.temperature": 0.1,
+  "inference.maxLines": 20,
+  "powershell.scriptAnalysis.settingsPath": "~/.config/psscriptanalyzer/PSScriptAnalyzerSettings.psd1",
+  "unotes.editor.imageMaxWidthPercent": 50,
+  "unotes.editor.extraFocus": true,
+  "unotes.rootPath": "~/Code/Notes",
+  "unotes.mediaFolder": "~/.unotes/media",
+  "git.openRepositoryInParentFolders": "never",
+  "editor.codeLensFontFamily": "'GohuFont 11 Nerd Font','TamzenForPowerline','GohuFont uni14 Nerd Font Mono','Monaspace krypton','Hasklug Nerd Font Mono','0xProto Nerd Font mono','Hurmit Nerd Font Mono','Hasklug Nerd Font Mono','MonaspiceKr Nerd Font Propo','0xProto nerd font mono','GohuFont uni14 Nerd Font Mono','Tamzen','Proggyvector','terminess Nerd Font Mono','Gohufont 11 Nerd Font Propo','Agave Nerd Font Mono','Gohufont 11 Nerd Font','ProggyVector','Agave Nerd Font Mono','CamingoCode Nerd Font','Monaspicekr nerd font','0xProto nerd font mono','Monaspace Krypton','ProggyVector','Hurmit Nerd Font Mono','SpaceMono Nerd Font','M PLUS Code Latin','ProggyClean CE Nerd Font'",
+  "editor.inlayHints.fontFamily": "0",
+  "editor.codeLens": true,
+  "typescript.preferGoToSourceDefinition": true,
+  "cmake.configureOnOpen": false,
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
+  },
+  "platformio-ide.activateProjectOnTextEditorChange": true,
+  "platformio-ide.usepip PIOCore": true,
+  "typescript.experimental.aiCodeActions": {
+    // added by @damsleth 2024-02-02
+    "addNameToNamelessParameter": true,
+    "addMissingImports": true,
+    "addMissingTypeToVariable": true,
+    "addMissingTypeToFunction": true,
+    "addMissingTypeToProperty": true,
+    "addMissingTypeToParameter": true,
+    "addMissingTypeToReturn": true,
+    "inferAndAddTypes": true,
+    "missingFunctionDeclaration": true,
+    "classDoesntImplementInheritedAbstractMember": true,
+    "classIncorrectlyImplementsInterface": true,
+    "extractConstant": true,
+    "extractFunction": true,
+    "extractInterface": true,
+    "extractType": true,
+    "extractMethod": true,
+    "extractVariable": true,
+    "fixImport": true,
+  },
+  "redhat.telemetry.enabled": false,
+  "go.toolsManagement.autoUpdate": true,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  // The path to the `bun` executable.
+  "bun.runtime": "",
+  "bun.debugTerminal.enabled": false,
+  "vs-browser.localProxyServer.port": 8081,
+  "vs-browser.reload.onSave": true,
+  "vs-browser.url": "http://localhost:3000",
+  "livePreview.portNumber": 3001,
+  "vscode-edge-devtools.userDataDir": false,
+  "vscode-edge-devtools.browserFlavor": "Default",
+  "livePreview.debugOnExternalPreview": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyleInactive": "line",
+  "terminal.integrated.cursorWidth": 2,
+  "editor.renderLineHighlight": "none",
+  "editor.renderLineHighlightOnlyWhenFocus": true,
+  "animations.Install-Method": "Apc Customize UI++",
+  "update.mode": "default",
+  "apc.imports": [
+    "file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.3/dist/updateHandler.js",
+    "file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.3/dist/extension.js"
+  ],
+      "apc.electron": {
+      "vibrancy": "light",
+      "backgroundColor": "#00000000",
+      "disableBlurForDialogs": false,
+      "disableBlurForMenus": false,
+      "opacity": 0.71
+    },
+  "workbench.colorCustomizations": {
+    "[Material Theme]": {
+      "activityBarBadge.background": "#64FFDA",
+      "activityBar.activeBorder": "#64FFDA",
+      "list.activeSelectionForeground": "#64FFDA",
+      "list.inactiveSelectionForeground": "#64FFDA",
+      "list.highlightForeground": "#64FFDA",
+      "scrollbarSlider.activeBackground": "#64FFDA50",
+      "editorSuggestWidget.highlightForeground": "#64FFDA",
+      "textLink.foreground": "#64FFDA",
+      "progressBar.background": "#64FFDA",
+      "pickerGroup.foreground": "#64FFDA",
+      "tab.activeBorder": "#64FFDA",
+      "notificationLink.foreground": "#64FFDA",
+      "editorWidget.resizeBorder": "#64FFDA",
+      "editorWidget.border": "#64FFDA",
+      "settings.modifiedItemIndicator": "#64FFDA",
+      "settings.headerForeground": "#64FFDA",
+      "panelTitle.activeBorder": "#64FFDA",
+      "breadcrumb.activeSelectionForeground": "#64FFDA",
+      "menu.selectionForeground": "#64FFDA",
+      "menubar.selectionForeground": "#64FFDA",
+      "editor.findMatchBorder": "#64FFDA",
+      "selection.background": "#64FFDA40",
+      "statusBarItem.remoteBackground": "#64FFDA"
+    },
+  },
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "bitoAI.codeCompletion.enableAutoCompletion": true,
+  "bitoAI.codeCompletion.enableCommentToCode": true,
+  "bitoAI.appearance.fontSize (Match with IDE Font)": false,
+  "workbench.settings.applyToAllProfiles": [
+    "workbench.colorCustomizations"
+  ],
+  "apc.menubar.compact": true,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "chat.editing.alwaysSaveWithGeneratedChanges": true,
+  "editor.minimap.showSlider": "always",
+  "lldb.suppressUpdateNotifications": true,
+  "gitlens.plusFeatures.enabled": false,
+  "[svg]": {
+    "editor.defaultFormatter": "jock.svg"
+  },
+  "scm.inputFontSize": 0,
+  "mark-sharp.display.fontSize": 17,
+  "powershell.pester.useLegacyCodeLens": false,
+  "powershell.pester.debugOutputVerbosity": "Normal",
+  // "copilot.vision.azureEndpoint": ""
+  "vscode_custom_css.imports": [
+    "file://${userHome}/.vscode/k_custom.css"
+  ],
+  "@azure.argTenant": "",
+  "editor.minimap.enabled": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "liveshare.accessibility.soundsEnabled": false,
+  "chat.detectParticipant.enabled": true,
+  "chat.agent.enabled": true,
+  "chat.implicitContext.enabled": {
+    "panel": "always",
+    "editing-session": "first"
+  },
+  "github.copilot.chat.completionContext.typescript.mode": "on",
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.followUps": "always",
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+  },
+  "github.copilot.advanced": {
+    "debug.showScores": true,
+    "completion.showScores": true,
+    "*": true,
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.editor.enableCodeActions": true,
+  "github.copilot.chat.agent.runTasks": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "[c]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
+  },
+  "azureFunctions.showCoreToolsWarning": false,
+  "idf.hasWalkthroughBeenShown": true,
+  "idf.espIdfPath": "${userHome}/esp/esp-idf",
+  "idf.toolsPath": "${userHome}/.espressif",
+  "idf.gitPath": "/opt/homebrew/bin/git",
+  "idf.pythonInstallPath": "${userHome}/.espressif/python_env/idf6.0_py3.13_env/bin/python",
+  "idf.port": "/dev/tty.usbmodem2101",
+  "platformio-ide.useBuiltinPIOCore": true,
+  "workbench.tree.indent": 4,
+  "workbench.tree.renderIndentGuides": "always",
+  "workbench.hover.delay": 400,
+  "workbench.tips.enabled": false,
+  "workbench.panel.showLabels": false,
+  "workbench.productIconTheme": "fluent-icons",
+  "search.showLineNumbers": true,
+  "zenMode.fullScreen": false,
+  "editor.tabSize": 2,
+  "oneDarkPro.bold": true,
+  "zenMode.showTabs": "none",
+  "yaml.schemas": {
+    "${userHome}/.vscode/extensions/continue.continue-1.1.30-darwin-arm64/config-yaml-schema.json": [
+      ".continue/**/*.yaml"
+    ]
+  },
+  "editor.showFoldingControls": "never",
+  "editor.lineDecorationsWidth": 10,
+  "editor.folding": false,
+  "workbench.commandPalette.experimental.askChatLocation": "quickChat",
+  "stm32-for-vscode.openOCDPath": false,
+  "stm32-for-vscode.makePath": "/usr/bin/make",
+  "stm32-for-vscode.armToolchainPath": false,
+  "settingsSync.keybindingsPerPlatform": false,
+  "chat.mcp.discovery.enabled": {
+    "claude-desktop": true,
+    "windsurf": true,
+    "cursor-global": true,
+    "cursor-workspace": true
+  },
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.editorActionsLocation": "hidden",
+  "workbench.navigationControl.enabled": false,
+  "gitlens.home.preview.enabled": false,
+  "roo-cline.allowedCommands": [
+    "npm test",
+    "npm install",
+    "tsc",
+    "git log",
+    "git diff",
+    "git show",
+    "ls",
+    "deno *",
+    "npm *"
+  ],
+  "markdown-preview-enhanced.liveUpdate": false,
+  "idf.showOnboardingOnInit": true,
+  "chat.editing.confirmEditRequestRetry": false,
+  "gistpad.mcp.enabled": false,
+  "chat.tools.useTreePicker": true,
+  "chat.mcp.serverSampling": {
+    "Global in Code - Insiders: deepwiki": {
+      "allowedModels": []
+    }
+  },
+  "github.copilot.chat.newWorkspace.useContext7": true,
+  "simpleBrowser.focusLockIndicator.enabled": false,
+  "editor.allowVariableFontsInAccessibilityMode": true,
+  "editor.aiStats.enabled": true,
+  "editor.glyphMargin": false,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.cursorBlinking": "solid",
+  "chat.agent.maxRequests": 50,
+  "editor.minimap.sectionHeaderFontSize": 0,
+  "git.blame.editorDecoration.enabled": false,
+  "git.blame.statusBarItem.enabled": false,
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "curl": true,
+    "npm test": true,
+    "sed": true,
+    "git fetch": true,
+    "npm run lint": true,
+    "docker compose": true,
+    "docker network": true,
+    "npm install": true,
+    "git add": true,
+    "git commit": true,
+    "git push": true,
+    "cargo build": true,
+    "npx tsc": true,
+    "cargo test": true,
+    "npx ava": true,
+    "cargo clippy": true,
+    "npx gulp": true,
+    "nvm": true,
+    "n": true
+  },
+  "chat.allowAnonymousAccess": true,
+  "chat.agentSessionsViewLocation": "view",
+  "chat.editing.autoAcceptDelay": 10,
+  "chat.fontSize": 14,
+  "chat.commandCenter.enabled": false,
+  "mdb.mcp.server": "prompt",
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "chat.emptyState.history.enabled": true,
+  "workbench.secondarySideBar.showLabels": false,
+"workbench.activityBar.location": "top",
+  "chat.tools.global.autoApprove": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.agent.currentEditorContext.enabled": true,
+  "github.copilot.chat.summarizeAgentConversationHistory.enabled": true,
+  "workbench.iconTheme": "vscode-icons",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "prettier.semi": false,
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "workbench.layoutControl.enabled": false,
+  "chat.recentSessions.enabled": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "chat.viewWelcome.enabled": false,
+  "chat.mcp.apps.enabled": true,
+  "chat.useAgentSkills": true,
+  "inlineChat.enableV2": true,
+  "chat.viewTitle.enabled": false,
+  "chat.tools.terminal.outputLocation": "chat",
+  "githubPullRequests.pushBranch": "always",
+  "chat.agentsControl.enabled": false,
+  "window.commandCenter": false,
+  "svg.preview.backgroundSaveTo": "Global",
+  "svg.preview.autoShow": true,
+  "svg.preview.background": "editor",
+  "githubPullRequests.pullRequestDescription": "Copilot",
+  "git.replaceTagsWhenPull": true,
+  "claudeCode.selectedModel": "default",
+  "chat.viewSessions.orientation": "stacked",
+  "chat.tools.urls.autoApprove": {
+    "https://code.visualstudio.com": true,
+    "https://github.com/microsoft/vscode/wiki/*": true,
+    "https://learn.microsoft.com": {
+      "approveRequest": false,
+      "approveResponse": true
+    },
+    "https://www.bing.com": {
+      "approveRequest": false,
+      "approveResponse": true
+    },
+    "https://github.com/karpathy/autoresearch": true,
+    "https://github.com/karpathy": true,
+    "https://github.com": true,
+    "https://raw.githubusercontent.com/karpathy/autoresearch/main/README.md": true,
+    "https://raw.githubusercontent.com/karpathy/autoresearch/main": true,
+    "https://raw.githubusercontent.com/karpathy/autoresearch": true,
+    "https://raw.githubusercontent.com/karpathy": true,
+    "https://raw.githubusercontent.com": true,
+    "https://*.githubusercontent.com": true
+  },
+  "chat.tools.terminal.ignoreDefaultAutoApproveRules": true,
+  "explorer.confirmPasteNative": false,
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "workbench.preferredLightColorTheme": "Bluloco Light",
+  "workbench.preferredDarkColorTheme": "Bluloco Light",
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "security.workspace.trust.banner": "never",
+  "security.workspace.trust.enabled": false,
+}

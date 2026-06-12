@@ -1,0 +1,16 @@
+# fnm-versions.txt - Node versions to install via `fnm install` on a fresh box.
+# Last entry tagged "default" becomes the fnm default version.
+#
+# Only ONE version is seeded on purpose. The previous list (18/20/22/24) was
+# just a snapshot of whatever had accumulated on the old Mac - nothing in these
+# dotfiles requires multiple majors. The shell enables `fnm --use-on-cd`
+# (zsh/.zsh/source.zsh), so cd-ing into a project with a .node-version/.nvmrc
+# auto-switches (and installs on demand) the version that project needs. So a
+# fresh box only needs the current default; per-project majors arrive when used.
+#
+# v26 matches the version pinned in zsh/.zshrc. Bump this when you move majors.
+#
+# Refresh from current machine state:
+#   fnm list | awk '/v[0-9]/{print $NF}' > _scripts/fnm-versions.txt
+
+v26.2.0 default

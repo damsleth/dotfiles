@@ -1,0 +1,35 @@
+#!/bin/sh
+# lf previewer. Args: $1=file $2=width $3=height $4=x(col) $5=y(row), in cells.
+file="$1"
+w="$2"
+h="$3"
+x="$4"
+y="$5"
+
+case "$(file -Lb --mime-type -- "$file")" in
+    image/*)
+        # kitten icat does absolute placement (WxH@XxY in cells) without moving
+        # the cursor or scrolling, so lf's text columns stay intact. Drawn
+        # straight to the terminal because lf would mangle protocol bytes on
+        # stdout. memory transfer avoids leaving temp files around.
+        kitten icat --silent --stdin no --transfer-mode memory \
+            --place "${w}x${h}@${x}x${y}" -- "$file" < /dev/null > /dev/tty
+        # Non-zero exit tells lf NOT to cache, so the image is redrawn each
+        # time you land on it (the cleaner wipes it when you move away).
+        exit 1
+        ;;
+    text/* | application/json | application/javascript | application/xml)
+        if command -v bat >/dev/null 2>&1; then
+            # --theme=ansi uses the terminal's own palette, so the preview
+            # stays readable in both light and dark Ghostty themes (the
+            # bundled defaults assume a dark background).
+            bat --color=always --style=plain --paging=never \
+                --theme=ansi -- "$file"
+        else
+            cat -- "$file"
+        fi
+        ;;
+    *)
+        file -Lb -- "$file"
+        ;;
+esac

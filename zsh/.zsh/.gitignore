@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+_icons.zsh
+dtop/target/
+.env
+plugins/*

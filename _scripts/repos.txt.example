@@ -1,0 +1,13 @@
+# repos.txt — repos for clone-repos.sh to clone into ~/code/<name>.
+#
+# This is the public EXAMPLE. Copy it to your private overlay (or set
+# $REPOS_FILE) with your own repos — don't commit a real list to a public repo.
+#
+# Format: one repo per line, "owner/repo" with an optional branch.
+# Blank lines and #-comments are ignored. Cloned over SSH (git@github.com).
+#
+#   owner/repo            # branch defaults to the remote HEAD
+#   owner/repo  develop   # pin a branch
+
+# yourname/dotfiles-private
+# yourname/some-tool

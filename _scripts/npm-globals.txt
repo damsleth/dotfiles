@@ -1,0 +1,8 @@
+@earendil-works/pi-coding-agent
+# @gsd-build/sdk is npm-linked from a local checkout, not registry-installable.
+# After restore, re-link manually: cd ~/code/<gsd-build-source> && npm link
+# @gsd-build/sdk
+pyright
+skills
+typescript
+typescript-language-server

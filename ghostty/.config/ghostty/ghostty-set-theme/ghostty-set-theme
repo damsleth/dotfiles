@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Swap the ghostty theme for the currently active macOS appearance slot.
+# Usage: ghostty-set-theme "Bluloco Light"
+#        ghostty-set-theme --light "Bluloco Light"
+#        ghostty-set-theme --dark  "dsh-dark"
+
+set -euo pipefail
+
+XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config"
+APP_CONFIG="$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+if [[ -f "$XDG_CONFIG" ]]; then
+  CONFIG="$XDG_CONFIG"
+elif [[ -f "$APP_CONFIG" ]]; then
+  CONFIG="$APP_CONFIG"
+else
+  CONFIG="$XDG_CONFIG"
+fi
+
+slot=""
+case "${1:-}" in
+  --light) slot="light"; shift ;;
+  --dark)  slot="dark";  shift ;;
+esac
+
+theme="${1:-}"
+if [[ -z "$theme" ]]; then
+  echo "usage: ghostty-set-theme [--light|--dark] <theme-name>" >&2
+  exit 64
+fi
+
+if [[ -z "$slot" ]]; then
+  appearance=$(defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light")
+  if [[ "$appearance" == "Dark" ]]; then slot="dark"; else slot="light"; fi
+fi
+
+if [[ ! -f "$CONFIG" ]]; then
+  echo "ghostty config not found at: $CONFIG" >&2
+  exit 1
+fi
+
+current=$(grep -E '^[[:space:]]*theme[[:space:]]*=' "$CONFIG" | tail -n1 || true)
+if [[ -z "$current" ]]; then
+  # Initialize a theme line if none exists yet.
+  printf '\ntheme = light:%s,dark:%s\n' "$theme" "$theme" >> "$CONFIG"
+  current=$(grep -E '^[[:space:]]*theme[[:space:]]*=' "$CONFIG" | tail -n1)
+fi
+
+# Parse "theme = light:X,dark:Y" or single-theme forms.
+value="${current#*=}"
+value="${value# }"
+
+light_part=""
+dark_part=""
+if [[ "$value" == *"light:"* || "$value" == *"dark:"* ]]; then
+  IFS=',' read -r -a parts <<< "$value"
+  for p in "${parts[@]}"; do
+    p="${p# }"; p="${p% }"
+    case "$p" in
+      light:*) light_part="${p#light:}" ;;
+      dark:*)  dark_part="${p#dark:}"  ;;
+    esac
+  done
+else
+  light_part="$value"
+  dark_part="$value"
+fi
+
+if [[ "$slot" == "light" ]]; then light_part="$theme"; else dark_part="$theme"; fi
+
+new_line="theme = light:${light_part},dark:${dark_part}"
+
+tmp=$(mktemp)
+awk -v new="$new_line" '
+  BEGIN { replaced = 0 }
+  /^[[:space:]]*theme[[:space:]]*=/ && !replaced { print new; replaced = 1; next }
+  { print }
+' "$CONFIG" > "$tmp"
+
+mv "$tmp" "$CONFIG"
+
+# Trigger reload by sending Cmd+Shift+, to Ghostty.
+osascript <<'OSA' >/dev/null 2>&1 || true
+tell application "System Events"
+  tell process "Ghostty"
+    keystroke "," using {command down, shift down}
+  end tell
+end tell
+OSA
+
+echo "ghostty $slot theme -> $theme"

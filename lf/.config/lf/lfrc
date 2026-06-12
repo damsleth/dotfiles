@@ -1,0 +1,28 @@
+set hidden true
+
+# High-res image previews via the Kitty graphics protocol (Ghostty supports it).
+set previewer ~/.config/lf/preview
+set cleaner ~/.config/lf/clean
+
+# l / <enter> on a file: open text in full-screen vim (great for scrolling long
+# JSON, etc.), everything else via the macOS default app. Directories still
+# enter normally since lf's open builtin handles those itself.
+cmd open ${{
+    case "$(file -Lb --mime-type -- "$f")" in
+        text/* | application/json | application/javascript | application/xml | application/x-shellscript | inode/x-empty)
+            "${EDITOR:-nvim}" "$f" ;;
+        *)
+            open "$f" ;;
+    esac
+}}
+
+# Move the current selection (or marked files) to the macOS Trash.
+cmd trash ${{
+    set -- $fx
+    /usr/bin/trash "$@"
+}}
+
+# Backspace (keycode 127 / 0x7f) -> trash. <backspace2> is the DEL-style
+# backspace macOS terminals send; <backspace> covers the ^H variant.
+map <backspace2> trash
+map <backspace> trash

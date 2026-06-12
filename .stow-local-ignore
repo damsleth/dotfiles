@@ -1,0 +1,11 @@
+# Keep generated/local state out of GNU Stow operations.
+\.DS_Store$
+\.git$
+\.gitignore$
+__pycache__$
+\.zwc$
+\.zcompdump.*$
+target$
+
+# Local zsh plugin checkouts are installed outside the tracked package state.
+^zsh/\.zsh/plugins/

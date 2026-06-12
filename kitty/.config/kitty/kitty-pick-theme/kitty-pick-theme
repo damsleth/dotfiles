@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Interactive kitty theme picker with color-swatch preview.
+# Updates the active appearance slot (light or dark) via kitty-set-theme
+# and reloads kitty. Themes come from the kitty-themes repo (the same
+# cache `kitten themes` uses) plus any user themes in
+# ~/.config/kitty/themes/.
+
+set -euo pipefail
+
+# When launched from a kitty keybind (no login shell), homebrew paths may
+# be missing from PATH — fzf and kitten live there.
+command -v fzf >/dev/null 2>&1 || PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+config_dir="${KITTY_CONFIG_DIRECTORY:-$HOME/.config/kitty}"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/kitty-pick-theme"
+zip_kitten="$HOME/Library/Caches/kitty/kitty-themes.zip"
+themes_repo="$cache_dir/kitty-themes-master/themes"
+themes_user="$config_dir/themes"
+index="$cache_dir/index.tsv"
+
+# Make sure the kitty-themes repo is extracted and the name->file index
+# is fresh. Reuses kitten's own download when available.
+ensure_themes() {
+  mkdir -p "$cache_dir"
+  local zip="$zip_kitten"
+  if [[ ! -f "$zip" ]]; then
+    zip="$cache_dir/kitty-themes.zip"
+    [[ -f "$zip" ]] || curl -fsSL \
+      "https://github.com/kovidgoyal/kitty-themes/archive/refs/heads/master.zip" \
+      -o "$zip"
+  fi
+  # Re-extract + re-index when the zip or user themes are newer than the index.
+  if [[ ! -f "$index" || "$zip" -nt "$index" || "$themes_user" -nt "$index" ]]; then
+    unzip -oq "$zip" -d "$cache_dir"
+    build_index
+  fi
+}
+
+# index.tsv: "<pretty name>\t<file path>", user themes win on name clashes.
+build_index() {
+  local tmp="$index.tmp" dir f name
+  : > "$tmp"
+  for dir in "$themes_user" "$themes_repo"; do
+    [[ -d "$dir" ]] || continue
+    for f in "$dir"/*.conf; do
+      [[ -e "$f" ]] || continue
+      name=$(sed -n 's/^## *name:[[:space:]]*//p' "$f" | head -n1)
+      [[ -n "$name" ]] || name=$(basename "$f" .conf)
+      printf '%s\t%s\n' "$name" "$f" >> "$tmp"
+    done
+  done
+  awk -F'\t' '!seen[$1]++' "$tmp" | sort -f > "$index"
+  rm -f "$tmp"
+}
+
+# Renders a preview pane for a single theme: bg/fg + 16-color palette swatches.
+preview() {
+  local name="$1" file
+  [[ -f "$index" ]] || ensure_themes
+  file=$(awk -F'\t' -v n="$name" '$1 == n { print $2; exit }' "$index")
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo "theme file not found: $name"
+    return
+  fi
+
+  awk -v name="$name" \
+      -v lines="${FZF_PREVIEW_LINES:-${LINES:-30}}" \
+      -v cols="${FZF_PREVIEW_COLUMNS:-${COLUMNS:-60}}" '
+    function h2d(s,   i,c,n,v) {
+      s = tolower(s); v = 0
+      for (i = 1; i <= length(s); i++) {
+        c = substr(s,i,1)
+        n = index("0123456789abcdef", c) - 1
+        if (n < 0) n = 0
+        v = v*16 + n
+      }
+      return v
+    }
+    function hex(s) {
+      gsub(/^#/, "", s)
+      return h2d(substr(s,1,2)) ";" h2d(substr(s,3,2)) ";" h2d(substr(s,5,2))
+    }
+    # Emit one line wrapped in the theme bg, padded out to the preview width.
+    # Uses fg as the default text color; \033[K clears-to-eol with current bg.
+    function row(content) {
+      printf "\033[48;2;%sm\033[38;2;%sm%s\033[K\033[0m\n", hex(bg), hex(fg), content
+      emitted++
+    }
+    # kitty theme syntax: "key value", values are #rrggbb in the themes repo
+    $1 == "background" && $2 ~ /^#/ { bg = $2 }
+    $1 == "foreground" && $2 ~ /^#/ { fg = $2 }
+    $1 ~ /^color([0-9]|1[0-5])$/ && $2 ~ /^#/ { pal[substr($1,6)+0] = $2 }
+    END {
+      if (bg == "") bg = "#000000"
+      if (fg == "") fg = "#ffffff"
+      emitted = 0
+      row("")
+      row("  \033[1m" name "\033[22m")
+      row("  bg " bg "   fg " fg)
+      row("")
+      row("  Sample text in this theme")
+      row("  The quick brown fox jumps over the lazy dog.")
+      row("  1234567890  !@#$%^&*()  => || && ::")
+      row("")
+      # palette swatches drawn directly on the bg
+      sw = "      "
+      line0 = "  "
+      for (i = 0; i < 8; i++) {
+        c = pal[i]; if (c == "") c = bg
+        line0 = line0 "\033[48;2;" hex(c) "m" sw "\033[48;2;" hex(bg) "m"
+      }
+      line1 = "  "
+      for (i = 8; i < 16; i++) {
+        c = pal[i]; if (c == "") c = bg
+        line1 = line1 "\033[48;2;" hex(c) "m" sw "\033[48;2;" hex(bg) "m"
+      }
+      row("  palette:")
+      row(line0)
+      row(line1)
+      # fill remaining height with empty bg-colored rows
+      while (emitted < lines) row("")
+    }
+  ' "$file"
+}
+
+if [[ "${1:-}" == "--preview" ]]; then
+  preview "$2"
+  exit 0
+fi
+
+slot_arg=()
+case "${1:-}" in
+  --light) slot_arg=(--light); ;;
+  --dark)  slot_arg=(--dark);  ;;
+esac
+
+ensure_themes
+
+selected=$(cut -f1 "$index" \
+  | fzf \
+      --prompt="theme> " \
+      --height=80% \
+      --layout=reverse \
+      --border \
+      --no-list-border \
+      --preview="$0 --preview {}" \
+      --preview-window=right,70%,wrap)
+
+[[ -z "$selected" ]] && exit 0
+
+"$script_dir/kitty-set-theme" ${slot_arg[@]+"${slot_arg[@]}"} "$selected"

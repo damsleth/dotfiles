@@ -1,0 +1,4 @@
+#!/bin/sh
+# Clear all Kitty-protocol graphics so old previews don't linger.
+# Straight to the terminal; lf would mangle the escape on stdout.
+kitten icat --clear --silent --stdin no --transfer-mode memory < /dev/null > /dev/tty
