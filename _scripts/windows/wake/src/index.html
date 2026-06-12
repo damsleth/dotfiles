@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* The app is hidden in main.js, but the content must exist for JS to run. */
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="status">Initializing Wake Lock...</div>
+
+  <script>
+    // Helper to update status (useful if you decide to make the window visible later)
+    const statusEl = document.getElementById('status');
+    
+    async function requestWakeLock() {
+      try {
+        // 'screen' type prevents screen sleep; 'display' is for external displays in some browsers
+        const wakeLock = await navigator.wakeLock.request('screen');
+        
+        statusEl.textContent = `Wake Lock Active! ID: ${Date.now().toString().slice(-4)}`;
+        console.log(`Wake lock active. Screen will not sleep.`);
+
+        // Listen for the 'release' event to know if something else releases it
+        wakeLock.addEventListener('release', () => {
+          statusEl.textContent = 'Wake Lock Released.';
+          
+          // Auto-retry logic: some apps/releases break locks, try again immediately
+          requestWakeLock();
+        });
+
+        return wakeLock;
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.name} - ${err.message}`;
+        console.error(`${err.name}: ${err.message}`);
+      }
+    }
+
+    requestWakeLock();
+  </script>
+</body>
+</html>
