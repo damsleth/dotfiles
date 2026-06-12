@@ -57,9 +57,14 @@ STOW_FLAGS=(
     "--dir=$DOTFILES_DIR"
     "--target=${HOME}"
     "--verbose"
+    "--no-folding"
     "--ignore=\\.DS_Store$"
     "--ignore=^plugins$"
 )
+# --no-folding: link individual files into real directories instead of folding a
+# whole package dir into one symlink. This lets the private overlay add files to
+# a directory the public repo also populates (e.g. ~/.zsh/local.zsh alongside the
+# public ~/.zsh/*.zsh) without a stow conflict.
 [[ $DRY_RUN -eq 1 ]] && STOW_FLAGS+=("--simulate")
 
 # System packages to apt-install on Debian/Ubuntu/WSL. Homebrew covers these
