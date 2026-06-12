@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # wizard.sh — interactive picker for which dotfile packages to install.
 #
-# Pure bash (works on macOS's bash 3.2), zero dependencies, no raw-terminal
-# mode — so it's safe over SSH, in tmux, and on dumb terminals. You toggle
-# packages by number; presets pre-check sensible sets.
+# Pure bash (works on macOS's bash 3.2), zero dependencies. Navigate with the
+# arrow keys (or j/k), space toggles the highlighted package, Enter installs.
+# m/r/e pick a preset, a/n select all/none, q quits. Works over SSH and in tmux
+# (single-keypress reads, no stty raw mode); falls back to the recommended set
+# when there's no TTY (e.g. bootstrap --no-wizard / piped input).
 #
 # Used by bootstrap.sh on first run. Can also be run directly:
 #   _scripts/wizard.sh                 # interactive, prints chosen packages
@@ -122,67 +124,77 @@ apply_preset rec   # start on the recommended set
 if command -v tput >/dev/null 2>&1 && [[ -t 1 ]]; then
   C_DIM="$(tput dim 2>/dev/null || true)"; C_B="$(tput bold 2>/dev/null || true)"
   C_R="$(tput sgr0 2>/dev/null || true)"; C_GRN="$(tput setaf 2 2>/dev/null || true)"
-  C_CYN="$(tput setaf 6 2>/dev/null || true)"; C_YEL="$(tput setaf 3 2>/dev/null || true)"
-  CLEAR="$(tput clear 2>/dev/null || true)"
+  C_CYN="$(tput setaf 6 2>/dev/null || true)"; C_REV="$(tput rev 2>/dev/null || true)"
+  COLS="$(tput cols 2>/dev/null || echo 80)"
 else
-  C_DIM=""; C_B=""; C_R=""; C_GRN=""; C_CYN=""; C_YEL=""; CLEAR=""
+  C_DIM=""; C_B=""; C_R=""; C_GRN=""; C_CYN=""; C_REV=""; COLS=80
 fi
+# Home + clear-to-end (less flicker than a full clear on each keypress).
+CLEAR=$'\e[H\e[J'
+NCOUNT=${#VISIBLE[@]}
+# Budget for the description column so long lines truncate instead of wrapping.
+DESC_MAX=$(( COLS - 30 )); (( DESC_MAX < 20 )) && DESC_MAX=20
 
-render() {
+render() {  # render <cursor-position 0..NCOUNT-1>
+  local cur="$1" last_cat="" pos=0 idx line key cat desc box mark sel=0 i
+  for i in "${VISIBLE[@]}"; do [[ "${SEL[$i]}" == "1" ]] && sel=$((sel+1)); done
   printf '%s' "$CLEAR" >&2
   {
-    printf '%s┌─ dotfiles installer ─────────────────────────────────────┐%s\n' "$C_CYN" "$C_R"
-    printf '%s  Pick what to install. Type numbers to toggle, then Enter.%s\n\n' "$C_DIM" "$C_R"
-    local last_cat="" idx line key cat desc count=0
-    # display number → package index map
-    NUMMAP=()
+    printf '%s┌─ dotfiles installer ──────────────────────────────┐%s\n' "$C_CYN" "$C_R"
+    printf '  %s↑/↓%s move   %sspace%s toggle   %sEnter%s install   %sq%s quit\n\n' \
+           "$C_B" "$C_R" "$C_B" "$C_R" "$C_B" "$C_R" "$C_B" "$C_R"
     for idx in "${VISIBLE[@]}"; do
       line="${PACKAGES[$idx]}"; cat="$(field "$line" 2)"
       key="$(field "$line" 1)"; desc="$(field "$line" 5)"
-      if [[ "$cat" != "$last_cat" ]]; then printf '  %s%s%s\n' "$C_B" "$cat" "$C_R"; last_cat="$cat"; fi
-      count=$((count+1)); NUMMAP[$count]=$idx
-      if [[ "${SEL[$idx]}" == "1" ]]; then
-        printf '    %s[x]%s %2d) %s%-11s%s %s%s%s\n' "$C_GRN" "$C_R" "$count" "$C_B" "$key" "$C_R" "$C_DIM" "$desc" "$C_R"
+      [[ "$cat" != "$last_cat" ]] && { printf '  %s%s%s\n' "$C_B" "$cat" "$C_R"; last_cat="$cat"; }
+      (( ${#desc} > DESC_MAX )) && desc="${desc:0:DESC_MAX-1}…"
+      if [[ "${SEL[$idx]}" == "1" ]]; then box="${C_GRN}[x]${C_R}"; else box="[ ]"; fi
+      if (( pos == cur )); then mark="${C_CYN}›${C_R}"; else mark=" "; fi
+      if (( pos == cur )); then
+        printf '  %s %s %s%-10s%s %s%s%s\n' "$mark" "$box" "${C_REV}${C_B}" "$key" "$C_R" "$C_DIM" "$desc" "$C_R"
       else
-        printf '    [ ] %2d) %-11s %s%s%s\n' "$count" "$key" "$C_DIM" "$desc" "$C_R"
+        printf '  %s %s %s%-10s%s %s%s%s\n' "$mark" "$box" "$C_B" "$key" "$C_R" "$C_DIM" "$desc" "$C_R"
       fi
+      pos=$((pos+1))
     done
-    NCOUNT=$count
-    local sel=0 idx2; for idx2 in "${VISIBLE[@]}"; do [[ "${SEL[$idx2]}" == "1" ]] && sel=$((sel+1)); done
-    printf '\n  %s%d selected%s of %d\n' "$C_GRN" "$sel" "$C_R" "$NCOUNT"
-    printf '  %spresets%s [m]inimal  [r]ecommended  [e]verything   %s|%s  [a]ll  [n]one\n' "$C_B" "$C_R" "$C_DIM" "$C_R"
-    printf '  %sEnter%s install   %sq%s quit\n' "$C_B" "$C_R" "$C_B" "$C_R"
-    printf '%s└──────────────────────────────────────────────────────────┘%s\n' "$C_CYN" "$C_R"
-    printf '%s> %s' "$C_YEL" "$C_R"
+    printf '\n  %s%d selected%s of %d    %spresets:%s [m]in [r]ec [e]very  [a]ll [n]one\n' \
+           "$C_GRN" "$sel" "$C_R" "$NCOUNT" "$C_DIM" "$C_R"
+    printf '%s└────────────────────────────────────────────────────┘%s' "$C_CYN" "$C_R"
   } >&2
 }
 
+# Read one keystroke into KEY, decoding arrow-key escape sequences.
+read_key() {
+  local k rest
+  IFS= read -rsn1 k 2>/dev/null || return 1
+  if [[ "$k" == $'\e' ]]; then
+    IFS= read -rsn2 -t 1 rest 2>/dev/null   # tail of an escape seq (e.g. "[A")
+    k="$k$rest"
+  fi
+  KEY="$k"
+}
+
+cur=0
+printf '\e[?25l' >&2                                   # hide cursor
+trap 'printf "\e[?25h\n" >&2' EXIT                     # restore on any exit
 while true; do
-  render
-  IFS= read -r reply || { echo >&2; break; }
-  # trim
-  reply="$(printf '%s' "$reply" | tr 'A-Z' 'a-z' | xargs 2>/dev/null || true)"
-  [[ -z "$reply" ]] && break   # Enter → install
-  for tok in $reply; do
-    case "$tok" in
-      q|quit) echo >&2; echo "wizard: cancelled" >&2; exit 130 ;;
-      m|min|minimal)      apply_preset min ;;
-      r|rec|recommended)  apply_preset rec ;;
-      e|all-preset|everything) apply_preset all ;;
-      a)   set_all 1 ;;
-      n|none) set_all 0 ;;
-      [0-9]*-[0-9]*)  # range a-b
-        lo="${tok%-*}"; hi="${tok#*-}"
-        if [[ "$lo" =~ ^[0-9]+$ && "$hi" =~ ^[0-9]+$ ]]; then
-          n=$lo; while [[ $n -le $hi ]]; do
-            t="${NUMMAP[$n]:-}"; [[ -n "$t" ]] && SEL[$t]=$(( 1 - ${SEL[$t]} )); n=$((n+1));
-          done
-        fi ;;
-      [0-9]*)
-        t="${NUMMAP[$tok]:-}"; [[ -n "$t" ]] && SEL[$t]=$(( 1 - ${SEL[$t]} )) ;;
-      *) : ;;  # ignore junk
-    esac
-  done
+  render "$cur"
+  read_key || break
+  case "$KEY" in
+    $'\e[A'|k|K) cur=$(( (cur - 1 + NCOUNT) % NCOUNT )) ;;   # up
+    $'\e[B'|j|J) cur=$(( (cur + 1) % NCOUNT )) ;;            # down
+    $'\e[H'|g)   cur=0 ;;                                    # home / top
+    $'\e[F'|G)   cur=$(( NCOUNT - 1 )) ;;                    # end / bottom
+    ' ')         idx="${VISIBLE[$cur]}"; SEL[$idx]=$(( 1 - ${SEL[$idx]} )) ;;  # toggle
+    m|M) apply_preset min ;;
+    r|R) apply_preset rec ;;
+    e|E) apply_preset all ;;
+    a|A) set_all 1 ;;
+    n|N) set_all 0 ;;
+    q|Q) printf '\n' >&2; echo "wizard: cancelled" >&2; exit 130 ;;
+    ''|$'\r'|$'\n')  break ;;        # Enter → install
+    *)   : ;;            # ignore anything else
+  esac
 done
 
 # ── emit selection ───────────────────────────────────────────────────────────
