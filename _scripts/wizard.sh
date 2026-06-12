@@ -36,7 +36,9 @@ PACKAGES=(
   "skhd|macOS keyboard|macos|all|skhd hotkey daemon (opt+space window toggle, etc.)"
 )
 
-PLATFORM="all"
+# Default to the host OS so a standalone run shows the right packages; callers
+# (bootstrap.sh) pass --platform explicitly.
+PLATFORM="$(uname -s)"
 MODE="interactive"   # interactive | print-preset | list
 PRESET="rec"
 
