@@ -11,6 +11,21 @@ Works across macOS (zsh), Ubuntu (zsh), and WSL. Packages come from
 checkbox wizard — start with the **Minimal** or **Recommended** preset and toggle
 from there. Nothing personal to me ships in this repo (see *Privacy* below).
 
+## TL;DR
+
+The opinionated path — installs everything except the macOS-only/opt-in bits
+(`karabiner`, `skhd`, `vscode`):
+
+```bash
+brew install stow                 # macOS  (Linux/WSL: sudo apt install -y stow)
+git clone https://github.com/damsleth/dotfiles.git ~/Code/dotfiles
+cd ~/Code/dotfiles && ./bootstrap.sh --no-wizard
+```
+
+Then restart your shell. Want to choose packages yourself? Drop `--no-wizard`
+for the interactive picker. Want the full machine (Homebrew + toolchains)? See
+*Full machine restore* below.
+
 ## Structure
 
 Each top-level directory is a **stow package** — its contents mirror the home directory structure.
