@@ -106,6 +106,17 @@ alias timing="/usr/bin/time -p zsh -i -c 'exit' 2>&1 | grep '^real' | cut -d' ' 
 alias tmp="cd ~/Code/tmp" # go to tmp dir
 alias today="date '+%Y-%m-%d'" # today's date
 alias traceroute="sudo mtr --report-wide --report-cycles=1" # traceroute with mtr
+# trough — open the tailnet token-query API web UI (http-only; tailnet is WireGuard-encrypted)
+trough() {
+  local url="http://kvps:8765"
+  if command -v open >/dev/null 2>&1; then open "$url"            # macOS: default browser
+  elif command -v xdg-open >/dev/null 2>&1; then xdg-open "$url"  # Linux desktop
+  else echo "$url"; fi                                            # headless: cmd-click in iTerm2
+}
+# clipboard relay via kvps (central Tailscale pastebin) — works from any tailnet node
+cpush() { printf '%s' "$(pbpaste)" | curl -s -X POST http://100.68.171.58:7331/ --data-binary @- ; }
+cpull() { curl -s http://100.68.171.58:7331/ | pbcopy ; }
+
 alias updateall='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup' # update all system and dev tools
 alias vær="curl wttr.in" # weather in Norwegian
 alias week="date +%V" # ISO week number
