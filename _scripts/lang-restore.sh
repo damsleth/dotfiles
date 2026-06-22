@@ -22,8 +22,10 @@ if command -v fnm >/dev/null 2>&1; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PIPX_FILE="$SCRIPT_DIR/pipx-packages.txt"
-NPM_FILE="$SCRIPT_DIR/npm-globals.txt"
+# Manifest paths are env-overridable so callers (dotfiles-wizard.sh) can point
+# them at a filtered temp list of just the packages the user selected.
+PIPX_FILE="${PIPX_FILE:-$SCRIPT_DIR/pipx-packages.txt}"
+NPM_FILE="${NPM_FILE:-$SCRIPT_DIR/npm-globals.txt}"
 MODE="restore"
 
 for arg in "$@"; do

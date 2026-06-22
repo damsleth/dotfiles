@@ -66,11 +66,12 @@ sudo apt install stow
 ```bash
 git clone https://github.com/damsleth/dotfiles.git ~/Code/dotfiles
 cd ~/Code/dotfiles
-./bootstrap.sh            # opens the package wizard
+./bootstrap.sh            # opens the dotfiles package wizard
 ```
 
-The wizard is a zero-dependency checkbox picker. Toggle packages by number, or
-pick a preset and tweak it:
+The wizard is a zero-dependency checkbox picker (arrow keys / `j k` to move,
+`space` to toggle, `Enter` to install). Toggle packages, or pick a preset and
+tweak it:
 
 ```bash
 ./bootstrap.sh --preset min    # bare essentials: zsh, vim, ssh, hushlogin
@@ -79,6 +80,24 @@ pick a preset and tweak it:
 ./bootstrap.sh --no-wizard      # recommended set, no prompt (good for CI/headless)
 ./bootstrap.sh --dry-run --all  # preview without changing anything
 ```
+
+### The full wizard (more than just dotfiles)
+
+`./bootstrap.sh` only links dotfiles. For a one-screen setup of the whole
+machine, run the multi-tab wizard:
+
+```bash
+./bootstrap.sh --full              # or: ./_scripts/dotfiles-wizard.sh
+./bootstrap.sh --full --dry-run    # preview every layer, change nothing
+```
+
+`Tab` / `←→` switches between checklists — **Dotfiles**, **Homebrew** (Brewfile
+categories), **macOS** (system defaults by category), **npm** and **pipx**
+globals (Homebrew + macOS tabs are macOS-only). Toggle what you want in each tab,
+press `Enter`, and it applies them in order: `brew bundle` (filtered to your
+selected categories) → stow → `macos.sh` → npm/pipx. Each layer is idempotent and
+just drives the same underlying scripts you can also run on their own
+(`_scripts/macos.sh --only finder,dock`, etc.).
 
 On Linux, `bootstrap.sh` also apt-installs `bat`, `golang-go`, `snapd` then
 `snap install`s `core`/`msedit` (the `bat` binary is symlinked from `batcat`).

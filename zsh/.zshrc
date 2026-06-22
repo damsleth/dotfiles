@@ -7,3 +7,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # cargo/rustup env (created by rustup-init); harmless if absent
 [ -s "$HOME/.local/share/../bin/env" ] && . "$HOME/.local/share/../bin/env"
+export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
