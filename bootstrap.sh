@@ -4,12 +4,18 @@
 # On first run (interactive, no flags) it opens a checkbox wizard so you pick
 # which packages to install. Use flags to skip the prompt:
 #
-#   ./bootstrap.sh                 # interactive wizard
+#   ./bootstrap.sh                 # interactive wizard (dotfiles only)
 #   ./bootstrap.sh --preset min    # bare essentials   (zsh, vim, ssh, hushlogin)
 #   ./bootstrap.sh --preset rec    # recommended set   (default / non-interactive)
 #   ./bootstrap.sh --all           # every package for this platform
 #   ./bootstrap.sh --no-wizard     # recommended set, no prompt
+#   ./bootstrap.sh --full          # multi-tab wizard: dotfiles + brew + macOS + npm/pipx
 #   ./bootstrap.sh --dry-run       # preview, change nothing  (combine with above)
+#
+# This script handles the dotfiles (stow) layer. The full multi-tab wizard
+# (--full, or _scripts/dotfiles-wizard.sh) also drives Homebrew, macOS defaults
+# and npm/pipx globals, then delegates the stow step back here via
+# DOTFILES_PRESELECTED so there's a single source of truth for symlinking.
 #
 # If a private overlay exists (./private or $DOTFILES_PRIVATE), its packages
 # are stowed on top after the public ones.
@@ -19,19 +25,27 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 DRY_RUN=0
-SELECT_MODE="wizard"   # wizard | preset | all
+SELECT_MODE="wizard"   # wizard | preset | all | preselected
 PRESET="rec"
+FULL_WIZARD=0
+
+# DOTFILES_PRESELECTED (env): a space-separated list of package keys. When set,
+# the wizard is skipped entirely and exactly these packages are stowed. This is
+# how the full multi-tab wizard delegates the stow step back to us without
+# re-entering the picker (no recursion).
+[[ -n "${DOTFILES_PRESELECTED:-}" ]] && SELECT_MODE="preselected"
 
 for arg in "$@"; do
     case "$arg" in
         --dry-run|-n) DRY_RUN=1 ;;
         --all)        SELECT_MODE="all" ;;
         --no-wizard|--yes|-y) SELECT_MODE="preset"; PRESET="rec" ;;
+        --full)       FULL_WIZARD=1 ;;
         --preset)     SELECT_MODE="preset" ;;          # value taken from next arg
         --preset=*)   SELECT_MODE="preset"; PRESET="${arg#*=}" ;;
         min|rec|all|minimal|recommended|everything)
                       [[ "$SELECT_MODE" == "preset" ]] && PRESET="$arg" ;;
-        -h|--help)    sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help)    sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "[warn] unknown arg: $arg" >&2 ;;
     esac
 done
@@ -47,6 +61,19 @@ info()    { echo "[info]  $*"; }
 success() { echo "[ok]    $*"; }
 skip()    { echo "[skip]  $*"; }
 warn()    { echo "[warn]  $*"; }
+
+# --full hands off to the multi-tab wizard, which drives every layer (Homebrew,
+# macOS defaults, npm/pipx) and delegates the stow step back here via
+# DOTFILES_PRESELECTED. Done before our banner so the wizard owns the screen.
+# Don't recurse when we're already the delegated stow run.
+WIZARD="$DOTFILES_DIR/_scripts/dotfiles-wizard.sh"
+if [[ $FULL_WIZARD -eq 1 && "$SELECT_MODE" != "preselected" ]]; then
+    if [[ -x "$WIZARD" ]]; then
+        WIZ_ARGS=(); [[ $DRY_RUN -eq 1 ]] && WIZ_ARGS=(--dry-run)
+        exec "$WIZARD" "${WIZ_ARGS[@]}"
+    fi
+    warn "dotfiles-wizard.sh not found — falling back to dotfiles-only bootstrap"
+fi
 
 [[ $DRY_RUN -eq 1 ]] && info "Dry run — no changes will be made"
 info "Platform: $PLATFORM ($OS)"
@@ -80,19 +107,26 @@ APT_PACKAGES=(bat golang-go snapd yt-dlp)
 SNAP_PACKAGES=(core msedit whisper-cpp)
 
 # ── package selection ─────────────────────────────────────────────────────────
-WIZARD="$DOTFILES_DIR/_scripts/wizard.sh"
 SELECTED=()
 select_packages() {
+    # Preselected: caller (the full wizard) already picked the packages.
+    if [[ "$SELECT_MODE" == "preselected" ]]; then
+        SELECTED=()
+        for pkg in $DOTFILES_PRESELECTED; do SELECTED+=("$pkg"); done
+        return
+    fi
     if [[ ! -x "$WIZARD" ]]; then
-        warn "wizard.sh not found/executable — falling back to a built-in recommended set"
+        warn "dotfiles-wizard.sh not found/executable — falling back to a built-in recommended set"
         SELECTED=(zsh vim nvim ghostty kitty btop trippy glow lf ssh hushlogin)
         return
     fi
+    # --tab dotfiles --emit → single-tab picker that prints chosen keys to stdout
+    # (no apply). This is exactly the old wizard.sh contract.
     local out
     case "$SELECT_MODE" in
-        all)    out="$("$WIZARD" --platform "$PLATFORM" --preset all)" ;;
-        preset) out="$("$WIZARD" --platform "$PLATFORM" --preset "$PRESET")" ;;
-        wizard) out="$("$WIZARD" --platform "$PLATFORM")" ;;   # interactive (or rec if no TTY)
+        all)    out="$("$WIZARD" --tab dotfiles --emit --platform "$PLATFORM" --preset all)" ;;
+        preset) out="$("$WIZARD" --tab dotfiles --emit --platform "$PLATFORM" --preset "$PRESET")" ;;
+        wizard) out="$("$WIZARD" --tab dotfiles --emit --platform "$PLATFORM")" ;;  # interactive (or rec if no TTY)
     esac
     # read lines into SELECTED (bash 3.2: no mapfile)
     SELECTED=()

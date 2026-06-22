@@ -21,6 +21,8 @@ if [[ "$TERM_PROGRAM" == "vscode" ]]; then
     # fnm
     if (( $+commands[fnm] )); then
         eval "$(fnm env --use-on-cd --shell zsh)"
+        # Re-prepend ~/.local/bin so our wrapper scripts win over fnm multishell
+        path=("$HOME/.local/bin" ${path:#"$HOME/.local/bin"})
     fi
 
     integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"

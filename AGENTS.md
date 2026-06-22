@@ -155,17 +155,32 @@ Note: `~/.zsh/.env` is gitignored — it contains machine-local environment secr
 ## bootstrap.sh
 
 `bootstrap.sh` is the **stow** entrypoint - it links dotfiles into `$HOME`.
-On a bare interactive run it opens `_scripts/wizard.sh` (a pure-bash checkbox
-picker) so the user chooses which packages to install; flags skip the prompt:
-`--preset min|rec|all`, `--all`, `--no-wizard`, plus `--dry-run` to preview.
-After the public packages, it stows the private overlay's packages if present.
+On a bare interactive run it opens the **Dotfiles** tab of
+`_scripts/dotfiles-wizard.sh` (via `--tab dotfiles --emit`) so the user chooses
+which packages to install; flags skip the prompt: `--preset min|rec|all`,
+`--all`, `--no-wizard`, plus `--dry-run` to preview. After the public packages,
+it stows the private overlay's packages if present.
 Platform detection: `uname -s` -> `Darwin` for macOS, `Linux` for Ubuntu/WSL.
 
-- `_scripts/wizard.sh` - the package picker. Pure bash (runs on macOS bash 3.2),
-  zero deps, no raw-terminal mode (safe over SSH). Catalog of packages lives in
-  the `PACKAGES` array near the top; add new packages there with their category,
-  platform, and preset membership. Non-interactive modes: `--preset NAME`,
-  `--list`. Prints chosen package names to stdout (UI to stderr).
+Two extra hooks tie the layers together:
+- `--full` execs the multi-tab wizard (Homebrew + macOS + npm/pipx, not just
+  dotfiles), which drives the whole machine setup.
+- `DOTFILES_PRESELECTED="zsh vim …"` (env) skips the picker and stows exactly
+  those packages. This is how the full wizard delegates the stow step back to
+  `bootstrap.sh` without re-entering the picker (no recursion).
+
+- `_scripts/dotfiles-wizard.sh` - the multi-tab picker (renamed from
+  `wizard.sh`). Pure bash (runs on macOS bash 3.2), zero deps, safe over SSH.
+  Tabs: **Dotfiles** (per-package, from the `PACKAGES` array near the top — add
+  new packages there with category/platform/preset), **Homebrew** (per-category,
+  parsed live from the `Brewfile` `# ===` headers), **macOS** (per-category, from
+  `macos.sh --list-categories`), **npm**/**pipx** (per-item, from the manifests).
+  Homebrew + macOS tabs only appear on macOS. `Tab`/`←→` switch tabs; `Enter`
+  applies. On apply it delegates to each domain's script (`brew bundle` on a
+  filtered temp Brewfile, `bootstrap.sh` for stow, `macos.sh --only`,
+  `lang-restore.sh` with temp manifests). Single-tab/non-interactive modes for
+  back-compat: `--tab dotfiles --emit`, `--preset NAME`, `--list`. Chosen keys
+  go to stdout, all UI to stderr.
 
 ## _scripts/
 
@@ -194,7 +209,9 @@ Helper scripts (executable, not stow packages):
   `_scripts/bootstrap-fresh.sh`. Copy this file into the public gist.
 
 - `_scripts/macos.sh` - opinionated `defaults write` for Finder, Dock,
-  keyboard, screenshots, etc. Idempotent.
+  keyboard, screenshots, etc. Idempotent. Organized into named categories;
+  `--list-categories` prints them, `--only finder,dock` runs a subset (the
+  macOS wizard tab drives this), `--dry-run` previews without writing.
 
 - `_scripts/dock.sh` - rebuilds the Dock layout via `dockutil`. Idempotent.
 

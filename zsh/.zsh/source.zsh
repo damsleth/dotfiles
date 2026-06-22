@@ -58,6 +58,8 @@ fi
 # fnm shell integration
 if (( $+commands[fnm] )); then
     eval "$(fnm env --use-on-cd --shell zsh)"
+    # Re-prepend ~/.local/bin so our wrapper scripts win over fnm multishell
+    path=("$HOME/.local/bin" ${path:#"$HOME/.local/bin"})
 fi
 
 # Starship prompt (skip silently if not installed)

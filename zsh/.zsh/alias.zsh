@@ -74,6 +74,7 @@ light() {
 }
 
 alias b="cd ~/brain" # go to brain dir
+alias ksp="~/Library/Application Support/Steam/steamapps/common/Kerbal Space Program"
 alias notes="cd ~/brain/vault" # go to notes
 alias light-mode="dark-mode off" # disable dark mode
 alias lsoft="lsof -nPi tcp" # list open TCP ports
