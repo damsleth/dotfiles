@@ -107,6 +107,9 @@ export AZURE_API_VERSION="2024-08-01-preview"
 export AZURE_EMBEDDING_API_VERSION="op://Employee/AzureAI/EMBEDDING_API_VERSION"
 export AZURE_API_BASE="op://Employee/AzureAI/API_BASE"
 
+# DOTNET
+export DOTNET_ROOT=/usr/local/share/dotnet
+
 # FNM - Fast Node Manager
 FNM_RESOLVE_ENGINES=true
 
