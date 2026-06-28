@@ -5,7 +5,7 @@
 # which packages to install. Use flags to skip the prompt:
 #
 #   ./bootstrap.sh                 # interactive wizard (dotfiles only)
-#   ./bootstrap.sh --preset min    # bare essentials   (zsh, vim, ssh, hushlogin)
+#   ./bootstrap.sh --preset min    # bare essentials   (zsh, vim, hushlogin)
 #   ./bootstrap.sh --preset rec    # recommended set   (default / non-interactive)
 #   ./bootstrap.sh --all           # every package for this platform
 #   ./bootstrap.sh --no-wizard     # recommended set, no prompt
@@ -117,7 +117,7 @@ select_packages() {
     fi
     if [[ ! -x "$WIZARD" ]]; then
         warn "dotfiles-wizard.sh not found/executable — falling back to a built-in recommended set"
-        SELECTED=(zsh vim nvim ghostty kitty btop trippy glow lf ssh hushlogin)
+        SELECTED=(zsh vim nvim ghostty kitty btop trippy glow lf hushlogin)
         return
     fi
     # --tab dotfiles --emit → single-tab picker that prints chosen keys to stdout
