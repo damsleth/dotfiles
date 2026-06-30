@@ -45,7 +45,7 @@ private/
 ```
 
 The public side hooks it without leaking anything: `ssh/.ssh/config` does
-`Include ~/.ssh/config.d/*`, `zsh/.zsh/_main.zsh` sources `~/.zsh/local.zsh`
+`Include ~/.ssh/config.d/*`, `zsh/.zsh/_main.zsh` sources `~/.config/zsh/local.zsh`
 if present, and `clone-repos.sh` resolves `repos.txt` from the overlay. None of
 those hooks reference real values. **Never move overlay content back into a
 tracked package.**
@@ -135,9 +135,8 @@ Restore flow on a fresh machine:
 ## Zsh config layout
 
 The `zsh` package manages:
-- `~/.zshrc` — entry point, sources `~/.zsh/_main.zsh`
-- `~/.zprofile` — login shell (Homebrew PATH etc.)
-- `~/.zsh/` — all modular zsh config files:
+- `~/.zshrc` — entry point, sets `ZSH_CONFIG_DIR` and sources `_main.zsh`
+- `~/.config/zsh/` — all modular zsh config files (Homebrew PATH is initialized from `env.zsh`):
   - `_main.zsh` — loader/orchestrator
   - `alias.zsh` — aliases
   - `env.zsh` — environment variables and PATH
@@ -150,7 +149,7 @@ The `zsh` package manages:
   - `tmux.zsh` — tmux config
   - `dtop.zsh` — dtop (minimal process viewer)
 
-Note: `~/.zsh/.env` is gitignored — it contains machine-local environment secrets.
+Note: `~/.config/zsh/.env` is gitignored — it contains machine-local environment secrets.
 
 ## bootstrap.sh
 
@@ -256,7 +255,7 @@ Helper scripts (executable, not stow packages):
   no PATH edits), and `~/go/bin`. Idempotent. Skips items already present.
 
 - `_scripts/secrets-restore.sh` - restores machine-local secret files from
-  1Password CLI (`~/.zsh/.env`, SSH private keys by default). The 1Password
+  1Password CLI (`~/.config/zsh/.env`, SSH private keys by default). The 1Password
   refs can be overridden with `ZSH_ENV_OP_REF` and `SSH_PRIVATE_KEY_OP_REFS`;
   never hard-code actual secret values.
 
@@ -265,7 +264,7 @@ Helper scripts (executable, not stow packages):
   Full Disk Access, Developer Tools, Login Items, VPN, and 1Password SSH Agent.
 
 - `_scripts/verify-restore.sh` - post-bootstrap sanity checker. Verifies
-  core/personal CLIs on PATH, `~/.zsh/.env`, SSH auth, pipx/npm globals
+  core/personal CLIs on PATH, `~/.config/zsh/.env`, SSH auth, pipx/npm globals
   installed, and personal repos cloned. macOS-only checks (brew bundle clean,
   App Store sign-in, the macOS 1Password SSH agent socket) are skipped on
   Linux. Exits non-zero if anything fails. Re-runnable.
