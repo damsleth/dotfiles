@@ -1,4 +1,5 @@
-source ~/.zsh/_main.zsh
+export ZSH_CONFIG_DIR="${ZSH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}"
+source "$ZSH_CONFIG_DIR/_main.zsh"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

@@ -1,20 +1,23 @@
-# ~/.zsh/source.zsh
+# zsh/source.zsh
 # HOMEBREW_PREFIX (and ZSH_OS) come from env.zsh, sourced just before this file.
 
-# Lazy-load cargo: defer sourcing until first use of cargo/rustc/rustup
+# Lazy-load cargo/rustup env when rustup is installed outside Homebrew.
+_load_cargo_env() {
+    [[ -r "${CARGO_HOME:-$HOME/.cargo}/env" ]] && source "${CARGO_HOME:-$HOME/.cargo}/env"
+}
 cargo() {
     unfunction cargo rustc rustup 2>/dev/null
-    source $HOME/.cargo/env
+    _load_cargo_env
     cargo "$@"
 }
 rustc() {
     unfunction cargo rustc rustup 2>/dev/null
-    source $HOME/.cargo/env
+    _load_cargo_env
     rustc "$@"
 }
 rustup() {
     unfunction cargo rustc rustup 2>/dev/null
-    source $HOME/.cargo/env
+    _load_cargo_env
     rustup "$@"
 }
 
@@ -51,8 +54,8 @@ done
 unset _fzf_dir _fzf_keybindings _fzf_completion
 
 # zsh-autosuggestions plugin
-if [[ -r "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -r "$ZSH_CONFIG_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "$ZSH_CONFIG_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # fnm shell integration
@@ -64,7 +67,7 @@ fi
 
 # Starship prompt (skip silently if not installed)
 if (( $+commands[starship] )); then
-    export STARSHIP_CONFIG="$HOME/.zsh/starship.toml"
+    export STARSHIP_CONFIG="$ZSH_CONFIG_DIR/starship.toml"
     eval "$(starship init zsh)"
 fi
 

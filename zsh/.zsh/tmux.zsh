@@ -1,10 +1,10 @@
-# ~/.zsh/tmux.zsh
+# zsh/tmux.zsh
 # tmux configuration for Zsh - utility functions for tmux session management
 
 # Load local environment variables for tmux-related commands
-if [[ -f "$HOME/.zsh/.env" ]]; then
+if [[ -f "$ZSH_CONFIG_DIR/.env" ]]; then
     set -a
-    source "$HOME/.zsh/.env"
+    source "$ZSH_CONFIG_DIR/.env"
     set +a
 fi
 

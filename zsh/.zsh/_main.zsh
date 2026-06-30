@@ -1,18 +1,20 @@
-# ~/.zsh/_main.zsh -- Main loader for all zsh config
+# zsh main loader -- Main loader for all zsh config
 # by @damsleth  --   Last updated 2025-10-23
 
+ZSH_CONFIG_DIR="${ZSH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}"
 DEFAULT_USER="damsleth" # set this to your own username
 
 # VSCode shell integration, only loads if inside a VSCode terminal
 # NOTE: this skips the rest of the .zshrc loading, because it interferes with the AI integration
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    source ~/.zsh/env.zsh
-    source ~/.zsh/alias.zsh
+    source "$ZSH_CONFIG_DIR/env.zsh"
+    source "$ZSH_CONFIG_DIR/alias.zsh"
 
     # Lazy-load cargo (needed for Rust builds)
-    cargo()  { unfunction cargo rustc rustup 2>/dev/null; source $HOME/.cargo/env; cargo "$@" }
-    rustc()  { unfunction cargo rustc rustup 2>/dev/null; source $HOME/.cargo/env; rustc "$@" }
-    rustup() { unfunction cargo rustc rustup 2>/dev/null; source $HOME/.cargo/env; rustup "$@" }
+    _load_cargo_env() { [[ -r "${CARGO_HOME:-$HOME/.cargo}/env" ]] && source "${CARGO_HOME:-$HOME/.cargo}/env" }
+    cargo()  { unfunction cargo rustc rustup 2>/dev/null; _load_cargo_env; cargo "$@" }
+    rustc()  { unfunction cargo rustc rustup 2>/dev/null; _load_cargo_env; rustc "$@" }
+    rustup() { unfunction cargo rustc rustup 2>/dev/null; _load_cargo_env; rustup "$@" }
 
     # ESP-IDF lazy init
     alias idf='source "$HOME/esp/esp-idf/export.sh" && idf.py'
@@ -88,39 +90,39 @@ main_zshrc_timing() {
 # ----------- END DEBUG LOGGING -----------
 
 # Source extra (early) config: instant prompt, welcome, etc.
-main_zshrc_timing ~/.zsh/extra.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/extra.zsh"
 
 # Environment variables and PATH
-main_zshrc_timing ~/.zsh/env.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/env.zsh"
 
 # Aliases
-main_zshrc_timing ~/.zsh/alias.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/alias.zsh"
 
 # Agent-specific aliases, functions and completions
-main_zshrc_timing ~/.zsh/agents.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/agents.zsh"
 
 # Functions
-main_zshrc_timing ~/.zsh/func.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/func.zsh"
 
 # Source external tools and prompt config (Starship, Cargo, chruby, etc.)
-main_zshrc_timing ~/.zsh/source.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/source.zsh"
 
 # GitHub Copilot CLI aliases
-main_zshrc_timing ~/.zsh/ghcs.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/ghcs.zsh"
 
 # Completions
-main_zshrc_timing ~/.zsh/comp.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/comp.zsh"
 
 # On-demand 1Password secret retrieval (`secret NAME`). After comp.zsh so compdef exists.
-main_zshrc_timing ~/.zsh/secrets.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/secrets.zsh"
 
 # tmux config
-main_zshrc_timing ~/.zsh/tmux.zsh
+main_zshrc_timing "$ZSH_CONFIG_DIR/tmux.zsh"
 
 # Machine-local / personal config (private overlay, or your own). Not tracked by
 # the public repo — put host-specific functions, secrets-touching helpers, and
-# anything you don't want published in ~/.zsh/local.zsh.
-[[ -r ~/.zsh/local.zsh ]] && main_zshrc_timing ~/.zsh/local.zsh
+# anything you don't want published in $ZSH_CONFIG_DIR/local.zsh.
+[[ -r "$ZSH_CONFIG_DIR/local.zsh" ]] && main_zshrc_timing "$ZSH_CONFIG_DIR/local.zsh"
 
 # Any additional customizations can go here
 export LSCOLORS="Exfxcxdxbxbxcxabagacad"
@@ -172,4 +174,4 @@ fi
 
 # profiling end - uncomment to enable
 # zprof
-# PATH ordering is managed in ~/.zsh/env.zsh.
+# PATH ordering is managed in $ZSH_CONFIG_DIR/env.zsh.
