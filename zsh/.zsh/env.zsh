@@ -115,7 +115,7 @@ export LESS="-R"
 export FZF_DEFAULT_COMMAND="fd . $HOME"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd -t d . $HOME"
-export HISTFILE="$HOME/.zsh_history"
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export HOMEBREW_NO_ENV_HINTS=1 # hide homebrew auto update hints
 
 # AZURE AI
