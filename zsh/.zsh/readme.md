@@ -4,8 +4,9 @@
 
 My personal z-shell configuration. It used to be a single `.zshrc` file, but became
 unwieldy somewhere past ~1000 LoC, so I split it into focused modules that each own one
-concern. `~/.zshrc` does almost nothing — it just sources [`_main.zsh`](_main.zsh), which
-loads everything else in order and (optionally) times each file as it goes.
+concern. `~/.zshrc` does almost nothing — it just sets `ZSH_CONFIG_DIR` (defaulting to
+`~/.config/zsh`) and sources [`_main.zsh`](_main.zsh), which loads everything else in
+order and (optionally) times each file as it goes.
 
 No framework, no Oh-My-Zsh. Just plain zsh, lazy-loading where it matters, and a pile of
 [Cool And Useful Functions™️](func.zsh) collected over the years.
@@ -31,7 +32,8 @@ No framework, no Oh-My-Zsh. Just plain zsh, lazy-loading where it matters, and a
 
 ```sh
 git clone https://github.com/damsleth/dotfiles ~/code/dotfiles
-ln -s ~/code/dotfiles/zsh/.zsh ~/.zsh
+mkdir -p ~/.config
+ln -s ~/code/dotfiles/zsh/.zsh ~/.config/zsh
 ln -s ~/code/dotfiles/zsh/.zshrc ~/.zshrc
 ```
 
@@ -41,7 +43,7 @@ a new shell. Edit the config any time with `zshconfig` and reload with `reload`.
 Optional extras the config will use if present (and silently skip if not): `starship`,
 `fzf`, `fnm`, `autojump`, `eza`, `bat`, `op` (1Password CLI), and a checkout of
 [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) under
-`~/.zsh/plugins/`.
+`~/.config/zsh/plugins/`.
 
 ## Benchmarking startup
 
