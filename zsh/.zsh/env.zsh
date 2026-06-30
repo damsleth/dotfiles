@@ -60,7 +60,6 @@ setopt EXTENDED_HISTORY
 
 OLLAMA_ORIGINS="app://obsidian.md*"
 OLLAMA_MODELS="~/.ollama/models"
-NPM_PACKAGES="${HOME}/.npm-packages"
 # claude code enable use of language servers
 ENABLE_LSP_TOOL=1
 
@@ -91,8 +90,19 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 export GEM_HOME="$XDG_DATA_HOME/gem"
 export BUN_INSTALL="$XDG_DATA_HOME/bun"
 export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle/config"
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle/plugin"
 export COMPOSER_HOME="$XDG_CONFIG_HOME/composer"
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_PREFIX="$XDG_DATA_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export NPM_PACKAGES="$NPM_CONFIG_PREFIX"
+export NUGET_PACKAGES="$XDG_CACHE_HOME/NuGet/packages"
+export NUGET_HTTP_CACHE_PATH="$XDG_CACHE_HOME/NuGet/http-cache"
+export PLATFORMIO_CORE_DIR="$XDG_DATA_HOME/platformio"
+export IDF_TOOLS_PATH="$XDG_DATA_HOME/espressif"
+export AZURE_CONFIG_DIR="$XDG_CONFIG_HOME/azure"
 
 export LESS="-R"
 export FZF_DEFAULT_COMMAND="fd . $HOME"
@@ -135,7 +145,7 @@ path=(
     "$BUN_INSTALL/bin"
     "$HOME/.deno/bin"
     "$HOME/.rvm/bin"
-    "$HOME/.npm-packages/bin"
+    "$NPM_CONFIG_PREFIX/bin"
     "$HOME/.codeium/windsurf/bin"
     "$HOME/.opencode/bin"
     "$HOME/.antigravity/antigravity/bin"

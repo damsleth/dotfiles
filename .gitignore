@@ -10,6 +10,7 @@ Thumbs.db
 !.env.example
 .netrc
 .npmrc
+!npm/.npmrc
 .pypirc
 *_token
 *-token
