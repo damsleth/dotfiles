@@ -1,4 +1,7 @@
-# ~/.zsh/comp.zsh
+# zsh/comp.zsh
+
+zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "${zcompdump:h}"
 
 # root completions
 if [[ "$EUID" -eq 0 ]]; then
@@ -6,7 +9,7 @@ if [[ "$EUID" -eq 0 ]]; then
 # to be loaded from disk only when it is first called
 # rather than immediately when the shell starts.
   autoload -U compinit -u
-  compinit -u
+  compinit -u -d "$zcompdump"
 else
   # non-root completions
   zstyle ':completion:*' menu select
@@ -24,7 +27,7 @@ else
   autoload -U bashcompinit
   bashcompinit
   autoload -Uz compinit
-  compinit -C
+  compinit -C -d "$zcompdump"
 
   # bun (uses compdef)
   [[ -r "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
@@ -60,7 +63,6 @@ fi
 # Compile completion dump only if it's newer than compiled version or compiled version doesn't exist
 # This runs in background to avoid startup delay
 {
-  local zcompdump="$HOME/.zcompdump"
   if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
     zcompile "$zcompdump"
   fi

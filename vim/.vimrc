@@ -1,3 +1,7 @@
+if exists('+viminfofile')
+  set viminfofile=~/.local/state/vim/viminfo
+endif
+
 if filereadable(expand('~/.vim/autoload/plug.vim'))
 call plug#begin()
 " The default plugin directory will be as follows:
