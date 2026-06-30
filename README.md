@@ -32,7 +32,7 @@ Each top-level directory is a **stow package** — its contents mirror the home 
 
 ```
 dotfiles/
-├── zsh/          → ~/.zshrc, ~/.zprofile, ~/.zsh/   (Starship prompt, aliases, functions)
+├── zsh/          → ~/.zshrc, ~/.config/zsh/         (Starship prompt, aliases, functions)
 ├── vim/          → ~/.vimrc
 ├── nvim/         → ~/.config/nvim/                  (LazyVim-based)
 ├── btop/         → ~/.config/btop/
@@ -138,7 +138,7 @@ Package managers: **Homebrew + mas** on macOS, **apt + snap** on Debian/Ubuntu/W
 - `_scripts/bootstrap-fresh-linux.sh` -> Debian/Ubuntu first-boot orchestrator (apt/snap, language managers, toolchains, ...).
 - `_scripts/macos.sh` -> `defaults write` for Finder, Dock, keyboard, screenshots (macOS).
 - `_scripts/dock.sh` -> rebuilds Dock layout via dockutil (macOS).
-- `_scripts/secrets-restore.sh` -> restores `~/.zsh/.env` and SSH private keys from 1Password.
+- `_scripts/secrets-restore.sh` -> restores `~/.config/zsh/.env` and SSH private keys from 1Password.
 - `_scripts/permissions-checklist.sh` -> prints macOS permission/system-extension follow-ups.
 - VS Code settings/extensions -> restored by VS Code Settings Sync after sign-in.
 
@@ -248,7 +248,7 @@ Anything personal lives in a **private overlay** — a sibling directory with th
 same stow layout that's gitignored here (`./private/`, or `$DOTFILES_PRIVATE`).
 If present, `bootstrap.sh` stows it *on top of* the public packages. The public
 side hooks it cleanly: `ssh/.ssh/config` does `Include ~/.ssh/config.d/*`,
-`zsh/.zsh/_main.zsh` sources `~/.zsh/local.zsh` if it exists, and
+`zsh/.zsh/_main.zsh` sources `~/.config/zsh/local.zsh` if it exists, and
 `clone-repos.sh` reads its repo list from the overlay. You don't need the
 overlay to use these dotfiles — it's just where my private bits go.
 
