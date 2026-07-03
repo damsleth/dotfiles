@@ -27,6 +27,7 @@ No framework, no Oh-My-Zsh. Just plain zsh, lazy-loading where it matters, and a
 | [`secrets.zsh`](secrets.zsh)    | On-demand secret retrieval from 1Password. `OP_SECRETS` maps env-var names to commit-safe `op://` references; `secret NAME` resolves one into the shell only when asked. |
 | [`tmux.zsh`](tmux.zsh)          | tmux session helpers — `ta` (attach/create), `rt` (remote sessions over SSH), `t`. |
 | [`starship.toml`](starship.toml) | [Starship](https://starship.rs) prompt config (loaded via `STARSHIP_CONFIG` in `source.zsh`). |
+| [`late.zsh`](late.zsh)          | Sourced from `.zshrc` after `_main.zsh` finishes: iTerm2 shell integration, a PATH safety-net script, and a couple of env vars that don't care what loaded before them. |
 
 ## Install
 
@@ -39,6 +40,14 @@ ln -s ~/code/dotfiles/zsh/.zshrc ~/.zshrc
 
 Set `DEFAULT_USER` at the top of [`_main.zsh`](_main.zsh) to your own username, then open
 a new shell. Edit the config any time with `zshconfig` and reload with `reload`.
+
+For a private overlay (see [`_main.zsh`](_main.zsh)'s note on `local.zsh`), symlink your
+private file to `local.zsh` *inside this repo's `.zsh/` dir* — it's gitignored, and the
+single `~/.config/zsh` symlink above picks it up automatically:
+
+```sh
+ln -s /path/to/your/private/local.zsh ~/code/dotfiles/zsh/.zsh/local.zsh
+```
 
 Optional extras the config will use if present (and silently skip if not): `starship`,
 `fzf`, `fnm`, `autojump`, `eza`, `bat`, `op` (1Password CLI), and a checkout of

@@ -8,6 +8,11 @@
 # NOTE: personal/host-specific functions (kswon, serveDT, mfa, unepwd, …) live
 # in the private overlay's ~/.zsh/local.zsh, not here. See _main.zsh.
 
+# kitty/ghostty set TERM=xterm-kitty / xterm-ghostty, which breaks PSReadLine's
+# line redraw (ghost-typed suggestions, dead backspace). Force xterm-256color
+# for pwsh only, since .NET's terminfo detection runs once at process start.
+pwsh() { TERM=xterm-256color command pwsh "$@" }
+
 # q = ask codex a question.
 # uses gpt-5.1-codex-mini with medium reasoning effort to get fast responses
 # e.g. codex -s read-only --skip-git-repo-check e "hello"

@@ -1,8 +1,10 @@
 # agent-specific aliases, functions and completions
-alias claude="headroom wrap claude"
+alias cclauded="claude --allow-dangerously-skip-permissions" # Claude in yolo-mode
+alias claudeh="headroom wrap claude"
 alias clauded="headroom wrap claude --allow-dangerously-skip-permissions" # Claude in yolo-mode
-alias codex="headroom wrap codex"
-alias codexd="headroom wrap codex --dangerously-bypass-approvals-and-sandbox" # Codex in yolo-mode
+alias codexh="headroom wrap codex"
+alias codexdh="headroom wrap codex --dangerously-bypass-approvals-and-sandbox" # Codex in yolo-mode
+alias codexd="codex --dangerously-bypass-approvals-and-sandbox" # Codex in yolo-mode
 
 # codex non-interactive, with no prompts, and just print the response.
 codexq(){
