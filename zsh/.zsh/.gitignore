@@ -4,3 +4,4 @@ _icons.zsh
 dtop/target/
 .env
 plugins/*
+local.zsh
