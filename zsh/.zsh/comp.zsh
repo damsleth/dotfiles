@@ -40,6 +40,14 @@ else
   fi
   [[ -r "$op_completion_cache" ]] && source "$op_completion_cache"
 
+  # likec4 (yargs completion, calls compdef; cache since it's a slow node CLI)
+  likec4_completion_cache="${XDG_CACHE_HOME:-$HOME/.cache}/likec4_completion.zsh"
+  if [[ ! -r "$likec4_completion_cache" || "$(command -v likec4)" -nt "$likec4_completion_cache" ]]; then
+    mkdir -p "${likec4_completion_cache:h}"
+    likec4 completion >| "$likec4_completion_cache" 2>/dev/null
+  fi
+  [[ -r "$likec4_completion_cache" ]] && source "$likec4_completion_cache"
+
   # 1Password CLI sign-in helper. Only needed when desktop-app integration
   # ("Settings -> Developer -> Integrate with 1Password CLI") is OFF; with it ON,
   # `op read` / `secret` trigger Touch ID directly and this is unnecessary.
