@@ -28,28 +28,32 @@ for the interactive picker. Want the full machine (Homebrew + toolchains)? See
 
 ## Structure
 
-Each top-level directory is a **stow package** — its contents mirror the home directory structure.
+Each top-level directory is a **stow package** except `_scripts/` and `_docs/`.
+Package contents mirror the home directory structure.
 
 ```
 dotfiles/
-├── zsh/          → ~/.zshrc, ~/.config/zsh/         (Starship prompt, aliases, functions)
+├── zsh/          → ~/.zshrc, ~/.config/zsh/        (Starship prompt, aliases, functions)
 ├── vim/          → ~/.vimrc
-├── nvim/         → ~/.config/nvim/                  (LazyVim-based)
+├── nvim/         → ~/.config/nvim/                 (LazyVim-based)
+├── npm/          → ~/.config/npm/npmrc
 ├── btop/         → ~/.config/btop/
 ├── ghostty/      → ~/.config/ghostty/
 ├── kitty/        → ~/.config/kitty/
 ├── glow/         → ~/.config/glow/
 ├── lf/           → ~/.config/lf/
 ├── trippy/       → ~/.trippy.toml
-├── karabiner/    → ~/.config/karabiner/     (macOS)
-├── skhd/         → ~/.config/skhd/          (macOS)
-├── vscode/       → ~/Library/.../Code/User/ (macOS, opt-in)
-├── ssh/          → ~/.ssh/config            (generic template, no keys/hosts)
-└── hushlogin/    → ~/.hushlogin
+├── karabiner/    → ~/.config/karabiner/            (macOS)
+├── skhd/         → ~/.config/skhd/                 (macOS)
+├── vscode/       → ~/Library/.../Code/User/        (macOS, opt-in)
+├── ssh/          → ~/.ssh/config                   (generic template, no keys/hosts)
+├── hushlogin/    → ~/.hushlogin
+├── _scripts/     → helper scripts                  (not stowed)
+└── _docs/        → package notes                   (not stowed)
 ```
 
-Personal packages (my own tooling/configs) are **not** in this repo — they live
-in a separate private overlay. See *Privacy & the private overlay* below.
+Personal packages are **not** in this repo — they live in a separate private overlay.
+On macOS, the bootstrap runs `private/Brewfile` after the public `Brewfile` when present.
 
 ## Prerequisites
 
@@ -138,7 +142,8 @@ Package managers: **Homebrew + mas** on macOS, **apt + snap** on Debian/Ubuntu/W
 - `_scripts/bootstrap-fresh-linux.sh` -> Debian/Ubuntu first-boot orchestrator (apt/snap, language managers, toolchains, ...).
 - `_scripts/macos.sh` -> `defaults write` for Finder, Dock, keyboard, screenshots (macOS).
 - `_scripts/dock.sh` -> rebuilds Dock layout via dockutil (macOS).
-- `_scripts/secrets-restore.sh` -> restores `~/.config/zsh/.env` and SSH private keys from 1Password.
+- `_scripts/secrets-restore.sh` -> restores `~/.config/zsh/.env` and SSH private keys from 1Password refs supplied by environment variables.
+- `_scripts/audit-public.sh` -> checks public leak patterns, SSH config, package catalog drift, syntax, and Stow simulation.
 - `_scripts/permissions-checklist.sh` -> prints macOS permission/system-extension follow-ups.
 - VS Code settings/extensions -> restored by VS Code Settings Sync after sign-in.
 
@@ -162,7 +167,7 @@ auth, so they warn-skip by default. To exercise them, inject a key just-in-time
 `--rm`) - prefer a dedicated unencrypted deploy key:
 
 ```bash
-SSH_TEST_KEY_OP_REF='op://Private/GitHub deploy key/private key' \
+SSH_TEST_KEY_OP_REF='op://Vault/GitHub deploy key/private key' \
     _scripts/test-bootstrap-container.sh     # from 1Password
 SSH_TEST_KEY_FILE=~/.ssh/throwaway_ed25519 \
     _scripts/test-bootstrap-container.sh     # from a key file

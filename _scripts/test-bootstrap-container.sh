@@ -18,7 +18,7 @@
 # Prefer a dedicated read-only deploy key over your personal key.
 #
 #   # from 1Password (op CLI must be signed in):
-#   SSH_TEST_KEY_OP_REF='op://Private/GitHub deploy key/private key' \
+#   SSH_TEST_KEY_OP_REF='op://Vault/GitHub deploy key/private key' \
 #       _scripts/test-bootstrap-container.sh
 #
 #   # from a key file on the host:
@@ -44,7 +44,7 @@ command -v "${PODMAN%% *}" >/dev/null 2>&1 || {
 # --- temp artifacts, cleaned on exit ----------------------------------------
 KEY_TMP=""
 ENTRY_TMP="$(mktemp)"
-LOG="$(mktemp --suffix=.bootstrap-test.log)"
+LOG="$(mktemp "${TMPDIR:-/tmp}/dotfiles-bootstrap-test.XXXXXX.log")"
 cleanup() {
     [[ -n "$KEY_TMP" && -f "$KEY_TMP" ]] && rm -f "$KEY_TMP"
     rm -f "$ENTRY_TMP"
@@ -120,7 +120,7 @@ su - tester -c 'command -v fnm && fnm list' 2>&1 | sed 's/^/   /'
 echo "-- node / go / rustc --"
 su - tester -c 'eval "$(fnm env)" 2>/dev/null; command -v node && node --version; command -v go && go version; command -v rustc && rustc --version' 2>&1 | sed 's/^/   /'
 echo "-- editable local tools on PATH (only if an SSH key was provided) --"
-su - tester -c 'for t in ledger yaams owa-piggy owa-cal owa-mail; do command -v "$t" >/dev/null 2>&1 && echo "present: $t"; done' 2>&1 | sed 's/^/   /'
+su - tester -c 'manifest=$HOME/Code/dotfiles/private/_scripts/local-tools.txt; if [ -f "$manifest" ]; then sed "s/#.*//" "$manifest" | xargs -n1 sh -c '''[ -n "$0" ] && command -v "$0" >/dev/null 2>&1 && echo "present: $0"'''; fi' 2>&1 | sed 's/^/   /'
 echo "===== [harness] done ====="
 ENTRY
 

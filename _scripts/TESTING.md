@@ -44,7 +44,7 @@ into the repo or printed to the log.
 
 ```bash
 # From 1Password (op CLI signed in):
-SSH_TEST_KEY_OP_REF='op://Private/GitHub deploy key/private key' \
+SSH_TEST_KEY_OP_REF='op://Vault/GitHub deploy key/private key' \
     _scripts/test-bootstrap-container.sh
 
 # From a key file on the host:
@@ -61,7 +61,7 @@ Security notes:
   trap); the container is `--rm`.
 
 With a working key the sanity block additionally lists the editable tools that
-landed on PATH (`ledger`, `yaams`, `owa-piggy`, `owa-cal`, `owa-mail`).
+landed on PATH (from the private local-tools manifest).
 
 ## What it validates
 
@@ -74,7 +74,7 @@ landed on PATH (`ledger`, `yaams`, `owa-piggy`, `owa-cal`, `owa-mail`).
 - `lang-restore.sh` (third-party pipx/npm globals), `clone-repos.sh`, and -
   with an SSH key - `tools-restore.sh` editable installs.
 - `verify-restore.sh` skips the macOS-only checks on Linux.
-- `owa-piggy login` is **not** invoked (intentionally removed from the orchestrator).
+- short-lived local-tool auth is **not** invoked (intentionally left out of the orchestrator).
 
 ## Timing methodology
 

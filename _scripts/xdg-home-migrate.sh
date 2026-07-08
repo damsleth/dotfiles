@@ -43,7 +43,7 @@ ensure_parent() {
 backup_path() {
   local src="$1"
   [[ -e "$src" || -L "$src" ]] || return 0
-  local rel="${src#$HOME_DIR/}"
+    local rel="${src#"$HOME_DIR"/}"
   local dest="$BACKUP_ROOT/$rel"
   ensure_parent "$dest"
   run mv "$src" "$dest"

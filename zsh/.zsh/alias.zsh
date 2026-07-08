@@ -84,7 +84,6 @@ alias mark="op run --no-masking mark" # run 1Password op mark
 alias mdl="mdless" # markdown pager
 alias nc="ncat" # netcat alternative
 alias oh="open ." # open current dir in Finder - mnemonic: open here
-alias owap="owa-piggy" # owa-piggy CLI shorthand
 alias pdfjoin="/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" # join PDFs
 alias phonebook="sqlite3 -line ~/Library/Messages/chat.db 'select id from handle' | sed '/^$/d' | sed 's/id = //' | fzf" # fuzzy search iMessage contacts
 alias poshtheme="code ~/.config/powershell/ktheme_rainbow.omp.json" # edit PowerShell theme
@@ -107,17 +106,6 @@ alias timing="/usr/bin/time -p zsh -i -c 'exit' 2>&1 | grep '^real' | cut -d' ' 
 alias tmp="cd ~/Code/tmp" # go to tmp dir
 alias today="date '+%Y-%m-%d'" # today's date
 alias traceroute="sudo mtr --report-wide --report-cycles=1" # traceroute with mtr
-# trough — open the tailnet token-query API web UI (http-only; tailnet is WireGuard-encrypted)
-trough() {
-  local url="http://kvps:8765"
-  if command -v open >/dev/null 2>&1; then open "$url"            # macOS: default browser
-  elif command -v xdg-open >/dev/null 2>&1; then xdg-open "$url"  # Linux desktop
-  else echo "$url"; fi                                            # headless: cmd-click in iTerm2
-}
-# clipboard relay via kvps (central Tailscale pastebin) — works from any tailnet node
-cpush() { printf '%s' "$(pbpaste)" | curl -s -X POST http://100.68.171.58:7331/ --data-binary @- ; }
-cpull() { curl -s http://100.68.171.58:7331/ | pbcopy ; }
-
 alias updateall='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup' # update all system and dev tools
 alias vær="curl wttr.in" # weather in Norwegian
 alias week="date +%V" # ISO week number

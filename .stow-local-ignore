@@ -9,3 +9,5 @@ target$
 
 # Local zsh plugin checkouts are installed outside the tracked package state.
 ^zsh/\.zsh/plugins/
+^\.zsh/local\.zsh$
+^\.zsh/secrets\.zsh$

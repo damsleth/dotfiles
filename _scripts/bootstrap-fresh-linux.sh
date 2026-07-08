@@ -25,6 +25,7 @@ set -euo pipefail
 # pulls the personal repos over SSH once the agent is loaded.
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/damsleth/dotfiles.git}"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 # Leave empty to skip the hostname step (common on WSL / shared boxes).
 HOSTNAME_DEFAULT="${HOSTNAME_DEFAULT:-}"
 
@@ -32,6 +33,14 @@ info()    { printf '\033[1;34m[boot]\033[0m %s\n' "$*"; }
 success() { printf '\033[1;32m[ok]\033[0m   %s\n' "$*"; }
 warn()    { printf '\033[1;33m[warn]\033[0m %s\n' "$*"; }
 err()     { printf '\033[1;31m[err]\033[0m  %s\n' "$*" >&2; }
+
+find_restore_script() {
+    local name="$1" candidate
+    for candidate in "$DOTFILES_DIR/_scripts/$name" "$DOTFILES_PRIVATE/_scripts/$name"; do
+        [[ -x "$candidate" ]] && { printf '%s\n' "$candidate"; return 0; }
+    done
+    return 1
+}
 
 # ----------------------------------------------------------------------------
 # Sanity check
@@ -115,7 +124,11 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.npm-packages/bin
 # Install them here so those scripts aren't no-ops on a fresh box.
 if ! command -v pipx >/dev/null 2>&1; then
     info "Installing pipx via apt"
-    sudo apt-get install -y pipx && pipx ensurepath || warn "pipx install failed"
+    if sudo apt-get install -y pipx; then
+        pipx ensurepath || warn "pipx ensurepath failed"
+    else
+        warn "pipx install failed"
+    fi
 fi
 
 if ! command -v fnm >/dev/null 2>&1; then
@@ -165,16 +178,17 @@ fi
 # ----------------------------------------------------------------------------
 # 9. Secrets from 1Password (if op is installed + signed in)
 # ----------------------------------------------------------------------------
-if [[ -x "$DOTFILES_DIR/_scripts/secrets-restore.sh" ]]; then
+secrets_restore="$(find_restore_script secrets-restore.sh || true)"
+if [[ -n "$secrets_restore" ]]; then
     info "Restoring machine-local secrets from 1Password"
-    "$DOTFILES_DIR/_scripts/secrets-restore.sh" || warn "secrets-restore.sh exited non-zero"
+    "$secrets_restore" || warn "secrets-restore.sh exited non-zero"
 fi
 
 # ----------------------------------------------------------------------------
 # 10. Clone personal repos referenced by ~/.local/bin symlinks
 # ----------------------------------------------------------------------------
 if [[ -x "$DOTFILES_DIR/_scripts/clone-repos.sh" ]]; then
-    info "Cloning personal repos (hugr, YAAMS, teaminal, ...)"
+    info "Cloning personal repos from overlay manifest"
     "$DOTFILES_DIR/_scripts/clone-repos.sh" || warn "clone-repos.sh exited non-zero (SSH agent loaded?)"
 fi
 
@@ -182,18 +196,17 @@ fi
 # 11. Editable-install self-written tools from their ~/code clones
 # ----------------------------------------------------------------------------
 # Must run AFTER clone-repos.sh (needs the checkouts) and after pipx exists.
-if [[ -x "$DOTFILES_DIR/_scripts/tools-restore.sh" ]]; then
-    info "Editable-installing local tools (cognitive-ledger, yaams, owa-tools, owa-piggy)"
-    "$DOTFILES_DIR/_scripts/tools-restore.sh" || warn "tools-restore.sh exited non-zero"
+tools_restore="$(find_restore_script tools-restore.sh || true)"
+if [[ -n "$tools_restore" ]]; then
+    info "Editable-installing local tools"
+    "$tools_restore" || warn "tools-restore.sh exited non-zero"
 fi
 
 # ----------------------------------------------------------------------------
-# 12. owa-piggy auth - intentionally NOT run here
+# 12. Short-lived local-tool auth - intentionally NOT run here
 # ----------------------------------------------------------------------------
-# owa-piggy refresh tokens live ~24h, so they can't be staged in this repo and
-# still be valid at restore time. Seeding them would mean committing fresh
-# tokens via the owa-piggy reseed launchd - spreading tokens across repos and
-# adding cross-repo entropy. Run `owa-piggy login` manually after bootstrap.
+# Auth tokens for private tools are deliberately left out of the orchestrator.
+# Authenticate manually after bootstrap once private tools are installed.
 
 # ----------------------------------------------------------------------------
 # 13. Sanity-check the restore
