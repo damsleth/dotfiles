@@ -114,7 +114,7 @@ main_zshrc_timing "$ZSH_CONFIG_DIR/ghcs.zsh"
 main_zshrc_timing "$ZSH_CONFIG_DIR/comp.zsh"
 
 # On-demand 1Password secret retrieval (`secret NAME`). After comp.zsh so compdef exists.
-main_zshrc_timing "$ZSH_CONFIG_DIR/secrets.zsh"
+[[ -r "$ZSH_CONFIG_DIR/secrets.zsh" ]] && main_zshrc_timing "$ZSH_CONFIG_DIR/secrets.zsh"
 
 # tmux config
 main_zshrc_timing "$ZSH_CONFIG_DIR/tmux.zsh"

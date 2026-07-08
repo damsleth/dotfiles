@@ -28,6 +28,8 @@ DRY_RUN=0
 SELECT_MODE="wizard"   # wizard | preset | all | preselected
 PRESET="rec"
 FULL_WIZARD=0
+STRICT=0
+FAILURES=0
 
 # DOTFILES_PRESELECTED (env): a space-separated list of package keys. When set,
 # the wizard is skipped entirely and exactly these packages are stowed. This is
@@ -37,7 +39,8 @@ FULL_WIZARD=0
 
 for arg in "$@"; do
     case "$arg" in
-        --dry-run|-n) DRY_RUN=1 ;;
+    --dry-run|-n) DRY_RUN=1 ;;
+    --strict) STRICT=1 ;;
         --all)        SELECT_MODE="all" ;;
         --no-wizard|--yes|-y) SELECT_MODE="preset"; PRESET="rec" ;;
         --full)       FULL_WIZARD=1 ;;
@@ -61,6 +64,7 @@ info()    { echo "[info]  $*"; }
 success() { echo "[ok]    $*"; }
 skip()    { echo "[skip]  $*"; }
 warn()    { echo "[warn]  $*"; }
+err()     { echo "[err]   $*" >&2; }
 
 # --full hands off to the multi-tab wizard, which drives every layer (Homebrew,
 # macOS defaults, npm/pipx) and delegates the stow step back here via
@@ -87,6 +91,8 @@ STOW_FLAGS=(
     "--no-folding"
     "--ignore=\\.DS_Store$"
     "--ignore=^plugins$"
+    "--ignore=^\\.zsh/local\\.zsh$"
+    "--ignore=^\\.zsh/secrets\\.zsh$"
 )
 # --no-folding: link individual files into real directories instead of folding a
 # whole package dir into one symlink. This lets the private overlay add files to
@@ -135,9 +141,17 @@ select_packages() {
 
 stow_one() {  # stow_one <dir> <package>
     local dir="$1" pkg="$2"
-    if [[ ! -d "$dir/$pkg" ]]; then skip "$pkg (not in $(basename "$dir"))"; return; fi
-    if stow "${STOW_FLAGS[@]:1}" "--dir=$dir" "$pkg" 2>&1; then success "$pkg"
-    else warn "$pkg — stow reported an issue (may already be linked)"; fi
+    if [[ ! -d "$dir/$pkg" ]]; then
+        skip "$pkg (not in $(basename "$dir"))"
+        ((FAILURES+=1))
+        return
+    fi
+    if stow "${STOW_FLAGS[@]:1}" "--dir=$dir" "$pkg" 2>&1; then
+        success "$pkg"
+    else
+        warn "$pkg — stow reported an issue (may already be linked)"
+        ((FAILURES+=1))
+    fi
 }
 
 install_apt_packages() {
@@ -218,6 +232,11 @@ info "Linking whisper-cpp command..."
 link_whisper_cpp
 
 echo
+if [[ $STRICT -eq 1 && $FAILURES -ne 0 ]]; then
+    err "Strict mode: $FAILURES bootstrap issue(s) encountered."
+    exit 1
+fi
+
 if [[ $DRY_RUN -eq 1 ]]; then
     info "Dry run complete — nothing was changed."
 else

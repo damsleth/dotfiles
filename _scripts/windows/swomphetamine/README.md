@@ -22,6 +22,18 @@ Run `SWOmphetamine.exe` — no installation, no UAC prompt, no admin rights need
 A pill icon appears in the system tray. Right-click it and choose **Exit** to quit
 and release the wake lock.
 
+## Verify the committed binary
+
+```powershell
+Get-FileHash .\SWOmphetamine.exe -Algorithm SHA256
+```
+
+Expected SHA-256:
+
+```text
+c1b7c189beb20cc943aa909c6cd1be041cecbf69a8fe4e0f0d8b9bd9b0ae99f2
+```
+
 To start automatically on login, drop a shortcut in:
 `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup`
 

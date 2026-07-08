@@ -10,14 +10,12 @@ Thumbs.db
 !.env.example
 .netrc
 .npmrc
-!npm/.npmrc
 .pypirc
 *_token
 *-token
 *token.json
 *secret*
 # Exception: holds only op:// references (names, not values) — safe to track.
-!zsh/.zsh/secrets.zsh
 *password*
 *credentials*
 *_key
@@ -43,11 +41,9 @@ ssh/.ssh/*
 **/.config/1Password/
 **/.config/copilot/
 **/.config/github-copilot/
-**/.config/owa-piggy/
 **/.config/owa-cal/
 **/.config/timereg-cli/
 **/.config/xledger-cli/
-**/.config/cognitive-ledger/
 **/.config/wtf/config.yml
 **/.config/auth0/
 **/.config/spotifyd/

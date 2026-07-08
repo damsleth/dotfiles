@@ -118,12 +118,6 @@ export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export HOMEBREW_NO_ENV_HINTS=1 # hide homebrew auto update hints
 
-# AZURE AI
-export AZURE_API_KEY="op://Vault/Item/field"
-export AZURE_API_VERSION="2024-08-01-preview"
-export AZURE_EMBEDDING_API_VERSION="op://Vault/Item/field"
-export AZURE_API_BASE="op://Vault/Item/field"
-
 # DOTNET
 export DOTNET_ROOT=/usr/local/share/dotnet
 

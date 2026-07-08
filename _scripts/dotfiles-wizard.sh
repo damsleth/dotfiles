@@ -37,6 +37,7 @@ PACKAGES=(
   "zsh|Shell|all|min,rec,all|Zsh config — starship prompt, aliases, functions, completions"
   "vim|Editors|all|min,rec,all|Vim config (~/.vimrc)"
   "nvim|Editors|all|rec,all|Neovim, LazyVim-based (~/.config/nvim)"
+  "npm|CLI tools|all|rec,all|npm XDG config (~/.config/npm/npmrc)"
   "vscode|Editors|macos|all|VS Code settings/keybindings/snippets (Settings Sync usually owns these)"
   "ghostty|Terminals|all|rec,all|Ghostty terminal config + light/dark theme switcher"
   "kitty|Terminals|all|rec,all|Kitty terminal config + theme switcher"

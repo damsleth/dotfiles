@@ -11,7 +11,7 @@ This is @damsleth's personal dotfiles repo, managed with GNU Stow.
 
 ## Repo structure
 
-Every top-level directory (except `_scripts/`) is a **stow package**.
+Every top-level directory (except `_scripts/` and `_docs/`) is a **stow package**.
 Each package mirrors the home directory - e.g., `zsh/.zshrc` maps to `~/.zshrc`.
 
 ```
@@ -21,6 +21,7 @@ dotfiles/
 │   └── .config/      # maps to ~/.config/
 │       └── <tool>/
 ├── _scripts/         # helper scripts (bootstrap-fresh, macos, dock, etc.)
+├── _docs/            # package notes that should not be stowed
 ├── Brewfile          # curated install manifest for `brew bundle`
 ├── Brewfile.full     # full machine dump (reference, do not run as-is)
 ├── bootstrap.sh      # stow-only bootstrap (runs on any platform)
@@ -37,7 +38,8 @@ layout and is stowed **on top of** the public packages by `bootstrap.sh`.
 
 ```
 private/
-├── hugr/ yaams/ ledger/ teaminal/   # personal tool configs (own emails/tenants)
+├── Brewfile                         # private Homebrew entries
+├── <tool>/                         # personal tool configs (own emails/tenants)
 ├── ssh/.ssh/config.d/personal       # real hosts/IPs/users (Include'd by public config)
 ├── ssh/.ssh/{*.pub,kswon-askpass.sh}# identity material + helpers
 ├── zsh/.zsh/local.zsh               # host-specific / secrets-touching shell funcs
@@ -191,8 +193,8 @@ Helper scripts (executable, not stow packages):
   `macos.sh` -> `secrets-restore.sh` -> `clone-repos.sh` ->
   `toolchains-restore.sh` -> `lang-restore.sh` -> `tools-restore.sh` ->
   `dock.sh` -> `verify-restore.sh` -> `permissions-checklist.sh`. Idempotent.
-  Run after the private repo is cloned. (`owa-piggy login` is intentionally
-  NOT run - its refresh tokens are short-lived; auth manually after bootstrap.)
+  Run after the private repo is cloned. Short-lived local-tool auth is intentionally
+  not run; auth manually after bootstrap.
 
 - `_scripts/bootstrap-fresh-linux.sh` - **Debian/Ubuntu/WSL** first-boot
   orchestrator and counterpart to `bootstrap-fresh.sh`. Installs apt
@@ -231,7 +233,7 @@ Helper scripts (executable, not stow packages):
 - `_scripts/binlink.sh` - interactive picker for symlinking an executable
   from a `~/code` repo into `~/.local/bin`. Supports link / unlink / list.
   This is the manual counterpart to the per-project venv + binlink pattern
-  used by `hugr`, `ledger`, `owa-piggy`, etc. Itself symlinked to
+  used by private local tools. Itself symlinked to
   `~/.local/bin/binlink`.
 
 - `_scripts/pull-all.sh` - parallel `git pull --ff-only` across every repo
@@ -255,19 +257,23 @@ Helper scripts (executable, not stow packages):
   no PATH edits), and `~/go/bin`. Idempotent. Skips items already present.
 
 - `_scripts/secrets-restore.sh` - restores machine-local secret files from
-  1Password CLI (`~/.config/zsh/.env`, SSH private keys by default). The 1Password
-  refs can be overridden with `ZSH_ENV_OP_REF` and `SSH_PRIVATE_KEY_OP_REFS`;
-  never hard-code actual secret values.
+  1Password CLI (`~/.config/zsh/.env`, SSH private keys) only from refs supplied
+  by `ZSH_ENV_OP_REF` and `SSH_PRIVATE_KEY_OP_REFS`; never hard-code actual
+  secret values or private 1Password paths in the public repo.
 
 - `_scripts/permissions-checklist.sh` - prints the macOS approvals that cannot
   be reliably granted from shell: system extensions, Accessibility,
   Full Disk Access, Developer Tools, Login Items, VPN, and 1Password SSH Agent.
 
 - `_scripts/verify-restore.sh` - post-bootstrap sanity checker. Verifies
-  core/personal CLIs on PATH, `~/.config/zsh/.env`, SSH auth, pipx/npm globals
-  installed, and personal repos cloned. macOS-only checks (brew bundle clean,
-  App Store sign-in, the macOS 1Password SSH agent socket) are skipped on
-  Linux. Exits non-zero if anything fails. Re-runnable.
+  core CLIs on PATH, `~/.config/zsh/.env`, SSH auth, pipx/npm globals installed,
+  and private repos from the overlay manifest when present. macOS-only checks
+  (brew bundle clean, App Store sign-in, the macOS 1Password SSH agent socket)
+  are skipped on Linux. Exits non-zero if anything fails. Re-runnable.
+
+- `_scripts/audit-public.sh` - public-safety and restore-contract audit. Checks
+  shell syntax, public leak patterns, SSH config, package catalog drift, Stow
+  simulation, and ShellCheck when available. Run before publishing.
 
 - `_scripts/import-config.sh` - migrate a `~/.config/<tool>` (or `~/.<name>`)
   dir into a new stow package. See "Adding a new package" below.

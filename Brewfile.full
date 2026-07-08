@@ -2,7 +2,6 @@ tap "1password/tap"
 tap "charmbracelet/tap"
 tap "christo-auer/eilmeldung", "https://github.com/christo-auer/eilmeldung"
 tap "dagger/tap"
-tap "damsleth/tap"
 tap "dotnet/dev-proxy"
 tap "drawthingsai/draw-things"
 tap "felixkratz/formulae"
@@ -471,17 +470,10 @@ brew "christo-auer/eilmeldung/eilmeldung"
 # Dagger is an integrated platform to orchestrate the delivery of applications
 brew "dagger/tap/dagger"
 # File-based, hybrid markdown+embeddings memory system for AI agents
-brew "damsleth/tap/cognitive-ledger"
 # Command-line interface for did (time tracking) via GraphQL
-brew "damsleth/tap/did-cli"
 # Outlook / Microsoft 365 CLI suite (cal, mail, graph, doctor, people, sched, drive)
-brew "damsleth/tap/owa-tools"
 # Local-first, high-recall personal memory store for messages, mail, and notes
-brew "damsleth/tap/yaams"
-# Meta-CLI and suite hub for the mnem memory suite
-brew "damsleth/tap/mnem"
 # Lightweight terminal Microsoft Teams client
-brew "damsleth/tap/teaminal"
 # Dev Proxy 2.4.0
 brew "dotnet/dev-proxy/dev-proxy"
 # Local inference and LoRA training CLI for Draw Things

@@ -9,6 +9,7 @@ set -uo pipefail
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 FAIL=0
 
 # Several checks below are macOS-specific (Homebrew, mas/App Store, the macOS
@@ -78,8 +79,8 @@ if [[ $IS_MACOS -eq 1 ]]; then
     fi
 fi
 
-info "Personal CLIs on PATH"
-for c in did-cli owa-piggy owa-cal owa-mail hugr yaams teaminal mark; do
+info "Core CLIs on PATH"
+for c in git stow zsh; do
     check_cmd "$c"
 done
 
@@ -130,12 +131,28 @@ if command -v npm >/dev/null 2>&1 && [[ -f "$DOTFILES_DIR/_scripts/npm-globals.t
     done < "$DOTFILES_DIR/_scripts/npm-globals.txt"
 fi
 
-info "Personal repos cloned"
-for d in hugr YAAMS cognitive-ledger owa-tools owa-piggy teaminal homebrew-tap; do
-    if [[ -d "$HOME/code/$d/.git" ]]; then pass "$HOME/code/$d"
-    else fail "$HOME/code/$d missing (run: _scripts/clone-repos.sh)"
-    fi
+repos_file=""
+for cand in "$DOTFILES_PRIVATE/_scripts/repos.txt" "$DOTFILES_DIR/_scripts/repos.txt"; do
+    [[ -f "$cand" ]] && { repos_file="$cand"; break; }
 done
+
+if [[ -n "$repos_file" ]]; then
+    info "Private repos cloned"
+    while IFS= read -r line; do
+        line="${line%%#*}"
+        line="$(echo "$line" | xargs)"
+        [[ -z "$line" ]] && continue
+        spec="$(echo "$line" | awk '{print $1}')"
+        override="$(echo "$line" | awk '{print $2}')"
+        repo_name="${spec##*/}"
+        target="$HOME/code/${override:-$repo_name}"
+        if [[ -d "$target/.git" ]]; then pass "$target"
+        else fail "$target missing (run: _scripts/clone-repos.sh)"
+        fi
+    done < "$repos_file"
+else
+    info "No private repos manifest found; skipping repo clone checks"
+fi
 
 echo
 if [[ $FAIL -eq 0 ]]; then

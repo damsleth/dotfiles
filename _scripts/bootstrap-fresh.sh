@@ -13,12 +13,21 @@ set -euo pipefail
 
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/damsleth/dotfiles.git}"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
-HOSTNAME_DEFAULT="KMBP"
+DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
+HOSTNAME_DEFAULT="${HOSTNAME_DEFAULT:-}"
 
 info()    { printf '\033[1;34m[boot]\033[0m %s\n' "$*"; }
 success() { printf '\033[1;32m[ok]\033[0m   %s\n' "$*"; }
 warn()    { printf '\033[1;33m[warn]\033[0m %s\n' "$*"; }
 err()     { printf '\033[1;31m[err]\033[0m  %s\n' "$*" >&2; }
+
+find_restore_script() {
+    local name="$1" candidate
+    for candidate in "$DOTFILES_DIR/_scripts/$name" "$DOTFILES_PRIVATE/_scripts/$name"; do
+        [[ -x "$candidate" ]] && { printf '%s\n' "$candidate"; return 0; }
+    done
+    return 1
+}
 
 # ----------------------------------------------------------------------------
 # Sanity check
@@ -34,14 +43,18 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done 2>
 # ----------------------------------------------------------------------------
 # 1. Hostname
 # ----------------------------------------------------------------------------
-current_hostname="$(scutil --get ComputerName 2>/dev/null || echo "")"
-if [[ "$current_hostname" != "$HOSTNAME_DEFAULT" ]]; then
-    info "Setting hostname to $HOSTNAME_DEFAULT (was: ${current_hostname:-unset})"
-    sudo scutil --set ComputerName "$HOSTNAME_DEFAULT"
-    sudo scutil --set LocalHostName "$HOSTNAME_DEFAULT"
-    sudo scutil --set HostName "$HOSTNAME_DEFAULT"
+if [[ -n "$HOSTNAME_DEFAULT" ]]; then
+    current_hostname="$(scutil --get ComputerName 2>/dev/null || echo "")"
+    if [[ "$current_hostname" != "$HOSTNAME_DEFAULT" ]]; then
+        info "Setting hostname to $HOSTNAME_DEFAULT (was: ${current_hostname:-unset})"
+        sudo scutil --set ComputerName "$HOSTNAME_DEFAULT"
+        sudo scutil --set LocalHostName "$HOSTNAME_DEFAULT"
+        sudo scutil --set HostName "$HOSTNAME_DEFAULT"
+    else
+        success "Hostname already $HOSTNAME_DEFAULT"
+    fi
 else
-    success "Hostname already $HOSTNAME_DEFAULT"
+    info "Skipping hostname step (HOSTNAME_DEFAULT unset)"
 fi
 
 # ----------------------------------------------------------------------------
@@ -138,6 +151,10 @@ if [[ -f "$DOTFILES_DIR/Brewfile" ]]; then
 else
     warn "No Brewfile at $DOTFILES_DIR/Brewfile - skipping"
 fi
+if [[ -f "$DOTFILES_PRIVATE/Brewfile" ]]; then
+    info "Running private brew bundle"
+    brew bundle --file="$DOTFILES_PRIVATE/Brewfile"
+fi
 
 # ----------------------------------------------------------------------------
 # 7. Stow packages (bootstrap.sh)
@@ -175,16 +192,17 @@ fi
 # ----------------------------------------------------------------------------
 # 9. Secrets from 1Password
 # ----------------------------------------------------------------------------
-if [[ -x "$DOTFILES_DIR/_scripts/secrets-restore.sh" ]]; then
+secrets_restore="$(find_restore_script secrets-restore.sh || true)"
+if [[ -n "$secrets_restore" ]]; then
     info "Restoring machine-local secrets from 1Password"
-    "$DOTFILES_DIR/_scripts/secrets-restore.sh" || warn "secrets-restore.sh exited non-zero"
+    "$secrets_restore" || warn "secrets-restore.sh exited non-zero"
 fi
 
 # ----------------------------------------------------------------------------
 # 10. Clone personal repos referenced by ~/.local/bin symlinks
 # ----------------------------------------------------------------------------
 if [[ -x "$DOTFILES_DIR/_scripts/clone-repos.sh" ]]; then
-    info "Cloning personal repos (hugr, YAAMS, teaminal, ...)"
+    info "Cloning personal repos from overlay manifest"
     "$DOTFILES_DIR/_scripts/clone-repos.sh" || warn "clone-repos.sh exited non-zero (SSH agent loaded?)"
 fi
 
@@ -215,20 +233,17 @@ fi
 # 11c. Editable-install self-written tools from their ~/code clones
 # ----------------------------------------------------------------------------
 # Runs after clone-repos.sh (step 10) and pipx (brew bundle, step 6).
-if [[ -x "$DOTFILES_DIR/_scripts/tools-restore.sh" ]]; then
-    info "Editable-installing local tools (cognitive-ledger, yaams, owa-tools, owa-piggy)"
-    "$DOTFILES_DIR/_scripts/tools-restore.sh" || warn "tools-restore.sh exited non-zero"
+tools_restore="$(find_restore_script tools-restore.sh || true)"
+if [[ -n "$tools_restore" ]]; then
+    info "Editable-installing local tools"
+    "$tools_restore" || warn "tools-restore.sh exited non-zero"
 fi
 
 # ----------------------------------------------------------------------------
-# 12. owa-piggy auth - intentionally NOT run here
+# 12. Short-lived local-tool auth - intentionally NOT run here
 # ----------------------------------------------------------------------------
-# owa-piggy auth is deliberately left out of the orchestrator. Its refresh
-# tokens have a ~24h lifetime, so they can't be staged in this repo ahead of a
-# fresh restore and still be valid. Seeding them would mean committing fresh
-# tokens as part of the owa-piggy reseed launchd job - which spreads refresh
-# tokens across repos and adds cross-repo entropy. Run `owa-piggy login`
-# manually after bootstrap instead.
+# Auth tokens for private tools are deliberately left out of the orchestrator.
+# Authenticate manually after bootstrap once private tools are installed.
 
 # ----------------------------------------------------------------------------
 # 13. Dock layout

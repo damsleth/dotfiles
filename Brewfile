@@ -17,7 +17,6 @@
 tap "homebrew/services"
 tap "1password/tap"
 tap "charmbracelet/tap"
-tap "damsleth/tap"
 tap "dagger/tap"
 tap "dotnet/dev-proxy"
 tap "felixkratz/formulae"
@@ -206,16 +205,6 @@ brew "media-info"
 # brew "macvim", args: ["HEAD"]
 # brew "mplayer"
 # brew "w3m"
-
-# ============================================================================
-# Personal taps (damsleth/*)
-# ============================================================================
-brew "damsleth/tap/did-cli"
-brew "damsleth/tap/mnem"
-brew "damsleth/tap/teaminal"
-brew "damsleth/tap/cognitive-ledger"
-brew "damsleth/tap/owa-tools"
-brew "damsleth/tap/yaams"
 
 # ============================================================================
 # File managers / TUI utilities
