@@ -167,6 +167,16 @@ else
 fi
 
 # ----------------------------------------------------------------------------
+# 7a. Terminfo (xterm-kitty etc.)
+# ----------------------------------------------------------------------------
+# Compile bundled terminfo entries into ~/.terminfo so TERM=xterm-kitty resolves
+# (otherwise `reset`, clear, tmux, less all fail with "unknown terminal type").
+if [[ -x "$DOTFILES_DIR/_scripts/terminfo-restore.sh" ]]; then
+    info "Restoring terminfo entries"
+    "$DOTFILES_DIR/_scripts/terminfo-restore.sh" || warn "terminfo-restore.sh exited non-zero"
+fi
+
+# ----------------------------------------------------------------------------
 # 7b. Runtime env for subsequent steps
 # ----------------------------------------------------------------------------
 # Stow just linked ~/.zshrc, but we're in a bash subshell - sourcing it won't

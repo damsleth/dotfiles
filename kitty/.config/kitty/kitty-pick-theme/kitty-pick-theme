@@ -137,13 +137,21 @@ esac
 
 ensure_themes
 
+# --no-list-border needs fzf >= 0.57; older fzf aborts with "unknown option"
+# and the launch overlay just vanishes (looks like the keybind is dead).
+# Probe once and only pass the flag when this fzf actually supports it.
+list_border_opt=()
+if printf 'x\n' | fzf --no-list-border --filter=x >/dev/null 2>&1; then
+  list_border_opt=(--no-list-border)
+fi
+
 selected=$(cut -f1 "$index" \
   | fzf \
       --prompt="theme> " \
       --height=80% \
       --layout=reverse \
       --border \
-      --no-list-border \
+      ${list_border_opt[@]+"${list_border_opt[@]}"} \
       --preview="$0 --preview {}" \
       --preview-window=right,70%,wrap)
 
