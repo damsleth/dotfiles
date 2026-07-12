@@ -203,6 +203,14 @@ link_whisper_cpp() {
 }
 
 # ── run ───────────────────────────────────────────────────────────────────────
+# Install the repo's git hooks (pre-commit leak guard) so fresh clones are
+# protected without a manual `git config` step.
+if [[ $DRY_RUN -eq 0 && -d "$DOTFILES_DIR/_scripts/git-hooks" ]] \
+   && git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+    git -C "$DOTFILES_DIR" config core.hooksPath _scripts/git-hooks
+    info "git hooks enabled (core.hooksPath=_scripts/git-hooks)"
+fi
+
 select_packages
 if [[ ${#SELECTED[@]} -eq 0 ]]; then
     warn "No packages selected — nothing to stow."
