@@ -1,4 +1,4 @@
-# ~/.zsh/extra.zsh
+# ~/.config/zsh/extra.zsh
 
 # Welcome message for root
 if [ "$EUID" -eq 0 ]; then

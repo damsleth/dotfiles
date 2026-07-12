@@ -1,4 +1,4 @@
-# ~/.zsh/functions.zsh
+# ~/.config/zsh/functions.zsh
 
 # Cool And Useful Functions™️ for iTerm+zsh
 # Written by @damsleth and found around the web
@@ -6,7 +6,7 @@
 # Last updated
 
 # NOTE: personal/host-specific functions (kswon, serveDT, mfa, unepwd, …) live
-# in the private overlay's ~/.zsh/local.zsh, not here. See _main.zsh.
+# in the private overlay's ~/.config/zsh/local.zsh, not here. See _main.zsh.
 
 # kitty/ghostty set TERM=xterm-kitty / xterm-ghostty, which breaks PSReadLine's
 # line redraw (ghost-typed suggestions, dead backspace). Force xterm-256color

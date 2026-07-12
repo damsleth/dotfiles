@@ -1,4 +1,4 @@
-# ~/.zsh/env.zsh
+# ~/.config/zsh/env.zsh
 
 # Platform detection (use ZSH_OS rather than OSTYPE so we can branch cleanly)
 case "$OSTYPE" in

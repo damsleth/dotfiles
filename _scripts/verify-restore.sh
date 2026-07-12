@@ -60,11 +60,11 @@ mas_signed_in() {
         | grep -q "AccountID =" && return 0
     return 1
 }
-# ~/.zsh/.env is restored on every platform.
-if [[ -f "$HOME/.zsh/.env" ]]; then
-    pass "$HOME/.zsh/.env present"
+# ~/.config/zsh/.env is restored on every platform.
+if [[ -f "$HOME/.config/zsh/.env" ]]; then
+    pass "$HOME/.config/zsh/.env present"
 else
-    fail "$HOME/.zsh/.env missing (run: _scripts/secrets-restore.sh)"
+    fail "$HOME/.config/zsh/.env missing (run: _scripts/secrets-restore.sh)"
 fi
 if [[ $IS_MACOS -eq 1 ]]; then
     if command -v mas >/dev/null 2>&1 && mas_signed_in; then

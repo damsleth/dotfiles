@@ -1,4 +1,4 @@
-# ~/.zsh/aliases.zsh
+# ~/.config/zsh/aliases.zsh
 # General Aliases
 
 alias vim="nvim" # default vim to neovim
