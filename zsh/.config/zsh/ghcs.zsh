@@ -1,4 +1,4 @@
-# ~/.zsh/gh_copilot.zsh
+# ~/.config/zsh/gh_copilot.zsh
 
 ghcs() {
 	FUNCNAME="$funcstack[1]"

@@ -91,13 +91,13 @@ STOW_FLAGS=(
     "--no-folding"
     "--ignore=\\.DS_Store$"
     "--ignore=^plugins$"
-    "--ignore=^\\.zsh/local\\.zsh$"
-    "--ignore=^\\.zsh/secrets\\.zsh$"
+    "--ignore=^\\.config/zsh/local\\.zsh$"
+    "--ignore=^\\.config/zsh/secrets\\.zsh$"
 )
 # --no-folding: link individual files into real directories instead of folding a
 # whole package dir into one symlink. This lets the private overlay add files to
-# a directory the public repo also populates (e.g. ~/.zsh/local.zsh alongside the
-# public ~/.zsh/*.zsh) without a stow conflict.
+# a directory the public repo also populates (e.g. ~/.config/zsh/local.zsh alongside
+# the public ~/.config/zsh/*.zsh) without a stow conflict.
 [[ $DRY_RUN -eq 1 ]] && STOW_FLAGS+=("--simulate")
 
 # System packages to apt-install on Debian/Ubuntu/WSL. Homebrew covers these
