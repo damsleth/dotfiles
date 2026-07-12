@@ -256,6 +256,14 @@ Helper scripts (executable, not stow packages):
   alone doesn't cover: fnm LTS Node + corepack, rustup (default stable,
   no PATH edits), and `~/go/bin`. Idempotent. Skips items already present.
 
+- `_scripts/terminfo-restore.sh` + `_scripts/terminfo/*.terminfo` - `tic`-compile
+  bundled terminfo sources (e.g. `xterm-kitty`) into `~/.terminfo` so `TERM`
+  resolves and `reset`/clear/tmux/less/ssh don't die with "unknown terminal
+  type". Deliberately NOT a stow package: `~/.terminfo` is written by `tic`
+  whenever you add a terminal, and stow would fold it into a symlink pointing at
+  this repo. Add a terminal by dropping its source in `_scripts/terminfo/`.
+  Idempotent; skips cleanly if `tic` is missing.
+
 - `_scripts/secrets-restore.sh` - restores machine-local secret files from
   1Password CLI (`~/.config/zsh/.env`, SSH private keys) only from refs supplied
   by `ZSH_ENV_OP_REF` and `SSH_PRIVATE_KEY_OP_REFS`; never hard-code actual

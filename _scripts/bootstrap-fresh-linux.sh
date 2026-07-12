@@ -109,6 +109,17 @@ else
 fi
 
 # ----------------------------------------------------------------------------
+# 4a. Terminfo (xterm-kitty etc.)
+# ----------------------------------------------------------------------------
+# Compile bundled terminfo entries into ~/.terminfo so TERM=xterm-kitty resolves
+# when you SSH in from kitty (otherwise `reset`, clear, tmux, less all fail with
+# "unknown terminal type"). No-ops cleanly if the distro's ncurses already has it.
+if [[ -x "$DOTFILES_DIR/_scripts/terminfo-restore.sh" ]]; then
+    info "Restoring terminfo entries"
+    "$DOTFILES_DIR/_scripts/terminfo-restore.sh" || warn "terminfo-restore.sh exited non-zero"
+fi
+
+# ----------------------------------------------------------------------------
 # 5. Prime PATH for the remaining steps
 # ----------------------------------------------------------------------------
 # Stow just linked ~/.zshrc, but we're in bash - replicate the parts later
