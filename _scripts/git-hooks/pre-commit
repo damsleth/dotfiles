@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# pre-commit — leak guard for the PUBLIC dotfiles repo.
+#
+# Installed via `git config core.hooksPath _scripts/git-hooks` (bootstrap.sh
+# sets this; run it manually with the command above if committing on a fresh
+# clone before bootstrap). Bypass a false positive with `git commit --no-verify`.
+set -euo pipefail
+
+fail() { printf '\033[1;31mpre-commit:\033[0m %s\n' "$*" >&2; }
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[[ -z "$staged" ]] && exit 0
+
+# 1. Structural guard: nothing under private/ belongs in the PUBLIC repo — that
+#    content lives in the nested private overlay repo (~/Code/dotfiles/private).
+if printf '%s\n' "$staged" | grep -q '^private/'; then
+  fail "refusing to commit files under private/ — that is the overlay repo, not this one:"
+  printf '%s\n' "$staged" | grep '^private/' | sed 's/^/    /' >&2
+  exit 1
+fi
+
+# 2. High-confidence secret scan of the staged additions (low false-positive:
+#    private-key blocks and Bearer tokens only — IP/email are too noisy to block
+#    here; use the AGENTS.md sweep for a manual audit).
+added=$(git diff --cached -U0 --no-color -- $staged | grep '^+' | grep -v '^+++' || true)
+if printf '%s\n' "$added" | grep -Eiq \
+   'BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY|bearer [a-z0-9._-]{12,}|shared-secret[[:space:]]*[=:]'; then
+  fail "staged changes look like they contain a private key or bearer token."
+  fail "review with 'git diff --cached'; if it's a false positive, 'git commit --no-verify'."
+  exit 1
+fi
+
+exit 0
