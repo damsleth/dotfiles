@@ -78,8 +78,9 @@ alias ksp="~/Library/Application Support/Steam/steamapps/common/Kerbal Space Pro
 alias notes="cd ~/brain/vault" # go to notes
 alias light-mode="dark-mode off" # disable dark mode
 alias lsoft="lsof -nPi tcp" # list open TCP ports
-alias l="eza -la1 --icons --git --group-directories-first" # enhanced ls
-alias ls="eza -a --icons --git --group-directories-first --grid" # enhanced ls
+# DISABLE EZA ALIASES (makes agentic ai work a lot harder)
+# alias l="eza -la1 --icons --git --group-directories-first" # enhanced ls
+# alias ls="eza -a --icons --git --group-directories-first --grid" # enhanced ls
 alias mark="op run --no-masking mark" # run 1Password op mark
 alias mdl="mdless" # markdown pager
 alias nc="ncat" # netcat alternative

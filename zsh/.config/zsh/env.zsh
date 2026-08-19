@@ -156,7 +156,8 @@ path=(
 # macOS-only app bundles
 if [[ "$ZSH_OS" == "macos" ]]; then
     path=(/Applications/Obsidian.app/Contents/MacOS $path)
-    alias cat="bat --paging=never" # use bat instead of cat
+    # DISABLE BAT ALIAS (makes agentic ai work a lot harder)
+    # alias cat="bat --paging=never" # use bat instead of cat
     alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale" # Tailscale CLI
 fi
 # Remove any literal, unexpanded entry inherited from other initializers.
