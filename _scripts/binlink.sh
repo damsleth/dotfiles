@@ -107,8 +107,9 @@ pick_one() {
 do_link() {
   info "Repos under $CODE_DIR:"
   local repo
-  repo="$(find "$CODE_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' \
-            | grep -v '^\.' | sort | pick_one 'Pick a repo (q to cancel):')" || {
+  repo="$(find "$CODE_DIR" -mindepth 1 -maxdepth 1 -type d -print \
+            | sed 's|.*/||' | grep -v '^\.' | sort \
+            | pick_one 'Pick a repo (q to cancel):')" || {
     warn "cancelled"; return
   }
   local repo_path="$CODE_DIR/$repo"
@@ -164,10 +165,17 @@ do_link() {
 
 # List symlinks in BIN_DIR whose target resolves under CODE_DIR.
 list_managed_links() {
-  local f tgt
+  local f raw_tgt tgt_dir tgt
   for f in "$BIN_DIR"/*; do
     [ -L "$f" ] || continue
-    tgt="$(readlink -f "$f" 2>/dev/null || true)"
+    raw_tgt="$(readlink "$f" 2>/dev/null || true)"
+    [ -n "$raw_tgt" ] || continue
+    case "$raw_tgt" in
+      /*) ;;
+      *) raw_tgt="$(dirname "$f")/$raw_tgt" ;;
+    esac
+    tgt_dir="$(cd "$(dirname "$raw_tgt")" 2>/dev/null && pwd -P)" || continue
+    tgt="$tgt_dir/$(basename "$raw_tgt")"
     case "$tgt" in
       "$CODE_DIR"/*) printf "%s\t%s\n" "$f" "$tgt" ;;
     esac
@@ -197,7 +205,9 @@ do_list() {
     any=1
     printf "  %s%s%s → %s\n" "$C_BLU" "$link" "$C_RST" "$tgt"
   done < <(list_managed_links)
-  [ "$any" -eq 0 ] && warn "  (none)"
+  if [ "$any" -eq 0 ]; then
+    warn "  (none)"
+  fi
 }
 
 # --- main loop --------------------------------------------------------------
