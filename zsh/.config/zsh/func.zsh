@@ -19,8 +19,9 @@ pwsh() { TERM=xterm-256color command pwsh "$@" }
 unalias q 2>/dev/null
 q() {
   codex \
-    --model gpt-5.4-mini \
-    --config reasoning_effort=medium \
+    --model gpt-5.6-luna \
+    --config model_reasoning_effort=none \
+    --config features.hooks=false \
     --sandbox read-only \
     --ask-for-approval never \
     e \
@@ -57,9 +58,14 @@ compresspdf() {
 
 pruneLocal() {
     git fetch -p
-    for branch in $(git branch -vv | grep ': gone]' | awk '{print $1}'); do
-        git branch -D $branch
-    done
+    git worktree prune
+    # for-each-ref, not `git branch -vv`: the latter prefixes worktree-held
+    # branches with '+' (and the current one with '*'), which awk $1 would eat
+    git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads |
+        awk '$2 == "[gone]" { print $1 }' |
+        while read -r branch; do
+            git branch -D "$branch"
+        done
 }
 
 mic() {
