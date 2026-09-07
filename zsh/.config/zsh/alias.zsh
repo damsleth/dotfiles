@@ -97,7 +97,17 @@ alias psconfig="code ~/.config/powershell/" # edit PowerShell config
 alias reload="source ~/.zshrc" # reload zsh config
 alias scan="sudo nmap -T5 -v -sV -Pn" # aggressive nmap scan
 alias sloc="cloc" # count lines of code
-[[ "$TERM" == "xterm-kitty" ]] && alias ssh="kitten ssh" # kitty only: auto-copy xterm-kitty terminfo to remote hosts (fixes tmux "missing or unsuitable terminal" + broken backspace)
+# kitty only: auto-copy xterm-kitty terminfo to remote hosts (fixes tmux "missing or unsuitable terminal" + broken backspace).
+# Hosts with `Tag windows` in ~/.ssh/config get real ssh: the kitten's bootstrap is a POSIX script ending in `exec $SHELL`, which pwsh chokes on.
+if [[ "$TERM" == "xterm-kitty" ]]; then
+  ssh() {
+    if command ssh -G "$@" 2>/dev/null | grep -qx 'tag windows'; then
+      command ssh "$@"
+    else
+      kitten ssh "$@"
+    fi
+  }
+fi
 alias subnetinfo='sudo nmap -sn "$(li).*" -oG - | awk "/Up$/{print \$2}" | xargs -I{} arp -a {} | awk "{print \$1, \$2, \$3, \$4, \$5}"' # scan subnet and show MAC/vendor info
 alias subnet='sudo nmap -sn "$(li).*" -oG -' # scan subnet for live hosts
 alias subnetf='arp -a | grep -v "(incomplete)" | grep "$(ipl | rev | cut -c5- | rev)" | grep -Eo "\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"' # filter ARP for subnet
