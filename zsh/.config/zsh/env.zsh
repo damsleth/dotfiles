@@ -106,8 +106,6 @@ export NUGET_HTTP_CACHE_PATH="$XDG_CACHE_HOME/NuGet/http-cache"
 export PLATFORMIO_CORE_DIR="$XDG_DATA_HOME/platformio"
 export IDF_TOOLS_PATH="$XDG_DATA_HOME/espressif"
 export AZURE_CONFIG_DIR="$XDG_CONFIG_HOME/azure"
-export HEADROOM_CONFIG_DIR="$XDG_CONFIG_HOME/headroom"
-export HEADROOM_WORKSPACE_DIR="$XDG_STATE_HOME/headroom"
 export SHELL_SESSION_DIR="$XDG_STATE_HOME/zsh/sessions"
 export TERMINFO="$XDG_DATA_HOME/terminfo"
 
