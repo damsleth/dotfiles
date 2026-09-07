@@ -93,9 +93,7 @@ karabiner/.config/karabiner/automatic_backups/
 # Warp (synced separately or machine-specific)
 warp/.warp/keybindings.yaml
 
-# headroom-specific
 .serena/
-headroom_memory.db
 
 # Private overlay — personal packages, hosts, secrets-touching helpers.
 # Kept on disk, layered on top of the public dotfiles, never published.
