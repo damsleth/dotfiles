@@ -52,6 +52,7 @@ tap "koekeishiya/formulae"           # skhd (global hotkeys, e.g. opt+space kitt
 brew "stow"
 brew "starship"
 brew "tmux"
+brew "herdr"                        # agent multiplexer (herdr.dev)
 brew "fzf"
 brew "zsh-syntax-highlighting"
 brew "bat"

@@ -1,0 +1,13 @@
+# herdr — terminal workspace manager for coding agents (https://herdr.dev)
+# Runtime state (sockets, logs, session.json) lives alongside this file and is
+# not tracked; only config.toml is stowed.
+onboarding = false
+
+[theme]
+# Follow the host terminal's light/dark appearance (matches the kitty/ghostty switchers).
+auto_switch = true
+dark_name = "catppuccin"
+light_name = "catppuccin-latte"
+
+[ui.toast]
+delivery = "terminal"
