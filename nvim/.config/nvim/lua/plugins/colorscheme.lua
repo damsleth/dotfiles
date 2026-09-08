@@ -39,6 +39,11 @@ return {
     "LazyVim/LazyVim",
     -- Pick the scheme synchronously at startup from the OS appearance.
     opts = {
+      transparent = true,
+      styles = {
+        sidebars = "transparent",
+        floats = "transparent",
+      },
       colorscheme = function()
         apply(is_dark())
       end,
