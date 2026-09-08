@@ -48,6 +48,9 @@ else
   fi
   [[ -r "$likec4_completion_cache" ]] && source "$likec4_completion_cache"
 
+  # herdr (fast Rust binary, no cache needed)
+  command -v herdr >/dev/null && eval "$(herdr completion zsh)"
+
   # 1Password CLI sign-in helper. Only needed when desktop-app integration
   # ("Settings -> Developer -> Integrate with 1Password CLI") is OFF; with it ON,
   # `op read` / `secret` trigger Touch ID directly and this is unnecessary.

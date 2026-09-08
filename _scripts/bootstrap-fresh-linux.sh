@@ -167,6 +167,11 @@ if ! command -v rustup >/dev/null 2>&1; then
     [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 fi
 
+if ! command -v herdr >/dev/null 2>&1; then
+    info "Installing herdr (official installer -> ~/.local/bin; brew provides it on mac)"
+    curl -fsSL https://herdr.dev/install.sh | sh || warn "herdr install failed"
+fi
+
 # ----------------------------------------------------------------------------
 # 7. Language toolchains (fnm LTS, rustup default, GOPATH)
 # ----------------------------------------------------------------------------

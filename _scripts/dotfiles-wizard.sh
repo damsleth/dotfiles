@@ -41,6 +41,7 @@ PACKAGES=(
   "vscode|Editors|macos|all|VS Code settings/keybindings/snippets (Settings Sync usually owns these)"
   "ghostty|Terminals|all|rec,all|Ghostty terminal config + light/dark theme switcher"
   "kitty|Terminals|all|rec,all|Kitty terminal config + theme switcher"
+  "herdr|Terminals|all|rec,all|herdr agent multiplexer config (~/.config/herdr/config.toml)"
   "btop|Monitoring|all|rec,all|btop resource monitor theme"
   "trippy|Networking|all|rec,all|trippy (mtr-like traceroute) config"
   "glow|CLI tools|all|rec,all|glow markdown renderer config"
