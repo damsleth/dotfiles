@@ -91,6 +91,11 @@ STOW_FLAGS=(
     "--no-folding"
     "--ignore=\\.DS_Store$"
     "--ignore=^plugins$"
+)
+# Only for the PUBLIC zsh package: a gitignored local.zsh/secrets.zsh may sit in
+# its working tree; never link those. The private overlay is the legit source of
+# these files, so it must NOT get these ignores or they would never be stowed.
+PUBLIC_ONLY_IGNORES=(
     "--ignore=^\\.config/zsh/local\\.zsh$"
     "--ignore=^\\.config/zsh/secrets\\.zsh$"
 )
@@ -123,7 +128,8 @@ select_packages() {
     fi
     if [[ ! -x "$WIZARD" ]]; then
         warn "dotfiles-wizard.sh not found/executable — falling back to a built-in recommended set"
-        SELECTED=(zsh vim nvim ghostty kitty btop trippy glow lf hushlogin)
+        SELECTED=(zsh vim nvim trippy glow lf hushlogin)
+        [[ "$PLATFORM" == "macos" ]] && SELECTED+=(ghostty kitty btop-macos) || SELECTED+=(btop-linux)
         return
     fi
     # --tab dotfiles --emit → single-tab picker that prints chosen keys to stdout
@@ -146,7 +152,9 @@ stow_one() {  # stow_one <dir> <package>
         ((FAILURES+=1))
         return
     fi
-    if stow "${STOW_FLAGS[@]:1}" "--dir=$dir" "$pkg" 2>&1; then
+    local extra=()
+    [[ "$dir" == "$DOTFILES_DIR" ]] && extra=("${PUBLIC_ONLY_IGNORES[@]}")
+    if stow "${STOW_FLAGS[@]:1}" ${extra[@]+"${extra[@]}"} "--dir=$dir" "$pkg" 2>&1; then
         success "$pkg"
     else
         warn "$pkg — stow reported an issue (may already be linked)"

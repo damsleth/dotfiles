@@ -85,7 +85,7 @@ nvim/.config/nvim/lazy-lock.json
 # Logs and caches
 *.log
 .cache/
-btop/.config/btop/btop.log
+btop-*/.config/btop/btop.log
 
 # Karabiner backups (auto-generated)
 karabiner/.config/karabiner/automatic_backups/

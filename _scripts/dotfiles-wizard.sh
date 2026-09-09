@@ -32,17 +32,18 @@ NPM_MANIFEST="$SCRIPT_DIR/npm-globals.txt"
 PIPX_MANIFEST="$SCRIPT_DIR/pipx-packages.txt"
 
 # ── dotfiles package catalog ──────────────────────────────────────────────────
-# key | category | platform(all|macos) | presets(csv of min,rec,all) | description
+# key | category | platform(all|macos|linux) | presets(csv of min,rec,all) | description
 PACKAGES=(
   "zsh|Shell|all|min,rec,all|Zsh config — starship prompt, aliases, functions, completions"
   "vim|Editors|all|min,rec,all|Vim config (~/.vimrc)"
   "nvim|Editors|all|rec,all|Neovim, LazyVim-based (~/.config/nvim)"
   "npm|CLI tools|all|rec,all|npm XDG config (~/.config/npm/npmrc)"
   "vscode|Editors|macos|all|VS Code settings/keybindings/snippets (Settings Sync usually owns these)"
-  "ghostty|Terminals|all|rec,all|Ghostty terminal config + light/dark theme switcher"
-  "kitty|Terminals|all|rec,all|Kitty terminal config + theme switcher"
+  "ghostty|Terminals|macos|rec,all|Ghostty terminal config + light/dark theme switcher"
+  "kitty|Terminals|macos|rec,all|Kitty terminal config + theme switcher"
   "herdr|Terminals|all|rec,all|herdr agent multiplexer config (~/.config/herdr/config.toml)"
-  "btop|Monitoring|all|rec,all|btop resource monitor theme"
+  "btop-macos|Monitoring|macos|rec,all|btop resource monitor config (macOS: en0, M1 tuning)"
+  "btop-linux|Monitoring|linux|rec,all|btop resource monitor config (Linux: adwaita theme, mem+net+proc)"
   "trippy|Networking|all|rec,all|trippy (mtr-like traceroute) config"
   "glow|CLI tools|all|rec,all|glow markdown renderer config"
   "lf|CLI tools|all|rec,all|lf file manager config + file previewer"
@@ -71,7 +72,7 @@ while [[ $# -gt 0 ]]; do
         *) echo "dotfiles-wizard: unknown arg '$1'" >&2; exit 2 ;;
     esac
 done
-case "$PLATFORM" in macos|darwin|Darwin) PLATFORM="macos" ;; esac
+case "$PLATFORM" in macos|darwin|Darwin) PLATFORM="macos" ;; linux|Linux) PLATFORM="linux" ;; esac
 
 field() { printf '%s' "$1" | cut -d'|' -f"$2"; }
 preset_has() { case ",$1," in *,"$2",*) return 0 ;; *) return 1 ;; esac; }
@@ -81,7 +82,7 @@ if [[ "$RUNMODE" == "list" ]]; then
     printf '%-12s %-16s %-10s %s\n' KEY CATEGORY PRESETS DESCRIPTION >&2
     for line in "${PACKAGES[@]}"; do
         plat="$(field "$line" 3)"
-        [[ "$plat" == "macos" && "$PLATFORM" != "macos" ]] && continue
+        [[ "$plat" != "all" && "$plat" != "$PLATFORM" ]] && continue
         printf '%-12s %-16s %-10s %s\n' \
             "$(field "$line" 1)" "$(field "$line" 2)" "$(field "$line" 4)" "$(field "$line" 5)" >&2
     done
@@ -91,7 +92,7 @@ if [[ "$RUNMODE" == "print-preset" ]]; then
     preset_has "min,rec,all" "$PRESET" || { echo "dotfiles-wizard: unknown preset '$PRESET' (use min|rec|all)" >&2; exit 2; }
     for line in "${PACKAGES[@]}"; do
         plat="$(field "$line" 3)"
-        [[ "$plat" == "macos" && "$PLATFORM" != "macos" ]] && continue
+        [[ "$plat" != "all" && "$plat" != "$PLATFORM" ]] && continue
         preset_has "$(field "$line" 4)" "$PRESET" && { field "$line" 1; echo; }
     done
     exit 0
@@ -212,7 +213,7 @@ compute_vis() {
     for i in "${!ITEMS[@]}"; do
         tab="$(field "${ITEMS[$i]}" 1)"; plat="$(field "${ITEMS[$i]}" 4)"
         [[ "$tab" == "$1" ]] || continue
-        [[ "$plat" == "macos" && "$PLATFORM" != "macos" ]] && continue
+        [[ "$plat" != "all" && "$plat" != "$PLATFORM" ]] && continue
         VIS+=("$i")
     done
 }
@@ -221,7 +222,7 @@ tab_count() {  # selected/total for a tab
     for i in "${!ITEMS[@]}"; do
         tab="$(field "${ITEMS[$i]}" 1)"; plat="$(field "${ITEMS[$i]}" 4)"
         [[ "$tab" == "$1" ]] || continue
-        [[ "$plat" == "macos" && "$PLATFORM" != "macos" ]] && continue
+        [[ "$plat" != "all" && "$plat" != "$PLATFORM" ]] && continue
         tot=$((tot+1)); [[ "${SEL[$i]}" == "1" ]] && sel=$((sel+1))
     done
     printf '%d/%d' "$sel" "$tot"
@@ -233,7 +234,7 @@ selected_keys() {
     for i in "${!ITEMS[@]}"; do
         tab="$(field "${ITEMS[$i]}" 1)"; plat="$(field "${ITEMS[$i]}" 4)"
         [[ "$tab" == "$1" ]] || continue
-        [[ "$plat" == "macos" && "$PLATFORM" != "macos" ]] && continue
+        [[ "$plat" != "all" && "$plat" != "$PLATFORM" ]] && continue
         [[ "${SEL[$i]}" == "1" ]] && out="$out $(field "${ITEMS[$i]}" 2)"
     done
     printf '%s' "${out# }"
