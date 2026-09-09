@@ -8,6 +8,6 @@ __pycache__$
 target$
 
 # Local zsh plugin checkouts are installed outside the tracked package state.
-^zsh/\.zsh/plugins/
-^\.zsh/local\.zsh$
-^\.zsh/secrets\.zsh$
+^zsh/\.config/zsh/plugins/
+^\.config/zsh/local\.zsh$
+^\.config/zsh/secrets\.zsh$
