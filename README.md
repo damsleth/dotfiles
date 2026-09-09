@@ -37,7 +37,8 @@ dotfiles/
 ├── vim/          → ~/.vimrc
 ├── nvim/         → ~/.config/nvim/                 (LazyVim-based)
 ├── npm/          → ~/.config/npm/npmrc
-├── btop/         → ~/.config/btop/
+├── btop-macos/   → ~/.config/btop/           (macOS variant)
+├── btop-linux/   → ~/.config/btop/           (Linux variant)
 ├── ghostty/      → ~/.config/ghostty/
 ├── kitty/        → ~/.config/kitty/
 ├── glow/         → ~/.config/glow/
