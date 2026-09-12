@@ -1,9 +1,9 @@
 # ~/.config/zsh/functions.zsh
 
-# Cool And Useful Functions™️ for iTerm+zsh
+# Cool And Useful Functions™️ for ghostty/kitty+zsh
 # Written by @damsleth and found around the web
 # Most recent additions at the top
-# Last updated
+# Last updated 2026-09-12
 
 # NOTE: personal/host-specific functions (kswon, serveDT, mfa, unepwd, …) live
 # in the private overlay's ~/.config/zsh/local.zsh, not here. See _main.zsh.
@@ -318,15 +318,6 @@ if tty -s;
 fi;
 }
 
-ibadge(){
-  badge="${1}"
-  printf "\e]1337;SetBadgeFormat=%s\a" \
-  $(echo -n "${1}" | base64)
-}
-
-# set iterm profile: itheme <profile_name>
-itheme() { echo -e "\033]50;SetProfile=$1\a" }
-
 # change directory to the last directory visited in lf
 lfcd () {
     cd "$(command lf -print-last-dir "$@")"
@@ -351,43 +342,3 @@ portpwdx() {
     return -1
   fi
 }
-
-# tabcolor function to change the color of the current iterm tab, 
-# accepts color names or hex values, if no argument is given, a random color will be generated
-tabcolor(){
-  local input="$1"
-  unset color input_lc colors
-  
-  # if no input, set random hex color
-  if [[ -z "$input" ]]; then
-    input=$(printf '#%06X' $((16#$(od -An -N2 -tx1 /dev/urandom | tr -d ' ')))) 
-  fi
-  
-  input_lc=$(printf '%s' "$input" | tr '[:upper:]' '[:lower:]')
-  colors="black|red|green|brown|yellow|blue|magenta|cyan|white|default"
-
-  if [[ "$input_lc" =~ ^($colors)$ ]]; then
-    case "$input_lc" in
-      black) color="#000000" ;;
-      red) color="#FF0000" ;;
-      green) color="#00FF00" ;;
-      brown) color="#A52A2A" ;;
-      yellow) color="#FFFF00" ;;
-      blue) color="#0000FF" ;;
-      magenta) color="#FF00FF" ;;
-      cyan) color="#00FFFF" ;;
-      white) color="#FFFFFF" ;;
-      default) color="#FFFFFF" ;;
-    esac
-  elif [[ "$input" =~ ^#[0-9a-fA-F]{6}$ ]]; then
-    color="$input"
-  else
-    echo "Invalid color: $input. Please provide a valid color name or hex code with 6 digits."
-    return 1
-  fi
-
-  printf "\033]6;1;bg;red;brightness;%d\007" $((16#${color:1:2})) # red
-  printf "\033]6;1;bg;green;brightness;%d\007" $((16#${color:3:2})) # green
-  printf "\033]6;1;bg;blue;brightness;%d\007" $((16#${color:5:2})) # blue
-}
-alias tc=tabcolor

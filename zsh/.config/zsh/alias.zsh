@@ -20,27 +20,10 @@ alias ch="code ." # open current dir in VS Code Insiders
 alias cleanupds="find . -type f -name '*.DS_Store' -ls -delete" # remove .DS_Store files recursively
 alias cloc="cloc --exclude-dir=node_modules,dist,build,coverage,lib,bin,docs ./" # count lines of code from ./ and down, exclude common dirs
 alias cloneweek="thab ~/Code/CLI/cloneweek/ cloneweek.zsh" # run cloneweek.zsh in cloneweek dir and return
-# update color preset for all open iTerm2 sessions
-iterm2_set_preset() {
-  local preset="$1"
-
-  osascript <<EOF >/dev/null
- tell application "iTerm2"
-   repeat with w in windows
-     repeat with t in tabs of w
-       repeat with s in sessions of t
-         set color preset of s to "$preset"
-       end repeat
-     end repeat
-   end repeat
- end tell
-EOF
-}
 
 dark() {
   dark-mode on &&
   wallpaper 'Black' &&
-  # iterm2_set_preset 'IR_Black' &&
   echo 'dark mode enabled'
 }
 alias decode-jwt="jwt-decode" # decode JWT tokens
@@ -68,8 +51,6 @@ alias lfconfig="code ~/.config/lf" # edit lf config
 alias li='ipl | rev | cut -d"." -f2- | rev' # get local subnet prefix
 light() {
   dark-mode off &&
-  wallpaper '/System/Library/Desktop Pictures/Peak.madesktop' &&
-  # iterm2_set_preset 'BlulocoLight' &&
   echo 'light mode enabled'
 }
 
