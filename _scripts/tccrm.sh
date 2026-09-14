@@ -78,24 +78,31 @@ del_row() { # db service client client_type
   elif [ "$4" = 0 ]; then sudo tccutil reset "$2" "$3"
   else echo "CANNOT (system db, bare path): $2 $3 — opening System Settings, press minus"; open_pane "$2"; fi
 }
-confirm() { # label count
-  printf '\ndelete %s %s? [y/N] ' "$2" "$1"; read -r yn; [[ "$yn" =~ ^[Yy] ]] || exit 1
+confirm() { # label count -> 0 if confirmed
+  printf '\ndelete %s %s? [y/N] ' "$2" "$1"; read -r yn; [[ "$yn" =~ ^[Yy] ]] || return 1
   mkdir -p "$BAK"; cp "$USER_DB" "$BAK/tcc-user-$(date +%Y%m%d-%H%M%S).db"
 }
-FZF=(fzf -m --delimiter=$'\t' --header='tab: select, enter: delete, esc: abort')
+stale() { grouped | while IFS=$'\t' read -r client ctype svcs; do
+  exists "$client" "$ctype" || printf '%s\t%s\t%s\n' "$client" "$ctype" "$svcs"; done; }
+FZF=(fzf -m --delimiter=$'\t' --header='tab: select, enter: delete, esc: quit')
 
 case "${1:-}" in
   -h|--help) usage; exit 0 ;;
   --all)  [ -n "${2:-}" ] || { usage; exit 1; }
-          if [[ "$2" = /* ]]; then del_client "$2"; else sudo tccutil reset All "$2"; fi ;;
-  --rows) picked=$(rows | grep -i -- "${2:-}" | "${FZF[@]}" --with-nth=1,2,3) || exit 0
-          echo "$picked" | cut -f1-3; confirm "row(s)" "$(echo "$picked" | wc -l | tr -d ' ')"
-          echo "$picked" | while IFS=$'\t' read -r db svc client ctype; do del_row "$db" "$svc" "$client" "$ctype"; done ;;
-  --stale) picked=$(grouped | while IFS=$'\t' read -r client ctype svcs; do
-             exists "$client" "$ctype" || printf '%s\t%s\t%s\n' "$client" "$ctype" "$svcs"; done)
-           [ -n "$picked" ] || { echo "nothing stale"; exit 0; } ;;
-  *)      picked=$(grouped | grep -i -- "${1:-}" | "${FZF[@]}" --with-nth=1,3) || exit 0 ;;
+          if [[ "$2" = /* ]]; then del_client "$2"; else sudo tccutil reset All "$2"; fi; exit ;;
+  --rows) src() { rows | grep -i -- "${2:-}"; }; nth=1,2,3; label="row(s)" ;;
+  --stale) src() { stale; }; nth=1,3; label="app(s)" ;;
+  *)      src() { grouped | grep -i -- "${1:-}"; }; nth=1,3; label="app(s)" ;;
 esac
-[ -n "${picked:-}" ] || exit 0
-echo "$picked" | cut -f1,3; confirm "app(s)" "$(echo "$picked" | wc -l | tr -d ' ')"
-echo "$picked" | while IFS=$'\t' read -r client _ _; do del_client "$client"; done
+
+# ponytail: loop until esc; the list is re-read each round so deleted rows vanish
+while picked=$(src "$@" | "${FZF[@]}" --with-nth="$nth"); do
+  echo "$picked" | cut -f"$nth"
+  confirm "$label" "$(echo "$picked" | wc -l | tr -d ' ')" || continue
+  if [ "$label" = "row(s)" ]; then
+    echo "$picked" | while IFS=$'\t' read -r db svc client ctype; do del_row "$db" "$svc" "$client" "$ctype"; done
+  else
+    echo "$picked" | while IFS=$'\t' read -r client _ _; do del_client "$client"; done
+  fi
+  read -r -p "done. enter to continue " _
+done
