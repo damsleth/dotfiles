@@ -15,13 +15,53 @@ config_dir="${KITTY_CONFIG_DIRECTORY:-$HOME/.config/kitty}"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/kitty-pick-theme"
 index="$cache_dir/index.tsv"
 themes_user="$config_dir/themes"
+pins_dir="$cache_dir/pins"
+
+# The window this script was launched over (the picker runs as a kitty overlay,
+# so $KITTY_WINDOW_ID is the overlay's own id, not the one we want to theme).
+target_window_id() {
+  local wid=""
+  [[ -n "${KITTY_LISTEN_ON:-}" ]] && wid=$(
+    kitten @ --to "$KITTY_LISTEN_ON" ls --match state:overlay_parent 2>/dev/null \
+      | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["tabs"][0]["windows"][0]["id"])' \
+      2>/dev/null) || true
+  echo "${wid:-${KITTY_WINDOW_ID:-}}"
+}
+
+# Windows pinned with --window keep their own theme across a global reload:
+# a config reload repaints every window, so we just repaint the pinned ones
+# back afterwards. Pins are keyed by kitty PID + window id (ids restart from 1
+# per kitty instance), and a set-colors that matches nothing prunes its own pin.
+reapply_pins() {
+  [[ -n "${KITTY_LISTEN_ON:-}" && -d "$pins_dir" ]] || return 0
+  local f key
+  for f in "$pins_dir"/*.conf; do
+    [[ -e "$f" ]] || continue
+    key="${f##*/}"; key="${key%.conf}"
+    if [[ "$key" != "${KITTY_PID:-x}"-* ]]; then rm -f "$f"; continue; fi
+    kitten @ --to "$KITTY_LISTEN_ON" set-colors --match "id:${key#*-}" "$f" \
+      >/dev/null 2>&1 || rm -f "$f"
+  done
+}
 
 reload_kitty() {
   # If kitty exposes an explicit remote-control socket, use it to reload the
   # attached instance. Without KITTY_LISTEN_ON, `kitten @` talks through the
   # terminal and remote-control errors leak visibly into the prompt.
   if [[ -n "${KITTY_LISTEN_ON:-}" ]] && command -v kitten >/dev/null 2>&1; then
-    kitten @ --to "$KITTY_LISTEN_ON" load-config --no-response >/dev/null 2>&1 || true
+    # Synchronous (no --no-response) so the repaint below lands after the
+    # reload, and skip the USR1/keystroke fallbacks — a late async reload
+    # would clobber the pinned windows again. Redundant once kitty's own
+    # watcher is armed, but on the first-ever run (fresh=1) the .auto.conf
+    # files did not exist at startup, so this is the only reload: keep it.
+    kitten @ --to "$KITTY_LISTEN_ON" load-config >/dev/null 2>&1 || true
+    # kitty also watches the *-theme.auto.conf files and fires a reload of its
+    # own ~0.25s after the write. Wait it out, otherwise that second reload
+    # repaints the pinned windows right after we restored them.
+    # ponytail: fixed wait; poll get-colors if a loaded machine ever misses it.
+    sleep 0.5
+    reapply_pins
+    return
   fi
 
   # SIGUSR1 makes kitty reload its config, including the .auto.conf overlays.
@@ -43,8 +83,9 @@ reload_kitty() {
 
 slot=""
 case "${1:-}" in
-  --light) slot="light"; shift ;;
-  --dark)  slot="dark";  shift ;;
+  --light)  slot="light";  shift ;;
+  --dark)   slot="dark";   shift ;;
+  --window) slot="window"; shift ;;
   --reset)
     rm -f "$config_dir/light-theme.auto.conf" \
           "$config_dir/dark-theme.auto.conf" \
@@ -92,6 +133,26 @@ else
   fi
 fi
 
+# --window: theme only the window this overlay was launched over, and record
+# the pin so a later global theme change leaves this window alone.
+if [[ "$slot" == "window" ]]; then
+  if [[ -z "${KITTY_LISTEN_ON:-}" ]]; then
+    echo "per-window theme needs kitty remote control (listen_on/allow_remote_control)" >&2
+    exit 1
+  fi
+  wid=$(target_window_id)
+  if [[ -z "$wid" ]]; then
+    echo "could not determine target window" >&2
+    exit 1
+  fi
+  mkdir -p "$pins_dir"
+  pin="$pins_dir/${KITTY_PID:-0}-$wid.conf"
+  printf '%s\n' "$content" > "$pin"
+  kitten @ --to "$KITTY_LISTEN_ON" set-colors --match "id:$wid" "$pin" >/dev/null
+  echo "kitty window $wid theme -> $theme"
+  exit 0
+fi
+
 write_slot() {
   local s="$1" target
   target="$config_dir/${s}-theme.auto.conf"
@@ -107,6 +168,10 @@ write_slot() {
 # the user a one-time restart is needed.
 fresh=0
 [[ -f "$config_dir/light-theme.auto.conf" || -f "$config_dir/dark-theme.auto.conf" ]] || fresh=1
+
+# Setting a global theme from a pinned window opts that window back into the
+# global pool: drop its pin before the reload repaints everything.
+rm -f "$pins_dir/${KITTY_PID:-0}-$(target_window_id).conf"
 
 write_slot "$slot"
 
