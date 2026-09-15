@@ -5,3 +5,6 @@
 -- No spell checking, ever. No squigglies. (Writing in multiple languages.)
 vim.opt.spell = false
 vim.opt.spelllang = ""
+
+-- Absolute line numbers.
+vim.opt.relativenumber = false

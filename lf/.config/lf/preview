@@ -24,7 +24,7 @@ case "$(file -Lb --mime-type -- "$file")" in
             # stays readable in both light and dark Ghostty themes (the
             # bundled defaults assume a dark background).
             bat --color=always --style=plain --paging=never \
-                --theme=ansi -- "$file"
+                --theme=ansi --wrap=character --terminal-width="$w" -- "$file"
         else
             cat -- "$file"
         fi
