@@ -131,8 +131,9 @@ fi
 
 slot_arg=()
 case "${1:-}" in
-  --light) slot_arg=(--light); ;;
-  --dark)  slot_arg=(--dark);  ;;
+  --light)  slot_arg=(--light);  ;;
+  --dark)   slot_arg=(--dark);   ;;
+  --window) slot_arg=(--window); ;;
 esac
 
 ensure_themes
