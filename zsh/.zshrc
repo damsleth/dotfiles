@@ -5,3 +5,7 @@ source "$ZSH_CONFIG_DIR/late.zsh"
 
 # bun completions
 [ -s ~/.local/share/bun/_bun ] && source ~/.local/share/bun/_bun
+
+# >>> Codex installer >>>
+export PATH="$HOME/.local/bin:$PATH"
+# <<< Codex installer <<<
