@@ -37,6 +37,8 @@ alias gateway="netstat -nr | grep default | grep en0 | tr -s ' ' | cut -d' ' -f2
 alias gco="git checkout" # git checkout
 alias gcob="git checkout -b" # git checkout new branch
 alias gl="git pull --all" # git pull all remotes
+alias gf="git fetch --all" # git fetch from all remotes
+alias glo="git log --oneline --graph --all" # git log in a compact, visual format
 alias globals="npm list -g --depth=0" # list global npm packages
 alias hs="http-server ./" # serve current dir over HTTP
 alias i="arch -x86_64" # run command under x86_64 architecture
