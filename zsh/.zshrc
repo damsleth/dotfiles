@@ -1,5 +1,7 @@
+# ponytail: no OS-specific paths here. Homebrew prefix + shellenv are detected
+# portably in $ZSH_CONFIG_DIR/env.zsh (ZSH_OS / HOMEBREW_PREFIX). If an installer
+# appends a hardcoded /opt/homebrew or /home/linuxbrew line, delete it.
 export ZSH_CONFIG_DIR="${ZSH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}"
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 source "$ZSH_CONFIG_DIR/_main.zsh"
 source "$ZSH_CONFIG_DIR/late.zsh"
 
