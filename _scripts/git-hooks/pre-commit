@@ -12,7 +12,7 @@ staged=$(git diff --cached --name-only --diff-filter=ACMR)
 [[ -z "$staged" ]] && exit 0
 
 # 1. Structural guard: nothing under private/ belongs in the PUBLIC repo — that
-#    content lives in the nested private overlay repo (~/Code/dotfiles/private).
+#    content lives in the nested private overlay repo (~/code/dotfiles/private).
 if printf '%s\n' "$staged" | grep -q '^private/'; then
   fail "refusing to commit files under private/ — that is the overlay repo, not this one:"
   printf '%s\n' "$staged" | grep '^private/' | sed 's/^/    /' >&2

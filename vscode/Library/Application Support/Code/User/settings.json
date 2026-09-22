@@ -235,7 +235,7 @@
   "powershell.scriptAnalysis.settingsPath": "~/.config/psscriptanalyzer/PSScriptAnalyzerSettings.psd1",
   "unotes.editor.imageMaxWidthPercent": 50,
   "unotes.editor.extraFocus": true,
-  "unotes.rootPath": "~/Code/Notes",
+  "unotes.rootPath": "~/code/Notes",
   "unotes.mediaFolder": "~/.unotes/media",
   "git.openRepositoryInParentFolders": "never",
   "editor.codeLensFontFamily": "'GohuFont 11 Nerd Font','TamzenForPowerline','GohuFont uni14 Nerd Font Mono','Monaspace krypton','Hasklug Nerd Font Mono','0xProto Nerd Font mono','Hurmit Nerd Font Mono','Hasklug Nerd Font Mono','MonaspiceKr Nerd Font Propo','0xProto nerd font mono','GohuFont uni14 Nerd Font Mono','Tamzen','Proggyvector','terminess Nerd Font Mono','Gohufont 11 Nerd Font Propo','Agave Nerd Font Mono','Gohufont 11 Nerd Font','ProggyVector','Agave Nerd Font Mono','CamingoCode Nerd Font','Monaspicekr nerd font','0xProto nerd font mono','Monaspace Krypton','ProggyVector','Hurmit Nerd Font Mono','SpaceMono Nerd Font','M PLUS Code Latin','ProggyClean CE Nerd Font'",

@@ -89,8 +89,8 @@ apt-get install -y -qq $PKGS >/dev/null
 useradd -m -s /bin/bash tester
 echo 'tester ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/tester
 chmod 0440 /etc/sudoers.d/tester
-mkdir -p /home/tester/Code
-cp -a /host-dotfiles /home/tester/Code/dotfiles
+mkdir -p /home/tester/code
+cp -a /host-dotfiles /home/tester/code/dotfiles
 
 if [[ "${HAVE_KEY:-0}" == "1" && -f /sshkey ]]; then
     install -d -m 700 -o tester -g tester /home/tester/.ssh
@@ -106,7 +106,7 @@ stamp "===== running bootstrap-fresh-linux.sh as 'tester' ====="
 B0=$EPOCHSECONDS
 # Prefix each orchestrator line with elapsed seconds so the host can compute
 # per-step durations from the [boot] anchors.
-su - tester -c 'export GIT_TERMINAL_PROMPT=0 HOSTNAME_DEFAULT= DOTFILES_DIR=$HOME/Code/dotfiles; timeout 1500 bash "$DOTFILES_DIR/_scripts/bootstrap-fresh-linux.sh"' 2>&1 \
+su - tester -c 'export GIT_TERMINAL_PROMPT=0 HOSTNAME_DEFAULT= DOTFILES_DIR=$HOME/code/dotfiles; timeout 1500 bash "$DOTFILES_DIR/_scripts/bootstrap-fresh-linux.sh"' 2>&1 \
   | while IFS= read -r line; do printf '[%ds] %s\n' "$((EPOCHSECONDS - B0))" "$line"; done
 rc=${PIPESTATUS[0]}
 echo
@@ -120,7 +120,7 @@ su - tester -c 'command -v fnm && fnm list' 2>&1 | sed 's/^/   /'
 echo "-- node / go / rustc --"
 su - tester -c 'eval "$(fnm env)" 2>/dev/null; command -v node && node --version; command -v go && go version; command -v rustc && rustc --version' 2>&1 | sed 's/^/   /'
 echo "-- editable local tools on PATH (only if an SSH key was provided) --"
-su - tester -c 'manifest=$HOME/Code/dotfiles/private/_scripts/local-tools.txt; if [ -f "$manifest" ]; then sed "s/#.*//" "$manifest" | xargs -n1 sh -c '''[ -n "$0" ] && command -v "$0" >/dev/null 2>&1 && echo "present: $0"'''; fi' 2>&1 | sed 's/^/   /'
+su - tester -c 'manifest=$HOME/code/dotfiles/private/_scripts/local-tools.txt; if [ -f "$manifest" ]; then sed "s/#.*//" "$manifest" | xargs -n1 sh -c '''[ -n "$0" ] && command -v "$0" >/dev/null 2>&1 && echo "present: $0"'''; fi' 2>&1 | sed 's/^/   /'
 echo "===== [harness] done ====="
 ENTRY
 

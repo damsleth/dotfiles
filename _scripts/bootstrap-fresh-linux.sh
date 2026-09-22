@@ -9,7 +9,7 @@
 # shared restore scripts under _scripts/.
 #
 # Usage after the repo is cloned (or clone it via step 3 below):
-#   ~/Code/dotfiles/_scripts/bootstrap-fresh-linux.sh
+#   ~/code/dotfiles/_scripts/bootstrap-fresh-linux.sh
 #
 # Idempotent: every step checks state before acting.
 #
@@ -24,7 +24,7 @@ set -euo pipefail
 # prompt for a GitHub PAT / use the gh credential helper). clone-repos.sh later
 # pulls the personal repos over SSH once the agent is loaded.
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/damsleth/dotfiles.git}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/code/dotfiles}"
 DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 # Leave empty to skip the hostname step (common on WSL / shared boxes).
 HOSTNAME_DEFAULT="${HOSTNAME_DEFAULT:-}"
