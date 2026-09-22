@@ -30,9 +30,9 @@ if [[ "$TERM_PROGRAM" == "vscode" ]]; then
     integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
     [[ -n "$integration_path" ]] && source "$integration_path"
 
-    export PROMPT='%~ %# '
+    export PROMPT='%m %~ %# '
     export RPROMPT=''
-    export PS1='%~ %# '
+    export PS1='%m %~ %# '
     return 0
 fi
 
