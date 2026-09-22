@@ -99,6 +99,15 @@ PUBLIC_ONLY_IGNORES=(
     "--ignore=^\\.config/zsh/local\\.zsh$"
     "--ignore=^\\.config/zsh/secrets\\.zsh$"
 )
+# The private overlay's SSH package may coexist with local SSH state in the
+# checkout (for example after an older manual setup). These files are per-host
+# trust or agent state, never configuration to distribute; keep Stow from
+# treating them as package content.
+PRIVATE_SSH_IGNORES=(
+    "--ignore=^\\.ssh/config$"
+    "--ignore=^\\.ssh/(1Password|agent)(/|$)"
+    "--ignore=^\\.ssh/known_hosts(\\.old)?$"
+)
 # --no-folding: link individual files into real directories instead of folding a
 # whole package dir into one symlink. This lets the private overlay add files to
 # a directory the public repo also populates (e.g. ~/.config/zsh/local.zsh alongside
@@ -154,6 +163,7 @@ stow_one() {  # stow_one <dir> <package>
     fi
     local extra=()
     [[ "$dir" == "$DOTFILES_DIR" ]] && extra=("${PUBLIC_ONLY_IGNORES[@]}")
+    [[ "$dir" == "$DOTFILES_PRIVATE" && "$pkg" == "ssh" ]] && extra+=("${PRIVATE_SSH_IGNORES[@]}")
     if stow "${STOW_FLAGS[@]:1}" ${extra[@]+"${extra[@]}"} "--dir=$dir" "$pkg" 2>&1; then
         success "$pkg"
     else
