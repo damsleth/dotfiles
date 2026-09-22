@@ -2,7 +2,7 @@
 # bootstrap-fresh.sh - first-boot setup for a brand-new macOS install
 #
 # Usage after the private repo is cloned:
-#   ~/Code/dotfiles/_scripts/bootstrap-fresh.sh
+#   ~/code/dotfiles/_scripts/bootstrap-fresh.sh
 #
 # For a brand-new Mac, use the public-safe gist bootstrap first; it installs
 # git/gh, authenticates GitHub, clones this private repo, then runs this script.
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/damsleth/dotfiles.git}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/code/dotfiles}"
 DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 HOSTNAME_DEFAULT="${HOSTNAME_DEFAULT:-}"
 

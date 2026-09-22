@@ -11,7 +11,7 @@
 set -euo pipefail
 
 DOTFILES_REPO="${DOTFILES_REPO:-damsleth/dotfiles}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/code/dotfiles}"
 
 info() { printf '\033[1;34m[gist]\033[0m %s\n' "$*"; }
 pass() { printf '\033[1;32m[ok]\033[0m    %s\n' "$*"; }
