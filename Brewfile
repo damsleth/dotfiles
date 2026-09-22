@@ -1,7 +1,7 @@
 # Brewfile - curated install manifest for a fresh machine
 #
 # Usage:
-#   brew bundle --file=~/Code/dotfiles/Brewfile
+#   brew bundle --file=~/code/dotfiles/Brewfile
 #
 # This file is the *curated* manifest. The unmodified dump from the previous
 # machine lives in Brewfile.full as reference.

@@ -84,7 +84,7 @@ tracked package.**
 5. **Don't modify what you haven't read.** Always read the current state of a file before editing.
 
 6. **Stow conventions:**
-   - Run `stow <package>` from the repo root (`~/Code/dotfiles`)
+   - Run `stow <package>` from the repo root (`~/code/dotfiles`)
    - Use `stow --simulate` to preview changes
    - Use `stow -R <package>` to restow after adding files
    - Use `stow -D <package>` to remove symlinks
@@ -106,12 +106,12 @@ to `COMMON_PACKAGES` in `bootstrap.sh`, then commit.
 Manual equivalent:
 
 ```bash
-mkdir -p ~/Code/dotfiles/<package>
-mv ~/.<tool>rc ~/Code/dotfiles/<package>/.<tool>rc
+mkdir -p ~/code/dotfiles/<package>
+mv ~/.<tool>rc ~/code/dotfiles/<package>/.<tool>rc
 # or for .config/:
-mkdir -p ~/Code/dotfiles/<package>/.config/<tool>
-mv ~/.config/<tool> ~/Code/dotfiles/<package>/.config/<tool>
-cd ~/Code/dotfiles && stow <package>
+mkdir -p ~/code/dotfiles/<package>/.config/<tool>
+mv ~/.config/<tool> ~/code/dotfiles/<package>/.config/<tool>
+cd ~/code/dotfiles && stow <package>
 git add <package> && git commit -m "feat: add <package> package"
 ```
 
@@ -308,7 +308,7 @@ Generated runtime artifacts are gitignored per-util.
 ## Brewfile
 
 `Brewfile` at the repo root is the **curated** install manifest. Run with
-`brew bundle --file=~/Code/dotfiles/Brewfile`. The file is organised by
+`brew bundle --file=~/code/dotfiles/Brewfile`. The file is organised by
 category with `REVIEW` blocks of previously-installed-but-suspect items
 commented out - uncomment to keep, delete to drop.
 

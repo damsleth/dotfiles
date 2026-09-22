@@ -8,7 +8,7 @@ set -uo pipefail
 # even when this script is invoked from non-login contexts (eg. bootstrap-fresh.sh).
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
 
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Code/dotfiles}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/code/dotfiles}"
 DOTFILES_PRIVATE="${DOTFILES_PRIVATE:-$DOTFILES_DIR/private}"
 FAIL=0
 

@@ -18,8 +18,8 @@ The opinionated path — installs everything except the macOS-only/opt-in bits
 
 ```bash
 brew install stow                 # macOS  (Linux/WSL: sudo apt install -y stow)
-git clone https://github.com/damsleth/dotfiles.git ~/Code/dotfiles
-cd ~/Code/dotfiles && ./bootstrap.sh --no-wizard
+git clone https://github.com/damsleth/dotfiles.git ~/code/dotfiles
+cd ~/code/dotfiles && ./bootstrap.sh --no-wizard
 ```
 
 Then restart your shell. Want to choose packages yourself? Drop `--no-wizard`
@@ -69,8 +69,8 @@ sudo apt install stow
 ## Quick start (just the dotfiles)
 
 ```bash
-git clone https://github.com/damsleth/dotfiles.git ~/Code/dotfiles
-cd ~/Code/dotfiles
+git clone https://github.com/damsleth/dotfiles.git ~/code/dotfiles
+cd ~/code/dotfiles
 ./bootstrap.sh            # opens the dotfiles package wizard
 ```
 
@@ -124,8 +124,8 @@ Recommended presets above are the friendlier starting point.
 curl -fsSL https://gist.githubusercontent.com/damsleth/b773ac8fa887e0ed0f08154ca9a725af/raw/public-bootstrap-gist.sh | bash
 
 # Debian / Ubuntu / WSL:
-git clone https://github.com/damsleth/dotfiles.git ~/Code/dotfiles
-~/Code/dotfiles/_scripts/bootstrap-fresh-linux.sh
+git clone https://github.com/damsleth/dotfiles.git ~/code/dotfiles
+~/code/dotfiles/_scripts/bootstrap-fresh-linux.sh
 ```
 
 Steps that need my private overlay (cloning my repos, editable-installing my
@@ -180,7 +180,7 @@ See [`_scripts/TESTING.md`](_scripts/TESTING.md) for the methodology, env knobs
 ## Managing packages
 
 ```bash
-cd ~/Code/dotfiles
+cd ~/code/dotfiles
 
 # Stow a single package
 stow zsh
@@ -200,23 +200,23 @@ stow --simulate -D zsh
 
 ```bash
 # Move the file into the correct package directory
-mv ~/.config/foo/bar.conf ~/Code/dotfiles/foo/.config/foo/bar.conf
+mv ~/.config/foo/bar.conf ~/code/dotfiles/foo/.config/foo/bar.conf
 
 # Re-stow to create the new symlink
-cd ~/Code/dotfiles && stow -R foo
+cd ~/code/dotfiles && stow -R foo
 ```
 
 ## Adding a new package
 
 ```bash
 # Create the package mirror structure
-mkdir -p ~/Code/dotfiles/newtool
-mv ~/.config/newtool ~/Code/dotfiles/newtool/.config/newtool
+mkdir -p ~/code/dotfiles/newtool
+mv ~/.config/newtool ~/code/dotfiles/newtool/.config/newtool
 # OR for home-level dotfiles:
-mv ~/.newtoolrc ~/Code/dotfiles/newtool/.newtoolrc
+mv ~/.newtoolrc ~/code/dotfiles/newtool/.newtoolrc
 
 # Stow it
-cd ~/Code/dotfiles && stow newtool
+cd ~/code/dotfiles && stow newtool
 
 # Commit
 git add newtool && git commit -m "feat: add newtool package"

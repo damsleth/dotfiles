@@ -17,7 +17,7 @@ alias cat0="/bin/cat $*" # use system cat with all args
 alias ch="code ." # open current dir in VS Code Insiders
 alias cleanupds="find . -type f -name '*.DS_Store' -ls -delete" # remove .DS_Store files recursively
 alias cloc="cloc --exclude-dir=node_modules,dist,build,coverage,lib,bin,docs ./" # count lines of code from ./ and down, exclude common dirs
-alias cloneweek="thab ~/Code/CLI/cloneweek/ cloneweek.zsh" # run cloneweek.zsh in cloneweek dir and return
+alias cloneweek="thab ~/code/CLI/cloneweek/ cloneweek.zsh" # run cloneweek.zsh in cloneweek dir and return
 
 dark() {
   dark-mode on &&
@@ -89,7 +89,7 @@ alias fsubnet="subnetf" # alias for subnetf
 alias tb="nc termbin.com 9999" # paste to termbin
 alias thab='(){cd $1 && $2 && cd -;}' # run command in dir and return. - mnemonic: There and Back Again
 alias timing="/usr/bin/time -p zsh -i -c 'exit' 2>&1 | grep '^real' | cut -d' ' -f2" # measure zsh startup time
-alias tmp="cd ~/Code/tmp" # go to tmp dir
+alias tmp="cd ~/code/tmp" # go to tmp dir
 alias today="date '+%Y-%m-%d'" # today's date
 alias traceroute="sudo mtr --report-wide --report-cycles=1" # traceroute with mtr
 alias updateall='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup' # update all system and dev tools
