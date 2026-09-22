@@ -14,20 +14,63 @@
 pwsh() { TERM=xterm-256color command pwsh "$@" }
 
 # q = ask codex a question.
-# uses gpt-5.1-codex-mini with medium reasoning effort to get fast responses
+# uses the lightest gpt model with no reasoning effort to get fast responses
 # e.g. codex -s read-only --skip-git-repo-check e "hello"
 unalias q 2>/dev/null
-q() {
-  codex \
-    --model gpt-5.6-luna \
-    --config model_reasoning_effort=none \
-    --config features.hooks=false \
-    --sandbox read-only \
-    --ask-for-approval never \
-    e \
-    --skip-git-repo-check \
-    "$*"
-}
+
+# q() {
+#   codex \
+#     --model gpt-5.6-luna \
+#     --config model_reasoning_effort=none \
+#     --config features.hooks=false \
+#     --sandbox read-only \
+#     --ask-for-approval never \
+#     e \
+#     --skip-git-repo-check \
+#     "$*"
+# }
+
+# extremely minimalist q function for fast responses
+  q() {
+    setopt localoptions pipefail
+
+    command codex \
+      --model gpt-5.6-luna \
+      --config model_reasoning_effort=none \
+      --config project_doc_max_bytes=0 \
+      --config skills.max_context_tokens=1 \
+      --config features.hooks=false \
+      --disable plugins \
+      --disable apps \
+      --disable memories \
+      --disable multi_agent \
+      --disable personality \
+      --disable browser_use \
+      --disable in_app_browser \
+      --disable computer_use \
+      --disable image_generation \
+      --disable goals \
+      --disable shell_tool \
+      --disable sleep_tool \
+      --disable skill_search \
+      --sandbox read-only \
+      --ask-for-approval never \
+      exec \
+      --ephemeral \
+      --ignore-user-config \
+      --ignore-rules \
+      --skip-git-repo-check \
+      -C /private/tmp \
+      --json \
+      "$*" |
+      command jq -r '
+        select(
+          .type == "item.completed"
+          and .item.type == "agent_message"
+        )
+        | .item.text
+      '
+  }
 alias q='noglob q' # prevent glob expansion to allow passing arguments with * and other special characters without quoting
 
 toggle_low_power_mode() {
