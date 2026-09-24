@@ -40,6 +40,7 @@ PACKAGES=(
   "npm|CLI tools|all|rec,all|npm XDG config (~/.config/npm/npmrc)"
   "vscode|Editors|macos|all|VS Code settings/keybindings/snippets (Settings Sync usually owns these)"
   "ghostty|Terminals|macos|rec,all|Ghostty terminal config + light/dark theme switcher"
+  "cmux|Terminals|macos|rec,all|cmux (libghostty) settings + shortcut overrides"
   "kitty|Terminals|macos|rec,all|Kitty terminal config + theme switcher"
   "herdr|Terminals|all|rec,all|herdr agent multiplexer config (~/.config/herdr/config.toml)"
   "btop-macos|Monitoring|macos|rec,all|btop resource monitor config (macOS: en0, M1 tuning)"
