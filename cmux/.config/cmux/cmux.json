@@ -1,0 +1,53 @@
+{
+  "$schema" : "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion" : 1,
+  "shortcuts" : {
+    "bindings" : {
+      "canvasTidy" : {
+        "first" : {
+          "command" : false,
+          "control" : false,
+          "key" : "",
+          "option" : false,
+          "shift" : false
+        }
+      },
+      "showHideAllWindows" : {
+        "first" : {
+          "command" : true,
+          "control" : true,
+          "key" : "space",
+          "keyCode" : 49,
+          "option" : true,
+          "shift" : false
+        }
+      }
+    }
+  },
+
+  "actions": {
+    "workspace": {
+      "title" : "🧠",
+      "type" : "workspace",
+      "workspace" : {
+        "cwd" : "~/brain/notes",
+        "layout" : {
+          "pane" : {
+            "surfaces" : [
+              {
+                "focus" : true,
+                "name" : "notes",
+                "type" : "terminal"
+              },
+              {
+                "cwd" : "~/brain",
+                "type" : "terminal"
+              }
+            ]
+          }
+        },
+        "name" : "🧠"
+      }
+    }
+  }
+}

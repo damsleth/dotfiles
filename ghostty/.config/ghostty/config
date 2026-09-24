@@ -17,6 +17,9 @@ background-blur-radius = 10
 keybind = super+u=toggle_background_opacity
 # <<< ghostty-installer:hotkey-transparency <<<
 
+# cmux theme picker (cmux reads this config; in plain Ghostty it just errors)
+keybind = ctrl+super+t=text:cmux themes\x0d
+
 font-family = "Hack Nerd Font Mono"
 # font-family = "DepartureMono Nerd Font"
 # font-family = "CascaydiaCove Nerd Font"
