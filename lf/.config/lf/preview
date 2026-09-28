@@ -14,7 +14,7 @@ case "$file" in
     *.md | *.markdown | *.txt)
         if command -v dawn >/dev/null 2>&1; then
             e=$(printf '\033')
-            DAWN_COLS="$w" dawn -P -b -- "$file" < /dev/null |
+            DAWN_COLS="$w" dawn -P -- "$file" < /dev/null |
                 sed "s/${e}]8;;[^${e}]*${e}\\\\//g"
             exit 0
         fi
