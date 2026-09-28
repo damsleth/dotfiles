@@ -6,6 +6,21 @@ h="$3"
 x="$4"
 y="$5"
 
+# Markdown/prose: dawn's rendered view. Matched on extension because
+# `file` calls markdown text/plain. DAWN_COLS lays it out for the pane and
+# keeps dawn from probing the tty lf is reading; sed drops OSC 8 hyperlinks,
+# which lf's preview pane can't render.
+case "$file" in
+    *.md | *.markdown | *.txt)
+        if command -v dawn >/dev/null 2>&1; then
+            e=$(printf '\033')
+            DAWN_COLS="$w" dawn -P -b -- "$file" < /dev/null |
+                sed "s/${e}]8;;[^${e}]*${e}\\\\//g"
+            exit 0
+        fi
+        ;;
+esac
+
 case "$(file -Lb --mime-type -- "$file")" in
     image/*)
         # kitten icat does absolute placement (WxH@XxY in cells) without moving
