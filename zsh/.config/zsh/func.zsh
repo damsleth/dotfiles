@@ -361,9 +361,17 @@ if tty -s;
 fi;
 }
 
-# change directory to the last directory visited in lf
+# change directory to the last directory visited in lf. Has to be a shell
+# function: a child process can't change its parent shell's cwd. Output that
+# isn't a directory (lf -version, -doc) is printed instead of cd'd into.
 lfcd () {
-    cd "$(command lf -print-last-dir "$@")"
+    local out
+    out="$(command lf -print-last-dir "$@")" || return
+    if [[ -d $out ]]; then
+        cd -- "$out"
+    elif [[ -n $out ]]; then
+        print -r -- "$out"
+    fi
 }
 
 # get the current working directory of a process by its PID
