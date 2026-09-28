@@ -9,12 +9,20 @@ y="$5"
 # Markdown/prose: dawn's rendered view. Matched on extension because
 # `file` calls markdown text/plain. DAWN_COLS lays it out for the pane and
 # keeps dawn from probing the tty lf is reading; sed drops OSC 8 hyperlinks,
-# which lf's preview pane can't render.
+# which lf's preview pane can't render. In kitty, DAWN_TEXT_SIZING has dawn
+# emit OSC 66 scaled headings; that needs an lf that draws multi-row preview
+# lines (the osc66-multicell-preview branch), stock lf shows them as text.
 case "$file" in
     *.md | *.markdown | *.txt)
         if command -v dawn >/dev/null 2>&1; then
             e=$(printf '\033')
-            DAWN_COLS="$w" dawn -P -- "$file" < /dev/null |
+            sizing=0
+            [ "$TERM" = xterm-kitty ] && sizing=1
+            # kitty follows the macOS appearance (*-theme.auto.conf); dawn
+            # can't query the background here, so follow it too.
+            theme=light
+            [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ] && theme=dark
+            DAWN_COLS="$w" DAWN_TEXT_SIZING=$sizing dawn -P -t "$theme" -- "$file" < /dev/null |
                 sed "s/${e}]8;;[^${e}]*${e}\\\\//g"
             exit 0
         fi
