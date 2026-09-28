@@ -4,10 +4,16 @@ set hidden true
 set previewer ~/.config/lf/preview
 set cleaner ~/.config/lf/clean
 
-# l / <enter> on a file: open text in full-screen vim (great for scrolling long
-# JSON, etc.), everything else via the macOS default app. Directories still
-# enter normally since lf's open builtin handles those itself.
+# l / <enter> on a file: markdown/prose opens in dawn's read-only reader
+# (j/k, ctrl+d/ctrl+u, q/esc back to lf where you left off), other text in
+# full-screen vim (great for scrolling long JSON, etc.), everything else via
+# the macOS default app. Directories still enter normally since lf's open
+# builtin handles those itself.
 cmd open ${{
+    case "$f" in
+        *.md | *.markdown | *.txt)
+            command -v dawn >/dev/null && exec dawn -p "$f" ;;
+    esac
     case "$(file -Lb --mime-type -- "$f")" in
         text/* | application/json | application/javascript | application/xml | application/x-shellscript | inode/x-empty)
             "${EDITOR:-nvim}" "$f" ;;
