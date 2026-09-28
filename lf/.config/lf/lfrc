@@ -12,7 +12,10 @@ set cleaner ~/.config/lf/clean
 cmd open ${{
     case "$f" in
         *.md | *.markdown | *.txt)
-            command -v dawn >/dev/null && exec dawn -p "$f" ;;
+            # dawn theme follows the macOS appearance, like kitty does
+            theme=light
+            [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ] && theme=dark
+            command -v dawn >/dev/null && exec dawn -p -t "$theme" "$f" ;;
     esac
     case "$(file -Lb --mime-type -- "$f")" in
         text/* | application/json | application/javascript | application/xml | application/x-shellscript | inode/x-empty)
