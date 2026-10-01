@@ -1,5 +1,35 @@
 {
   "$schema" : "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "actions" : {
+    "workspace" : {
+      "title" : "🧠",
+      "type" : "workspace",
+      "workspace" : {
+        "cwd" : "~/brain/notes",
+        "layout" : {
+          "pane" : {
+            "surfaces" : [
+              {
+                "focus" : true,
+                "name" : "notes",
+                "type" : "terminal"
+              },
+              {
+                "cwd" : "~/brain",
+                "type" : "terminal"
+              }
+            ]
+          }
+        },
+        "name" : "🧠"
+      }
+    }
+  },
+  "activePaneBorderColor" : "#5a9bff",
+  "customSidebars" : {
+    "renderer" : "inProcess"
+  },
+  "paneBorderColor" : "#1a2440",
   "schemaVersion" : 1,
   "shortcuts" : {
     "bindings" : {
@@ -24,30 +54,11 @@
       }
     }
   },
+  "ui" : {
+    "surfaceTabBar" : {
+      "buttons" : [
 
-  "actions": {
-    "workspace": {
-      "title" : "🧠",
-      "type" : "workspace",
-      "workspace" : {
-        "cwd" : "~/brain/notes",
-        "layout" : {
-          "pane" : {
-            "surfaces" : [
-              {
-                "focus" : true,
-                "name" : "notes",
-                "type" : "terminal"
-              },
-              {
-                "cwd" : "~/brain",
-                "type" : "terminal"
-              }
-            ]
-          }
-        },
-        "name" : "🧠"
-      }
+      ]
     }
   }
 }
