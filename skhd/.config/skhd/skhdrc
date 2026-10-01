@@ -2,3 +2,11 @@
 
 # opt+space: show/hide kitty
 alt - space : ~/.config/kitty/toggle-kitty.sh
+
+# cmux: step background opacity (kitty-style); other apps get the key as-is.
+cmd + shift - up   [ "cmux" : ~/.config/cmux/cmux-opacity +0.05
+                     *      ~ ]
+cmd + shift - down [ "cmux" : ~/.config/cmux/cmux-opacity -0.05
+                     *      ~ ]
+cmd + shift - 0    [ "cmux" : ~/.config/cmux/cmux-opacity 0.90
+                     *      ~ ]

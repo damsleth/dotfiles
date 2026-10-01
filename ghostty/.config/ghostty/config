@@ -12,7 +12,7 @@ keybind = global:alt+space=toggle_visibility
 
 # >>> ghostty-installer:hotkey-transparency (managed: do not edit between markers) >>>
 # Transparency toggle (like iTerm's cmd+u)
-background-opacity = 0.90
+background-opacity = 1.00
 background-blur-radius = 10
 keybind = super+u=toggle_background_opacity
 # <<< ghostty-installer:hotkey-transparency <<<
@@ -25,7 +25,18 @@ font-family = "Hack Nerd Font Mono"
 # font-family = "CascaydiaCove Nerd Font"
 font-size = 18
 
-theme = light:Alabaster,dark:12-bit Rainbow
-macos-titlebar-style = tabs
+theme = light:Adwaita,dark:12-bit Rainbow
+# macos-titlebar-style = tabs
 window-padding-y = 10
 window-padding-x = 10
+
+# Ported from kitty.conf (cmux reads these too)
+cursor-style = bar
+copy-on-select = clipboard
+mouse-hide-while-typing = true
+confirm-close-surface = false
+unfocused-split-opacity = 0.7
+
+# do these even do anything?
+macos-window-buttons = hidden
+macos-titlebar-style = hidden

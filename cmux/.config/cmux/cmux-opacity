@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Step or set background-opacity in the Ghostty config, then reload cmux.
+# Usage: cmux-opacity +0.05 | -0.05 | 0.9
+# Bound in skhdrc (cmux only). cmux has no runtime opacity action and ignores
+# toggle_background_opacity, so this edits the shared config and reloads.
+# Steps arriving within BATCH seconds are summed into one write + reload.
+
+set -euo pipefail
+
+BATCH=0.5
+arg="${1:?usage: cmux-opacity +0.05|-0.05|<value>}"
+cfg="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config"
+state="${TMPDIR:-/tmp}/cmux-opacity"
+mkdir -p "$state"
+
+apply() {  # $1 = +delta | -delta | absolute
+  local cur new tmp
+  cur=$(awk -F= '/^[[:space:]]*background-opacity[[:space:]]*=/ { v=$2 } END { gsub(/[[:space:]]/, "", v); print (v == "" ? 1 : v) }' "$cfg")
+  case "$1" in
+    +*|-*) new=$(awk -v c="$cur" -v d="$1" 'BEGIN { print c + d }') ;;
+    *)     new="$1" ;;
+  esac
+  new=$(awk -v n="$new" 'BEGIN { if (n < 0.1) n = 0.1; if (n > 1) n = 1; printf "%.2f", n }')
+  [[ "$new" == "$(awk -v c="$cur" 'BEGIN { printf "%.2f", c }')" ]] && return 0
+
+  tmp=$(mktemp)
+  if grep -qE '^[[:space:]]*background-opacity[[:space:]]*=' "$cfg"; then
+    awk -v n="$new" '/^[[:space:]]*background-opacity[[:space:]]*=/ { print "background-opacity = " n; next } { print }' "$cfg" > "$tmp"
+  else
+    { cat "$cfg"; echo "background-opacity = $new"; } > "$tmp"
+  fi
+  # cat > instead of mv: the config is a stow symlink, keep it one.
+  cat "$tmp" > "$cfg"
+  rm -f "$tmp"
+
+  # Inside cmux the socket works; from skhd it's refused, so press cmux's
+  # reloadConfiguration shortcut (cmd+shift+comma) instead.
+  cmux reload-config >/dev/null 2>&1 || skhd -k "cmd + shift - 0x2B"
+}
+
+case "$arg" in
+  +*|-*) ;;
+  *) apply "$arg"; exit 0 ;;
+esac
+
+echo "$arg" >> "$state/pending"
+# First caller in the window becomes the leader; the rest just queue a delta.
+mkdir "$state/lock" 2>/dev/null || exit 0
+sleep "$BATCH"
+rmdir "$state/lock"
+mv "$state/pending" "$state/taking" 2>/dev/null || exit 0
+sum=$(awk '{ s += $1 } END { printf "%+.2f", s }' "$state/taking")
+rm -f "$state/taking"
+apply "$sum"
