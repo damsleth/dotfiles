@@ -34,7 +34,7 @@ for f in bootstrap.sh _scripts/*.sh; do
         printf '%s\n' "$syntax_out" >&2
     fi
 done
-for f in zsh/.zshrc zsh/.zsh/*.zsh; do
+for f in zsh/.zshrc zsh/.config/zsh/*.zsh; do
     [[ -f "$f" ]] || continue
     if ! syntax_out="$(zsh -n "$f" 2>&1)"; then
         fail "zsh syntax: $f"
@@ -84,8 +84,8 @@ for pkg in $catalog; do
         --no-folding \
         --ignore='\.DS_Store$' \
         --ignore='^plugins$' \
-        --ignore='^\.zsh/local\.zsh$' \
-        --ignore='^\.zsh/secrets\.zsh$' \
+        --ignore='^\.config/zsh/local\.zsh$' \
+        --ignore='^\.config/zsh/secrets\.zsh$' \
         "$pkg" >/dev/null 2>&1 || fail "stow simulation failed: $pkg"
 done
 pass "stow simulation"
