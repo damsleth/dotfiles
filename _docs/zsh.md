@@ -31,23 +31,11 @@ No framework, no Oh-My-Zsh. Just plain zsh, lazy-loading where it matters, and a
 
 ## Install
 
-```sh
-git clone https://github.com/damsleth/dotfiles ~/code/dotfiles
-mkdir -p ~/.config
-ln -s ~/code/dotfiles/zsh/.zsh ~/.config/zsh
-ln -s ~/code/dotfiles/zsh/.zshrc ~/.zshrc
-```
+Stow links the package into `$HOME`. See [`zsh/README.md`](../zsh/README.md) for the
+file map, the private overlay (`local.zsh`, `secrets.zsh`) and the stow commands.
 
 Set `DEFAULT_USER` at the top of [`_main.zsh`](_main.zsh) to your own username, then open
 a new shell. Edit the config any time with `zshconfig` and reload with `reload`.
-
-For a private overlay (see [`_main.zsh`](_main.zsh)'s note on `local.zsh`), symlink your
-private file to `local.zsh` *inside this repo's `.zsh/` dir* — it's gitignored, and the
-single `~/.config/zsh` symlink above picks it up automatically:
-
-```sh
-ln -s /path/to/your/private/local.zsh ~/code/dotfiles/zsh/.zsh/local.zsh
-```
 
 Optional extras the config will use if present (and silently skip if not): `starship`,
 `fzf`, `fnm`, `autojump`, `eza`, `bat`, `op` (1Password CLI), and a checkout of

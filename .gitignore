@@ -62,11 +62,6 @@ ssh/.ssh/*
 **/.config/*/__pycache__/
 
 # Zsh internals — generated/runtime files
-zsh/.zsh/.env
-zsh/.zsh/plugins/*
-!zsh/.zsh/plugins/.gitkeep
-zsh/.zsh/__pycache__/
-zsh/.zsh/dtop/target/
 *.zwc
 *.zcompdump*
 .zsh_history

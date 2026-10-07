@@ -42,12 +42,12 @@ private/
 ├── <tool>/                         # personal tool configs (own emails/tenants)
 ├── ssh/.ssh/config.d/personal       # real hosts/IPs/users (Include'd by public config)
 ├── ssh/.ssh/{*.pub,kswon-askpass.sh}# identity material + helpers
-├── zsh/.zsh/local.zsh               # host-specific / secrets-touching shell funcs
+├── zsh/.config/zsh/local.zsh               # host-specific / secrets-touching shell funcs
 └── _scripts/{repos.txt,local-tools.txt,tools-restore.sh}
 ```
 
 The public side hooks it without leaking anything: `ssh/.ssh/config` does
-`Include ~/.ssh/config.d/*`, `zsh/.zsh/_main.zsh` sources `~/.config/zsh/local.zsh`
+`Include ~/.ssh/config.d/*`, `zsh/.config/zsh/_main.zsh` sources `~/.config/zsh/local.zsh`
 if present, and `clone-repos.sh` resolves `repos.txt` from the overlay. None of
 those hooks reference real values. **Never move overlay content back into a
 tracked package.**
