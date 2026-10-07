@@ -254,7 +254,7 @@ Anything personal lives in a **private overlay** — a sibling directory with th
 same stow layout that's gitignored here (`./private/`, or `$DOTFILES_PRIVATE`).
 If present, `bootstrap.sh` stows it *on top of* the public packages. The public
 side hooks it cleanly: `ssh/.ssh/config` does `Include ~/.ssh/config.d/*`,
-`zsh/.zsh/_main.zsh` sources `~/.config/zsh/local.zsh` if it exists, and
+`zsh/.config/zsh/_main.zsh` sources `~/.config/zsh/local.zsh` if it exists, and
 `clone-repos.sh` reads its repo list from the overlay. You don't need the
 overlay to use these dotfiles — it's just where my private bits go.
 
