@@ -230,11 +230,24 @@ Helper scripts (executable, not stow packages):
   `_scripts/repos.txt`, and no-ops if none exist. See `_scripts/repos.txt.example`
   for the format. Supports `--pull` and `--dry-run`. Requires working SSH agent.
 
-- `_scripts/binlink.sh` - interactive picker for symlinking an executable
-  from a `~/code` repo into `~/.local/bin`. Supports link / unlink / list.
-  This is the manual counterpart to the per-project venv + binlink pattern
-  used by private local tools. Itself symlinked to
-  `~/.local/bin/binlink`.
+- `_scripts/binlink.py` - arrow-key TUI (same keys as `freespace -c`) for
+  symlinking scripts and binaries from a saved list of source folders into
+  `~/.local/bin`: space links/unlinks, `r` renames, `a`/`d` add/remove a
+  folder, enter applies. Recognises +x, `#!` and `.sh` files; scans build
+  output too (cargo `target/<profile>/` top level, venv `bin/`). Folders live
+  in `~/.config/binlink/config.json`, seeded on first run from existing links.
+  Never overwrites a name it didn't create. `-l` lists managed links. Self-check:
+  `_scripts/test-binlink.sh`. Itself symlinked to `~/.local/bin/binlink`.
+
+- `_scripts/freespace.py` - reclaim disk space from caches, trash and dev
+  build artifacts; `-n` dry run, `-c` config TUI (`~/.config/freespace/`).
+  Self-check: `_scripts/test-freespace.sh`. Symlinked to `~/.local/bin/freespace`.
+
+- `_scripts/repo-sync.sh` - status report for every git repo under `~/code`,
+  `git pull --ff-only` on the clean ones; `-c` picks which repos to sync.
+  Config `~/.config/repo-sync/config.json`, state
+  `~/.local/state/repo-sync/state.json`. Self-check: `_scripts/test-repo-sync.sh`.
+  Symlinked to `~/.local/bin/repo-sync`.
 
 - `_scripts/pull-all.sh` - parallel `git pull --ff-only` across every repo
   under `~/code`. Skips non-git dirs, detached HEAD, missing upstream, and
