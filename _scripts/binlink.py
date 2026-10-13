@@ -370,7 +370,7 @@ def _interactive(cfg: dict) -> list[str] | None:
 
             elif key == "r" and isinstance(row, ToolRow):
                 new = _prompt_inline(f"Link {os.path.basename(row.path)} as", row.name)
-                why = new and new != row.name and taken(rows, row, new)
+                why = new and taken(rows, row, new)
                 if not new or "/" in new or new.startswith("."):
                     message = "Rename cancelled."
                 elif why:

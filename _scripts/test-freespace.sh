@@ -79,7 +79,7 @@ mkdir -p "$HOME/code/org/group/app/node_modules" "$HOME/code/eggonly/x.egg-info"
   "$HOME/code/dup/node_modules/pkg/__pycache__"
 touch "$HOME/afile"
 printf '{"scan_roots":["~/code","~/code/dup"],"skip_projects":["~/code/keep","~/gone"]}\n' >"$CFG"
-python3 -I - "$S" >/dev/null <<'PY'
+python3 -I -B - "$S" >/dev/null <<'PY'
 import io, json, os, sys
 from importlib.machinery import SourceFileLoader
 fs = sys.modules["fs"] = __import__("types").ModuleType("fs"); SourceFileLoader("fs", sys.argv[1]).exec_module(fs)   # load_module is gone in 3.15
@@ -164,7 +164,7 @@ PY
 
 # config TUI: deleting every scan root persists as [], "a" refuses ~ and re-adds under the "scan roots" separator
 printf '{"scan_roots":["~/code","~/Downloads"]}\n' >"$CFG"
-python3 -I - "$S" >/dev/null <<'PY'
+python3 -I -B - "$S" >/dev/null <<'PY'
 import sys
 from importlib.machinery import SourceFileLoader
 fs = sys.modules["fs"] = __import__("types").ModuleType("fs"); SourceFileLoader("fs", sys.argv[1]).exec_module(fs)   # load_module is gone in 3.15
@@ -197,7 +197,7 @@ PY
 # scan roots toggle like categories: deselecting a root keeps everything under it (saved as the root itself,
 # so later projects are kept too); one project back on saves the others individually; selecting it clears them
 printf '{"scan_roots":["~/code"]}\n' >"$CFG"
-python3 -I - "$S" >/dev/null <<'PY'
+python3 -I -B - "$S" >/dev/null <<'PY'
 import sys
 from importlib.machinery import SourceFileLoader
 fs = sys.modules["fs"] = __import__("types").ModuleType("fs"); SourceFileLoader("fs", sys.argv[1]).exec_module(fs)   # load_module is gone in 3.15
