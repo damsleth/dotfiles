@@ -24,7 +24,7 @@ ln -s /usr/bin/python3 src/py/.venv/bin/python
 ln -s "$T/src/scripts/b.py" bin/bee                       # existing link: seeds ~/src/scripts
 printf 'mine\n' > bin/a                                    # takes a.sh's default name
 
-python3 -I - "$S" >/dev/null <<'PY'
+python3 -I -B - "$S" >/dev/null <<'PY'
 import os, sys, types
 from importlib.machinery import SourceFileLoader
 b = sys.modules["b"] = types.ModuleType("b"); SourceFileLoader("b", sys.argv[1]).exec_module(b)
@@ -43,6 +43,7 @@ def drive(keys, prompts=()):
     return b._interactive(b.load_config())
 
 # rows: 0 folder, 1 a.sh (off, "a" taken), 2 b.py (linked as bee), 3 tool (off)
+assert drive(["j", "r", "\r"], prompts=["a"]) == []                   # r + enter on a taken default: refused
 assert drive([" ", "j", " ", "q"]) is None and not os.path.lexists(H + "/bin/tool")   # q applies nothing
 assert os.path.islink(H + "/bin/bee")
 log = drive(["j", " ", "r", "j", " ", "j", " ", "a", "a", "\r"], prompts=["aa", "~/src/rs", "/nope"])
