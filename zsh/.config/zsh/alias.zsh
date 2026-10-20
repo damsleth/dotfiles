@@ -24,6 +24,7 @@ dark() {
   wallpaper 'Black' &&
   echo 'dark mode enabled'
 }
+
 alias decode-jwt="jwt-decode" # decode JWT tokens
 alias dl="cd ~/Downloads" # go to Downloads
 alias edge='open -a "Microsoft Edge"' # open Edge browser
@@ -33,6 +34,16 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo 
 alias f="fzf -e" # fuzzy finder
 alias g="git status" # git
 alias gaa="git add ." # git add all
+
+gca() {
+  if [[ -z "$1" ]]; then
+    echo "specify commit message"
+    return 1
+  fi
+
+  git add . && git commit -m "$1"
+}
+
 alias gateway="netstat -nr | grep default | grep en0 | tr -s ' ' | cut -d' ' -f2" # get default gateway for en0
 alias gco="git checkout" # git checkout
 alias gcob="git checkout -b" # git checkout new branch
@@ -49,8 +60,10 @@ alias kittyconf="code ~/.config/kitty/kitty.conf" # edit Kitty config
 alias lf="lfcd" # launch lf file manager and cd
 alias lfconfig="code ~/.config/lf" # edit lf config
 alias li='ipl | rev | cut -d"." -f2- | rev' # get local subnet prefix
+
 light() {
   dark-mode off &&
+  wallpaper 'Aerial 4' &&
   echo 'light mode enabled'
 }
 
