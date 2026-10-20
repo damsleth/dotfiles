@@ -290,6 +290,25 @@ input="$1"
 input_lc=$(printf '%s' "$input" | tr '[:upper:]' '[:lower:]')
 colors="black|cyan|silver|teal|stone|plum|ocher|gold|electric blue"
 
+# Aerial 4 is an app extension, not a file, so osascript can't set it:
+# copy each screen's Idle (screensaver) choice into its Desktop slot instead.
+if [[ "$input_lc" == "aerial 4" ]]; then
+    python3 -I - "$HOME/Library/Application Support/com.apple.wallpaper/Store/Index.plist" <<'PY' && killall WallpaperAgent
+import plistlib, sys
+f = sys.argv[1]
+p = plistlib.load(open(f, "rb"))
+def walk(d):
+    for v in d.values():
+        if isinstance(v, dict):
+            if "Desktop" in v and "Idle" in v:
+                v["Desktop"]["Content"] = v["Idle"]["Content"]
+            walk(v)
+walk(p)
+plistlib.dump(p, open(f, "wb"), fmt=plistlib.FMT_BINARY)
+PY
+    return
+fi
+
 if [[ "$input_lc" =~ ^($colors)$ ]]; then
     # capitalize only the first letter of the normalized color (e.g. "electric blue" -> "Electric blue")
     first_char=$(printf '%s' "${input_lc:0:1}" | tr '[:lower:]' '[:upper:]')
