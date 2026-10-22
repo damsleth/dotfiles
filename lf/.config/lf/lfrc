@@ -30,7 +30,7 @@ map <backspace> trash
 # Scroll text previews (markdown, code, JSON): ctrl+j/k one line, J/K half
 # a pane. lf can't
 # scroll a preview itself, so this keeps the file and a line offset in a
-# state file the previewer reads, then reloads to redraw it.
+# state file the previewer reads, then has lf redraw the preview.
 # Arg: a line count, or half / -half for half a pane.
 cmd preview-scroll &{{
     state="${TMPDIR:-/tmp}/lf-preview-scroll"
@@ -45,7 +45,8 @@ cmd preview-scroll &{{
     n=$((n + d))
     [ "$n" -lt 0 ] && n=0
     printf '%s\n%s\n' "$f" "$n" > "$state"
-    lf -remote "send $id reload"
+    # select (not reload) re-runs just the preview; reload re-reads every pane
+    lf -remote "send $id select \"$f\""
 }}
 map <c-j> preview-scroll 1
 map <c-k> preview-scroll -1
