@@ -27,12 +27,10 @@ cmd trash ${{
 map <backspace2> trash
 map <backspace> trash
 
-# Scroll text previews (markdown, code, JSON): ctrl+j/k one line,
-# ctrl+shift+j/k half a pane. Terminals send the same byte for ctrl+j and
-# ctrl+shift+j, so kitty.conf and the ghostty config remap ctrl+shift+j/k to
-# alt+j/k, which lf can tell apart. lf can't scroll a preview itself, so this
-# keeps the file and a line offset in a state file the previewer reads, then
-# reloads to redraw it. Arg: a line count, or half / -half.
+# Scroll text previews (markdown, code, JSON): ctrl+j/k one line. lf can't
+# scroll a preview itself, so this keeps the file and a line offset in a
+# state file the previewer reads, then reloads to redraw it.
+# Arg: a line count, or half / -half for half a pane.
 cmd preview-scroll &{{
     state="${TMPDIR:-/tmp}/lf-preview-scroll"
     { read -r p; read -r n; } < "$state" 2>/dev/null
@@ -50,5 +48,3 @@ cmd preview-scroll &{{
 }}
 map <c-j> preview-scroll 1
 map <c-k> preview-scroll -1
-map <a-j> preview-scroll half
-map <a-k> preview-scroll -half
