@@ -7,7 +7,7 @@ x="$4"
 y="$5"
 
 # Filter for text previews: ctrl+j/k (preview-scroll in lfrc) store the file
-# and a half-page count in $state; skip that far in, clamped so scrolling
+# and a line offset in $state; skip that far in, clamped so scrolling
 # stops at the last page. Unscrolled output streams so lf can cut big files
 # short; once scrolled it's buffered to count lines (slow on huge files).
 scroll() {
@@ -15,14 +15,13 @@ scroll() {
     { read -r p; read -r n; } < "$state" 2>/dev/null
     [ "$p" = "$file" ] && [ "${n:-0}" -gt 0 ] || { cat; return; }
     out=$(cat)
-    half=$(( (h + 1) / 2 ))
-    max=$(( ($(printf '%s\n' "$out" | wc -l) - h + half - 1) / half ))
+    max=$(( $(printf '%s\n' "$out" | wc -l) - h ))
     [ "$max" -lt 0 ] && max=0
     if [ "$n" -gt "$max" ]; then
         n=$max
         printf '%s\n%s\n' "$file" "$n" > "$state"
     fi
-    printf '%s\n' "$out" | tail -n +$((n * half + 1))
+    printf '%s\n' "$out" | tail -n +$((n + 1))
 }
 
 # Markdown/prose: dawn's rendered view. Matched on extension because

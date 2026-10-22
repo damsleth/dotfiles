@@ -20,6 +20,11 @@ keybind = super+u=toggle_background_opacity
 # cmux theme picker (cmux reads this config; in plain Ghostty it just errors)
 keybind = ctrl+super+t=text:cmux themes\x0d
 
+# ctrl+shift+j/k → alt+j/k: lf scrolls its preview half a pane on these
+# (ctrl+j/k scroll one line); plain ctrl+shift+j sends the same byte as ctrl+j
+keybind = ctrl+shift+j=text:\x1bj
+keybind = ctrl+shift+k=text:\x1bk
+
 font-family = "Hack Nerd Font Mono"
 # font-family = "DepartureMono Nerd Font"
 # font-family = "CascaydiaCove Nerd Font"
