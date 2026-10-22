@@ -6,6 +6,17 @@ local function apply()
   for _, g in ipairs({ "Normal", "NormalNC", "NormalFloat", "SignColumn", "LineNr", "EndOfBuffer" }) do
     vim.api.nvim_set_hl(0, g, { bg = "none" })
   end
+  -- The "vim" scheme's DiffText/ColorColumn are loud reds and blues, and
+  -- render-markdown borrows them for headings and code. Calm greys instead.
+  if vim.o.background == "dark" then
+    for i = 1, 6 do
+      vim.api.nvim_set_hl(0, "RenderMarkdownH" .. i, { fg = "#87afd7", bold = true })
+      vim.api.nvim_set_hl(0, "RenderMarkdownH" .. i .. "Bg", { bg = i == 1 and "#303030" or "#262626" })
+    end
+    vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "#1c1c1c" })
+    vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { fg = "#d7d7af", bg = "#262626" })
+    vim.api.nvim_set_hl(0, "@markup.quote", { fg = "#a8a8a8", italic = true })
+  end
 end
 
 -- Toggling the kitty theme mid-session: nvim re-queries on :set background& only,
