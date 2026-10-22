@@ -1,5 +1,22 @@
 set hidden true
 
+# Size the parent and current columns to their longest name, clamped to
+# 10..width/4, and give the preview the rest. lf takes ratios as
+# proportions, so plain column counts work.
+# ponytail: refit on cd only; a resize or hidden toggle scales the old split
+# until the next cd.
+cmd on-cd &{{
+    fit() {
+        ls -A -- "$1" 2>/dev/null | awk -v lo=10 -v hi=$((lf_width / 4)) '
+            length > m { m = length }
+            END { m += 3; print (m < lo ? lo : m > hi ? hi : m) }'
+    }
+    p=$(fit ..)
+    c=$(fit .)
+    lf -remote "send $id set ratios $p:$c:$((lf_width - p - c))"
+}}
+cmd on-init :on-cd
+
 # High-res image previews via the Kitty graphics protocol (Ghostty supports it).
 set previewer ~/.config/lf/preview
 set cleaner ~/.config/lf/clean
