@@ -21,6 +21,9 @@ printf 'dep\n' > src/rs/target/debug/rsbin.d
 touch src/py/.venv/pyvenv.cfg
 for f in bin/mycli bin/pip lib/site.py; do printf '#!/x/python\n' > "src/py/.venv/$f"; chmod +x "src/py/.venv/$f"; done
 ln -s /usr/bin/python3 src/py/.venv/bin/python
+mkdir -p src/pj/.venv/bin && touch src/pj/.venv/pyvenv.cfg  # pyproject [project.scripts] narrows bin/ to its own
+printf '[project.scripts]\npj = "pj:main"\n' > src/pj/pyproject.toml
+for f in pj ruff; do printf '#!/x/python\n' > "src/pj/.venv/bin/$f"; chmod +x "src/pj/.venv/bin/$f"; done
 ln -s "$T/src/scripts/b.py" bin/bee                       # existing link: seeds ~/src/scripts
 printf 'mine\n' > bin/a                                    # takes a.sh's default name
 
@@ -34,6 +37,7 @@ rel = lambda ps: sorted(os.path.relpath(p, H + "/src") for p in ps)
 assert rel(b.scan("~/src/scripts")) == ["scripts/a.sh", "scripts/b.py", "scripts/tool"], b.scan("~/src/scripts")
 assert rel(b.scan("~/src/rs")) == ["rs/target/debug/rsbin"], b.scan("~/src/rs")
 assert rel(b.scan("~/src/py")) == ["py/.venv/bin/mycli"], b.scan("~/src/py")
+assert rel(b.scan("~/src/pj")) == ["pj/.venv/bin/pj"], b.scan("~/src/pj")
 assert b.load_config() == {"folders": ["~/src/scripts"]}, b.load_config()
 
 b._render = lambda *a, **k: 0
