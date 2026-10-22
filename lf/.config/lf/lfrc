@@ -1,21 +1,24 @@
 set hidden true
 
-# Size the parent and current columns to their longest name, clamped to
-# 10..width/4, and give the preview the rest. lf takes ratios as
-# proportions, so plain column counts work.
-# ponytail: refit on cd only; a resize or hidden toggle scales the old split
-# until the next cd.
+# Size the parent and current columns to their longest shown name (dotfiles
+# only while hidden is on), clamped to 10..width/4, and give the preview the
+# rest. lf takes ratios as proportions, so plain column counts work.
+# ponytail: refit on cd and zh only; a resize scales the old split until the
+# next cd.
 cmd on-cd &{{
+    a=
+    [ "$lf_hidden" = true ] && a=-A
     fit() {
-        ls -A -- "$1" 2>/dev/null | awk -v lo=10 -v hi=$((lf_width / 4)) '
+        ls $a -- "$1" 2>/dev/null | awk -v lo=10 -v hi=$((lf_width / 4)) '
             length > m { m = length }
-            END { m += 3; print (m < lo ? lo : m > hi ? hi : m) }'
+            END { m += 4; print (m < lo ? lo : m > hi ? hi : m) }'
     }
     p=$(fit ..)
     c=$(fit .)
     lf -remote "send $id set ratios $p:$c:$((lf_width - p - c))"
 }}
 cmd on-init :on-cd
+map zh :set hidden!; on-cd
 
 # High-res image previews via the Kitty graphics protocol (Ghostty supports it).
 set previewer ~/.config/lf/preview
