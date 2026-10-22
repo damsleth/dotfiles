@@ -4,19 +4,10 @@ set hidden true
 set previewer ~/.config/lf/preview
 set cleaner ~/.config/lf/clean
 
-# l / <enter> on a file: markdown/prose opens in dawn's read-only reader
-# (j/k, ctrl+d/ctrl+u, q/esc back to lf where you left off), other text in
-# full-screen vim (great for scrolling long JSON, etc.), everything else via
-# the macOS default app. Directories still enter normally since lf's open
-# builtin handles those itself.
+# l / <enter> on a file: text (markdown included) opens in full-screen vim,
+# everything else via the macOS default app. Directories still enter
+# normally since lf's open builtin handles those itself.
 cmd open ${{
-    case "$f" in
-        *.md | *.markdown | *.txt)
-            # dawn theme follows the macOS appearance, like kitty does
-            theme=light
-            [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ] && theme=dark
-            command -v dawn >/dev/null && exec dawn -p -t "$theme" "$f" ;;
-    esac
     case "$(file -Lb --mime-type -- "$f")" in
         text/* | application/json | application/javascript | application/xml | application/x-shellscript | inode/x-empty)
             "${EDITOR:-nvim}" "$f" ;;
@@ -35,3 +26,18 @@ cmd trash ${{
 # backspace macOS terminals send; <backspace> covers the ^H variant.
 map <backspace2> trash
 map <backspace> trash
+
+# ctrl+j / ctrl+k scroll the markdown (dawn) preview half a pane down/up.
+# lf can't scroll a preview itself, so this keeps the file and a half-page
+# count in a state file the previewer reads, then reloads to redraw it.
+cmd preview-scroll &{{
+    state="${TMPDIR:-/tmp}/lf-preview-scroll"
+    { read -r p; read -r n; } < "$state" 2>/dev/null
+    [ "$p" = "$f" ] || n=0
+    n=$((n + $1))
+    [ "$n" -lt 0 ] && n=0
+    printf '%s\n%s\n' "$f" "$n" > "$state"
+    lf -remote "send $id reload"
+}}
+map <c-j> preview-scroll 1
+map <c-k> preview-scroll -1

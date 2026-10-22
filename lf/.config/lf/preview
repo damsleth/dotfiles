@@ -22,9 +22,23 @@ case "$file" in
             # can't query the background here, so follow it too.
             theme=light
             [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ] && theme=dark
-            DAWN_COLS="$w" DAWN_TEXT_SIZING=$sizing dawn -P -t "$theme" -- "$file" < /dev/null |
-                sed "s/${e}]8;;[^${e}]*${e}\\\\//g"
-            exit 0
+            out=$(DAWN_COLS="$w" DAWN_TEXT_SIZING=$sizing dawn -P -t "$theme" -- "$file" < /dev/null |
+                sed "s/${e}]8;;[^${e}]*${e}\\\\//g")
+            # ctrl+j/k (preview-scroll in lfrc) store the file and a
+            # half-page count here. Clamp so scrolling stops at the last page.
+            state="${TMPDIR:-/tmp}/lf-preview-scroll"
+            { read -r p; read -r n; } < "$state" 2>/dev/null
+            [ "$p" = "$file" ] || n=0
+            half=$(( (h + 1) / 2 ))
+            max=$(( ($(printf '%s\n' "$out" | wc -l) - h + half - 1) / half ))
+            [ "$max" -lt 0 ] && max=0
+            if [ "$n" -gt "$max" ]; then
+                n=$max
+                printf '%s\n%s\n' "$file" "$n" > "$state"
+            fi
+            printf '%s\n' "$out" | tail -n +$((n * half + 1))
+            # Non-zero: don't cache, so a scroll redraw re-runs this.
+            exit 1
         fi
         ;;
 esac
