@@ -6,6 +6,25 @@ h="$3"
 x="$4"
 y="$5"
 
+# Filter for text previews: ctrl+j/k (preview-scroll in lfrc) store the file
+# and a half-page count in $state; skip that far in, clamped so scrolling
+# stops at the last page. Unscrolled output streams so lf can cut big files
+# short; once scrolled it's buffered to count lines (slow on huge files).
+scroll() {
+    state="${TMPDIR:-/tmp}/lf-preview-scroll"
+    { read -r p; read -r n; } < "$state" 2>/dev/null
+    [ "$p" = "$file" ] && [ "${n:-0}" -gt 0 ] || { cat; return; }
+    out=$(cat)
+    half=$(( (h + 1) / 2 ))
+    max=$(( ($(printf '%s\n' "$out" | wc -l) - h + half - 1) / half ))
+    [ "$max" -lt 0 ] && max=0
+    if [ "$n" -gt "$max" ]; then
+        n=$max
+        printf '%s\n%s\n' "$file" "$n" > "$state"
+    fi
+    printf '%s\n' "$out" | tail -n +$((n * half + 1))
+}
+
 # Markdown/prose: dawn's rendered view. Matched on extension because
 # `file` calls markdown text/plain. DAWN_COLS lays it out for the pane and
 # keeps dawn from probing the tty lf is reading; sed drops OSC 8 hyperlinks,
@@ -22,21 +41,8 @@ case "$file" in
             # can't query the background here, so follow it too.
             theme=light
             [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = Dark ] && theme=dark
-            out=$(DAWN_COLS="$w" DAWN_TEXT_SIZING=$sizing dawn -P -t "$theme" -- "$file" < /dev/null |
-                sed "s/${e}]8;;[^${e}]*${e}\\\\//g")
-            # ctrl+j/k (preview-scroll in lfrc) store the file and a
-            # half-page count here. Clamp so scrolling stops at the last page.
-            state="${TMPDIR:-/tmp}/lf-preview-scroll"
-            { read -r p; read -r n; } < "$state" 2>/dev/null
-            [ "$p" = "$file" ] || n=0
-            half=$(( (h + 1) / 2 ))
-            max=$(( ($(printf '%s\n' "$out" | wc -l) - h + half - 1) / half ))
-            [ "$max" -lt 0 ] && max=0
-            if [ "$n" -gt "$max" ]; then
-                n=$max
-                printf '%s\n%s\n' "$file" "$n" > "$state"
-            fi
-            printf '%s\n' "$out" | tail -n +$((n * half + 1))
+            DAWN_COLS="$w" DAWN_TEXT_SIZING=$sizing dawn -P -t "$theme" -- "$file" < /dev/null |
+                sed "s/${e}]8;;[^${e}]*${e}\\\\//g" | scroll
             # Non-zero: don't cache, so a scroll redraw re-runs this.
             exit 1
         fi
@@ -61,10 +67,11 @@ case "$(file -Lb --mime-type -- "$file")" in
             # stays readable in both light and dark Ghostty themes (the
             # bundled defaults assume a dark background).
             bat --color=always --style=plain --paging=never \
-                --theme=ansi --wrap=character --terminal-width="$w" -- "$file"
+                --theme=ansi --wrap=character --terminal-width="$w" -- "$file" | scroll
         else
-            cat -- "$file"
+            cat -- "$file" | scroll
         fi
+        exit 1
         ;;
     *)
         file -Lb -- "$file"

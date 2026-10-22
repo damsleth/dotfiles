@@ -27,7 +27,7 @@ cmd trash ${{
 map <backspace2> trash
 map <backspace> trash
 
-# ctrl+j / ctrl+k scroll the markdown (dawn) preview half a pane down/up.
+# ctrl+j / ctrl+k scroll text previews (markdown, code, JSON) half a pane.
 # lf can't scroll a preview itself, so this keeps the file and a half-page
 # count in a state file the previewer reads, then reloads to redraw it.
 cmd preview-scroll &{{
