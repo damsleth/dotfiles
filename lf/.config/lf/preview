@@ -6,22 +6,43 @@ h="$3"
 x="$4"
 y="$5"
 
-# Filter for text previews: ctrl+j/k (preview-scroll in lfrc) store the file
-# and a line offset in $state; skip that far in, clamped so scrolling
-# stops at the last page. Unscrolled output streams so lf can cut big files
-# short; once scrolled it's buffered to count lines (slow on huge files).
-scroll() {
-    state="${TMPDIR:-/tmp}/lf-preview-scroll"
-    { read -r p; read -r n; } < "$state" 2>/dev/null
-    [ "$p" = "$file" ] && [ "${n:-0}" -gt 0 ] || { cat; return; }
-    out=$(cat)
-    max=$(( $(printf '%s\n' "$out" | wc -l) - h ))
+# Text preview scrolling: ctrl+j/k and J/K (preview-scroll in lfrc) store
+# the file and a line offset in $state. Once scrolled, the rendered preview
+# is kept in $cache so each further scroll only reads it back: lf blanks the
+# pane while the previewer runs, so a re-render per keypress would blink.
+state="${TMPDIR:-/tmp}/lf-preview-scroll"
+cache="$state.out"
+{ read -r p; read -r n; } < "$state" 2>/dev/null
+[ "$p" = "$file" ] && [ "${n:-0}" -gt 0 ] && scrolled=1
+
+# Print the page at offset n from $cache, clamped so scrolling stops at the
+# last page.
+page() {
+    max=$(( $(wc -l < "$cache") - h ))
     [ "$max" -lt 0 ] && max=0
     if [ "$n" -gt "$max" ]; then
         n=$max
         printf '%s\n%s\n' "$file" "$n" > "$state"
     fi
-    printf '%s\n' "$out" | tail -n +$((n + 1))
+    tail -n +$((n + 1)) "$cache"
+}
+
+# Cache is valid for this file at this width, unless the file changed since.
+# ponytail: not keyed on the dawn theme; a light/dark switch mid-scroll keeps
+# the old colours until the file is scrolled from the top again.
+if [ -n "$scrolled" ] && [ "$cache" -nt "$file" ] &&
+    [ "$(cat "$cache.key" 2>/dev/null)" = "$file $w" ]; then
+    page
+    exit 1
+fi
+
+# Filter for text previews: unscrolled output streams so lf can cut big
+# files short; scrolled output goes to $cache first.
+scroll() {
+    [ -n "$scrolled" ] || { cat; return; }
+    cat > "$cache"
+    printf '%s\n' "$file $w" > "$cache.key"
+    page
 }
 
 # Markdown/prose: dawn's rendered view. Matched on extension because
