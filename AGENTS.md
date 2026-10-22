@@ -52,6 +52,11 @@ if present, and `clone-repos.sh` resolves `repos.txt` from the overlay. None of
 those hooks reference real values. **Never move overlay content back into a
 tracked package.**
 
+## Git workflow
+
+Single-maintainer repo: commit straight to `main` and push. No worktrees,
+feature branches or PRs.
+
 ## Critical rules
 
 1. **Never add secrets or PII.** No `.env`, `.netrc`, `.npmrc`, SSH private keys,
@@ -186,6 +191,12 @@ Two extra hooks tie the layers together:
 ## _scripts/
 
 Helper scripts (executable, not stow packages):
+
+- `_scripts/whyslow.sh` - snapshots Mac CPU/memory/swap and pipes it to
+  `claude -p --model haiku --safe-mode --tools ""` for a short diagnosis
+  (`-n` prints the snapshot only; `WHYSLOW_MODEL` overrides the model).
+  `--safe-mode` skips hooks, plugins, skills, MCP and CLAUDE.md but keeps
+  OAuth; `--bare` would need `ANTHROPIC_API_KEY`.
 
 - `_scripts/bootstrap-fresh.sh` - **macOS-only** first-boot orchestrator.
   Sets hostname, installs Xcode CLT + Homebrew, enables TouchID sudo, ensures
