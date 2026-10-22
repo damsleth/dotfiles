@@ -101,15 +101,15 @@ def project_scripts(venv: str) -> set[str] | None:
 
 
 def scan(folder: str) -> list[str]:
-    out, keep = [], {}                                     # keep: venv bin/ -> its project's commands
+    out = []
     for dirpath, dirs, files in os.walk(_abs(folder)):
         if "pyvenv.cfg" in files:                          # virtualenv: commands only in bin/
             dirs[:], files = [d for d in dirs if d == "bin"], []
-            keep[os.path.join(dirpath, "bin")] = project_scripts(dirpath)
         elif {"deps", ".fingerprint"} <= set(dirs):        # cargo profile dir: binaries sit on top
             dirs[:] = [d for d in dirs if d not in CARGO_JUNK]
         dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
-        names = keep.get(dirpath)
+        venv = os.path.dirname(dirpath)                    # bin/ reached from the venv or listed directly
+        names = project_scripts(venv) if os.path.basename(dirpath) == "bin" and os.path.isfile(os.path.join(venv, "pyvenv.cfg")) else None
         out += [p for p in (os.path.join(dirpath, f) for f in sorted(files))
                 if is_command(p) and (names is None or os.path.basename(p) in names)]
     return out

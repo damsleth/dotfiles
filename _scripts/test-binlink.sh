@@ -38,6 +38,7 @@ assert rel(b.scan("~/src/scripts")) == ["scripts/a.sh", "scripts/b.py", "scripts
 assert rel(b.scan("~/src/rs")) == ["rs/target/debug/rsbin"], b.scan("~/src/rs")
 assert rel(b.scan("~/src/py")) == ["py/.venv/bin/mycli"], b.scan("~/src/py")
 assert rel(b.scan("~/src/pj")) == ["pj/.venv/bin/pj"], b.scan("~/src/pj")
+assert rel(b.scan("~/src/pj/.venv/bin")) == ["pj/.venv/bin/pj"], b.scan("~/src/pj/.venv/bin")  # folder is bin/ itself
 assert b.load_config() == {"folders": ["~/src/scripts"]}, b.load_config()
 
 b._render = lambda *a, **k: 0
