@@ -27,7 +27,7 @@ dark() {
 
 alias decode-jwt="jwt-decode" # decode JWT tokens
 alias dl="cd ~/Downloads" # go to Downloads
-alias edge='open -a "Microsoft Edge"' # open Edge browser
+alias edge='open -na "Microsoft Edge"' # open Edge browser
 alias edgecors='open -a Microsoft\ Edge --args --disable-web-security --user-data-dir=/tmp/edge-cors' # open Edge with CORS disabled
 alias edgekill="ps ux | grep '[E]dge Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill" # kill Edge renderer processes
 alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'" # empty all trashes and quarantine
