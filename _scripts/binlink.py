@@ -10,7 +10,8 @@ binlink -h      this help
 
 A file counts as a command when it is executable, starts with #!, or ends in .sh/.bash/.zsh.
 Folders are scanned recursively, build output included: in a cargo target/ only the top of each
-profile dir (debug/, release/) is looked at, in a virtualenv only bin/.
+profile dir (debug/, release/) is looked at, in a virtualenv only bin/, narrowed to the
+[project.scripts] of the pyproject.toml beside it so dependency commands stay out.
 
 Folders live in ~/.config/binlink/config.json. The first run seeds them from the folders your
 existing links in BIN_DIR point into under CODE_DIR. Removing a folder leaves its links alone.
@@ -29,6 +30,11 @@ import termios
 import tty
 from dataclasses import dataclass, field
 from pathlib import Path
+
+try:
+    import tomllib
+except ImportError:   # python < 3.11: venvs list all of bin/
+    tomllib = None
 
 HOME        = Path.home()
 BIN_DIR     = Path(os.environ.get("BIN_DIR") or HOME / ".local/bin").expanduser()
@@ -85,15 +91,27 @@ def is_command(p: str) -> bool:
         return False
 
 
+def project_scripts(venv: str) -> set[str] | None:
+    """[project.scripts] names of the pyproject.toml next to a venv; None means keep all of bin/."""
+    try:
+        with open(os.path.join(os.path.dirname(venv), "pyproject.toml"), "rb") as f:
+            return set(tomllib.load(f)["project"]["scripts"]) or None
+    except (AttributeError, OSError, KeyError, TypeError, ValueError):
+        return None
+
+
 def scan(folder: str) -> list[str]:
-    out = []
+    out, keep = [], {}                                     # keep: venv bin/ -> its project's commands
     for dirpath, dirs, files in os.walk(_abs(folder)):
         if "pyvenv.cfg" in files:                          # virtualenv: commands only in bin/
             dirs[:], files = [d for d in dirs if d == "bin"], []
+            keep[os.path.join(dirpath, "bin")] = project_scripts(dirpath)
         elif {"deps", ".fingerprint"} <= set(dirs):        # cargo profile dir: binaries sit on top
             dirs[:] = [d for d in dirs if d not in CARGO_JUNK]
         dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
-        out += [p for p in (os.path.join(dirpath, f) for f in sorted(files)) if is_command(p)]
+        names = keep.get(dirpath)
+        out += [p for p in (os.path.join(dirpath, f) for f in sorted(files))
+                if is_command(p) and (names is None or os.path.basename(p) in names)]
     return out
 
 
