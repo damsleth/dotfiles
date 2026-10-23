@@ -380,12 +380,34 @@ if tty -s;
 fi;
 }
 
+# print light or dark for the terminal's background colour, asked via OSC 11
+# (kitty, Ghostty, iTerm2, tmux answer). Prints nothing if there's no reply.
+# This is the window's own theme, which can differ from the macOS appearance.
+term_bg () {
+    local r ch
+    local -a c
+    [[ -t 0 ]] || return
+    printf '\e]11;?\a' > /dev/tty
+    # One char at a time: read -t only times the first char, and some
+    # terminals end the reply with ESC \ rather than BEL.
+    while read -rs -k1 -t 0.2 ch < /dev/tty; do
+        [[ $ch == $'\a' || $ch == '\' ]] && break
+        r+=$ch
+    done
+    # reply: ESC ]11;rgb:RRRR/GGGG/BBBB (2 or 4 hex digits); top byte of each
+    c=(${(s:/:)${r#*rgb:}})
+    (( ${#c} == 3 )) || return
+    local -i R=16#${c[1][1,2]} G=16#${c[2][1,2]} B=16#${c[3][1,2]}
+    (( 299*R + 587*G + 114*B > 127500 )) && print light || print dark
+}
+
 # change directory to the last directory visited in lf. Has to be a shell
 # function: a child process can't change its parent shell's cwd. Output that
 # isn't a directory (lf -version, -doc) is printed instead of cd'd into.
+# LF_BG tells lf's previewer whether the terminal is light or dark.
 lfcd () {
     local out
-    out="$(command lf -print-last-dir "$@")" || return
+    out="$(LF_BG=$(term_bg) command lf -print-last-dir "$@")" || return
     if [[ -d $out ]]; then
         cd -- "$out"
     elif [[ -n $out ]]; then
