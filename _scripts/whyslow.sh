@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # whyslow: snapshot what's eating the Mac and have a cheap model explain it.
 #
-#   whyslow          snapshot + diagnosis (claude -p, haiku, no tools)
+#   whyslow          snapshot + diagnosis (claude -p, haiku, no tools) + token/cost footer
 #   whyslow -n       print the snapshot only, no model call
 #   WHYSLOW_MODEL=sonnet whyslow   use another model
 set -u  # no pipefail: ps | head SIGPIPEs by design
@@ -43,6 +43,9 @@ Output exactly:
 3. "Fix:" then numbered steps in order of impact, each one line, concrete.'
 
 if [[ "${1:-}" == "-n" ]]; then snapshot; exit; fi
-command -v claude >/dev/null || { echo "whyslow: claude CLI not on PATH; try whyslow -n" >&2; exit 1; }
+for c in claude jq; do command -v $c >/dev/null || { echo "whyslow: $c not on PATH; try whyslow -n" >&2; exit 1; }; done
 # --safe-mode: no hooks, plugins, skills, MCP or CLAUDE.md; --tools "": it only reads text
-snapshot | claude -p --model "${WHYSLOW_MODEL:-haiku}" --safe-mode --tools "" --no-session-persistence --system-prompt "$PROMPT"
+# json output carries usage; costUSD is list price, not what a subscription bills
+snapshot | claude -p --model "${WHYSLOW_MODEL:-haiku}" --safe-mode --tools "" --no-session-persistence \
+    --output-format json --system-prompt "$PROMPT" |
+  jq -r '.result, "", (.usage | "-- tokens: \(.input_tokens + .cache_read_input_tokens + .cache_creation_input_tokens) in (\(.cache_read_input_tokens) cache read, \(.cache_creation_input_tokens) cache write), \(.output_tokens) out"), "-- cost: $\(.total_cost_usd * 10000 | round / 10000) (list price)"'
