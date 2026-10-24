@@ -105,7 +105,8 @@ alias timing="/usr/bin/time -p zsh -i -c 'exit' 2>&1 | grep '^real' | cut -d' ' 
 alias tmp="cd ~/code/tmp" # go to tmp dir
 alias today="date '+%Y-%m-%d'" # today's date
 alias traceroute="sudo mtr --report-wide --report-cycles=1" # traceroute with mtr
-alias updateall='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup' # update all system and dev tools
+alias updatemac='sudo softwareupdate -i -a' # update macOS software
+alias updateall='brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup' # update all system and dev tools excluding macOS software
 alias vær="curl wttr.in" # weather in Norwegian
 alias week="date +%V" # ISO week number
 alias wttr="curl wttr.in" # weather
