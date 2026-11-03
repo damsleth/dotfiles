@@ -249,7 +249,7 @@ Helper scripts (executable, not stow packages):
   output too (cargo `target/<profile>/` top level, venv `bin/` narrowed to the sibling
   `pyproject.toml` `[project.scripts]`). Folders live
   in `~/.config/binlink/config.json`, seeded on first run from existing links.
-  Never overwrites a name it didn't create. `-l` lists managed links. Self-check:
+  Never overwrites a regular file. `-l` lists managed links. Self-check:
   `_scripts/test-binlink.sh`. Itself symlinked to `~/.local/bin/binlink`.
 
 - `_scripts/freespace.py` - reclaim disk space from caches, trash and dev

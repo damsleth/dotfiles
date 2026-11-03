@@ -119,6 +119,10 @@ export HOMEBREW_NO_ENV_HINTS=1 # hide homebrew auto update hints
 # DOTNET
 export DOTNET_ROOT=/usr/local/share/dotnet
 
+# REA (Reverse Engineer Anything)
+export REA_NATIVE_PROVIDER=ghidra
+
+
 # FNM - Fast Node Manager
 FNM_RESOLVE_ENGINES=true
 
