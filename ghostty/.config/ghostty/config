@@ -12,7 +12,7 @@ keybind = global:alt+space=toggle_visibility
 
 # >>> ghostty-installer:hotkey-transparency (managed: do not edit between markers) >>>
 # Transparency toggle (like iTerm's cmd+u)
-background-opacity = 1.00
+background-opacity = 0.90
 background-blur-radius = 10
 keybind = super+u=toggle_background_opacity
 # <<< ghostty-installer:hotkey-transparency <<<
@@ -20,12 +20,15 @@ keybind = super+u=toggle_background_opacity
 # cmux theme picker (cmux reads this config; in plain Ghostty it just errors)
 keybind = ctrl+super+t=text:cmux themes\x0d
 
-font-family = "Hack Nerd Font Mono"
+font-family = "0xProto Nerd Font"
+# font-family = "FantasqueSansM Nerd Font"
+# font-family = "ProFont IIx Nerd Font Mono"
+# font-family = "Hack Nerd Font Mono"
 # font-family = "DepartureMono Nerd Font"
 # font-family = "CascaydiaCove Nerd Font"
 font-size = 18
 
-theme = light:Adwaita,dark:12-bit Rainbow
+theme = light:Adwaita,dark:3024 Day
 # macos-titlebar-style = tabs
 window-padding-y = 10
 window-padding-x = 10
