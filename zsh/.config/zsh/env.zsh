@@ -114,6 +114,7 @@ export FZF_DEFAULT_COMMAND="fd . $HOME"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
+[[ -d ${HISTFILE:h} ]] || mkdir -p ${HISTFILE:h} # zsh can't lock history in a missing dir
 export HOMEBREW_NO_ENV_HINTS=1 # hide homebrew auto update hints
 
 # DOTNET
