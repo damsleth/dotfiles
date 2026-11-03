@@ -94,7 +94,24 @@ alias sloc="cloc" # count lines of code
 # Never let the terminal inject anything into a remote login: kitten ssh's
 # bootstrap is a POSIX script and Windows shells choke on it. xterm-256color
 # exists on every host, so nothing needs copying over.
-ssh() { TERM=xterm-256color command ssh "$@"; }
+# ssh_config Host patterns are case-sensitive but hostnames aren't, so the host
+# part of the destination is lowercased: `ssh KAZURE` hits `Host kazure`. The
+# loop skips options; a cluster ending in an arg-taking letter (-p, -vi) eats
+# the next word too.
+ssh() {
+	local -a args=("$@"); local i=1 d
+	while (( i <= $#args )); do
+		[[ $args[i] == -- ]] && { (( i++ )); break }
+		[[ $args[i] == -?* ]] || break
+		[[ ${args[i][2,-1]} =~ '^[^BbcDEeFIiJLlmOoPpQRSWw]*[BbcDEeFIiJLlmOoPpQRSWw]$' ]] && (( i++ ))
+		(( i++ ))
+	done
+	if (( i <= $#args )); then
+		d=$args[i]
+		[[ $d == *@* ]] && args[i]="${d%@*}@${(L)d##*@}" || args[i]=${(L)d}
+	fi
+	TERM=xterm-256color command ssh "${args[@]}"
+}
 alias subnetinfo='sudo nmap -sn "$(li).*" -oG - | awk "/Up$/{print \$2}" | xargs -I{} arp -a {} | awk "{print \$1, \$2, \$3, \$4, \$5}"' # scan subnet and show MAC/vendor info
 alias subnet='sudo nmap -sn "$(li).*" -oG -' # scan subnet for live hosts
 alias subnetf='arp -a | grep -v "(incomplete)" | grep "$(ipl | rev | cut -c5- | rev)" | grep -Eo "\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"' # filter ARP for subnet
