@@ -63,5 +63,16 @@ drive(["j", "j", "j", "j", " ", "\r"])                                 # row 4: 
 assert os.readlink(H + "/bin/rsbin") == H + "/src/rs/target/debug/rsbin"
 drive(["j", "j", "j", "j", "d", "\r"])
 assert b.load_config() == {"folders": ["~/src/scripts"]} and os.path.islink(H + "/bin/rsbin")
+
+# foreign symlink on the name: space refuses, o overwrites; renaming onto one overwrites; broken links listed
+os.symlink("/usr/bin/true", H + "/bin/b")
+os.symlink(H + "/src/scripts/gone.sh", H + "/bin/gone")
+os.symlink("/nowhere/x", H + "/bin/elsewhere")                         # dangling, but not into our tree
+assert b.broken_links(["~/src/scripts"]) == [("gone", H + "/src/scripts/gone.sh")], b.broken_links([])
+drive(["j", "j", " ", "\r"]); assert os.readlink(H + "/bin/b") == "/usr/bin/true"   # row 2: b.py
+drive(["j", "j", "o", "\r"]); assert os.readlink(H + "/bin/b") == H + "/src/scripts/b.py"
+drive(["j", "j", "j", "r", "\r"], prompts=["gone"])                    # row 3: tool, linked as tool
+assert os.readlink(H + "/bin/gone") == H + "/src/scripts/tool" and not os.path.lexists(H + "/bin/tool")
+assert b.broken_links(["~/src/scripts"]) == []
 PY
 echo "binlink self-check: OK"

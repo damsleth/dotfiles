@@ -6,7 +6,7 @@ binlink -l      list the links that point into your folders
 binlink -h      this help
 
   up/down (j/k) move · space link/unlink (on a folder: all of it) · r rename link
-  a add folder · d remove folder · enter apply · q quit without changes
+  o overwrite a symlink already holding the name · a add folder · d remove folder · enter apply · q quit without changes
 
 A file counts as a command when it is executable, starts with #!, or ends in .sh/.bash/.zsh.
 Folders are scanned recursively, build output included: in a cargo target/ only the top of each
@@ -15,6 +15,8 @@ profile dir (debug/, release/) is looked at, in a virtualenv only bin/, narrowed
 
 Folders live in ~/.config/binlink/config.json. The first run seeds them from the folders your
 existing links in BIN_DIR point into under CODE_DIR. Removing a folder leaves its links alone.
+Broken links (pointing into CODE_DIR or a folder at something that's gone) are listed on startup
+and by -l; o on a row relinks over one. Regular files in BIN_DIR are never overwritten.
 Env: BIN_DIR (default ~/.local/bin), CODE_DIR (default ~/code)
 """
 from __future__ import annotations
@@ -130,6 +132,15 @@ def current_links() -> dict[str, list[str]]:
     return links
 
 
+def broken_links(folders: list[str]) -> list[tuple[str, str]]:
+    """(name, target) of the dangling symlinks in BIN_DIR that point into CODE_DIR or a folder."""
+    roots = tuple(os.path.realpath(p) + os.sep for p in [CODE_DIR, *map(_abs, folders)])
+    if not BIN_DIR.is_dir():
+        return []
+    return [(e.name, os.path.realpath(e.path)) for e in sorted(os.scandir(BIN_DIR), key=lambda e: e.name)
+            if e.is_symlink() and not os.path.exists(e.path) and os.path.realpath(e.path).startswith(roots)]
+
+
 def load_config() -> dict:
     try:
         return json.loads(CONFIG_PATH.read_text())
@@ -160,6 +171,7 @@ class ToolRow:
     name: str
     linked: list[str] = field(default_factory=list)   # names in BIN_DIR that point at it now
     want: bool = False
+    force: bool = False   # replace a foreign symlink already sitting at BIN_DIR/name
 
     @property
     def changed(self) -> bool:
@@ -189,13 +201,14 @@ def build_rows(cfg: dict) -> list[Row]:
 
 
 def taken(rows: list[Row], row: ToolRow, name: str) -> str | None:
-    """Why row can't be linked as name, or None. Never overwrite something binlink didn't make."""
+    """Why row can't be linked as name, or None. Symlinks only get replaced with row.force; files never."""
     if any(r is not row and isinstance(r, ToolRow) and r.want and r.name == name for r in rows):
         return f"another file is already set to link as {name}"
     dst = BIN_DIR / name
-    if os.path.lexists(dst) and name not in row.linked:
-        where = f" → {_short(os.readlink(dst))}" if dst.is_symlink() else ""
-        return f"{_short(dst)} already exists{where}; press r to pick another name"
+    if dst.is_symlink() and name not in row.linked and not row.force:
+        return f"{_short(dst)} already exists → {_short(os.readlink(dst))}; o to overwrite, r to rename"
+    if os.path.lexists(dst) and not dst.is_symlink():
+        return f"{_short(dst)} already exists (not a link); r to pick another name"
     return None
 
 
@@ -212,6 +225,8 @@ def apply(rows: list[Row]) -> list[str]:
                 log.append(f"{RED}unlinked{RESET}  {', '.join(r.linked)}")
                 continue
             dst = BIN_DIR / r.name
+            if r.force and dst.is_symlink():   # recheck: only ever a link, never a file
+                os.remove(dst)
             if os.path.lexists(dst):
                 log.append(f"{YELLOW}skipped{RESET}   {r.name}: {_short(dst)} already exists")
             elif r.linked:
@@ -290,6 +305,9 @@ def _row_line(rows: list[Row], row: Row, is_cur: bool, width: int) -> str:
         tag = (f"  {RED}← will unlink{RESET}" if not row.want
                else f"  {GREEN}← will link{RESET}" if not row.linked
                else f"  {YELLOW}← rename from {row.linked[0]}{RESET}")
+        if row.want and row.force:
+            tag += f"  {YELLOW}(overwrites {_short(os.readlink(BIN_DIR / row.name))}){RESET}" \
+                if (BIN_DIR / row.name).is_symlink() else ""
     name = f"{names:<{width}}" if row.want else f"{DIM}{names:<{width}}{RESET}"
     return f"{mark}     {dot}  {name}  {DIM}{rel}{RESET}{tag}"
 
@@ -298,7 +316,7 @@ def _render(rows: list[Row], cursor: int, top: int, message: str | None, folders
     """Draw one frame that fits the terminal; returns the scroll offset that keeps the cursor visible."""
     header = [
         f"{BOLD}binlink{RESET}  {DIM}→ {_short(BIN_DIR)}   ({_short(CONFIG_PATH)}){RESET}",
-        f"{DIM}up/down navigate  {YELLOW}·{DIM}  space link/unlink  {YELLOW}·{DIM}  r rename"
+        f"{DIM}up/down navigate  {YELLOW}·{DIM}  space link/unlink  {YELLOW}·{DIM}  r rename  {YELLOW}·{DIM}  o overwrite"
         f"  {YELLOW}·{DIM}  a add folder  {YELLOW}·{DIM}  d remove folder"
         f"  {YELLOW}·{DIM}  enter apply  {YELLOW}·{DIM}  q quit{RESET}",
         "",
@@ -342,7 +360,10 @@ def _interactive(cfg: dict) -> list[str] | None:
     rows = build_rows(cfg)
     original = _folders(rows)
     cursor = top = 0
-    message: str | None = None
+    broken = broken_links(cfg.get("folders", []))
+    idle = (f"Broken links: {', '.join(f'{n} → {_short(t)}' for n, t in broken)}  (o on a row relinks over one)"
+            if broken else None)   # shown whenever no other message is
+    message = idle
     if f"{BIN_DIR}" not in os.environ.get("PATH", "").split(os.pathsep):
         message = f"{_short(BIN_DIR)} is not in $PATH: links work but aren't callable until it is."
 
@@ -352,7 +373,7 @@ def _interactive(cfg: dict) -> list[str] | None:
         while True:
             cursor = min(cursor, max(len(rows) - 1, 0))
             top = _render(rows, cursor, top, message, _folders(rows) != original)
-            message = None
+            message = idle
             key = _read_key()
             row = rows[cursor] if rows else None
 
@@ -372,7 +393,7 @@ def _interactive(cfg: dict) -> list[str] | None:
                 if why:
                     message = why
                 else:
-                    row.want = not row.want
+                    row.want, row.force = not row.want, False
             elif key == " " and isinstance(row, FolderRow):
                 kids = _kids(rows, row.path)
                 want = not all(k.want for k in kids)
@@ -384,15 +405,27 @@ def _interactive(cfg: dict) -> list[str] | None:
                         else:
                             k.want = want
                 if skipped:
-                    message = f"Name taken, left alone (r to rename): {', '.join(skipped)}"
+                    message = f"Name taken, left alone (o on a row to overwrite, r to rename): {', '.join(skipped)}"
+
+            elif key == "o" and isinstance(row, ToolRow):
+                dst = BIN_DIR / row.name
+                row.force = dst.is_symlink() and row.name not in row.linked
+                why = taken(rows, row, row.name) if row.force else f"no other link at {_short(dst)} to overwrite"
+                if why:
+                    row.force, message = False, why
+                else:
+                    row.want = True
 
             elif key == "r" and isinstance(row, ToolRow):
                 new = _prompt_inline(f"Link {os.path.basename(row.path)} as", row.name)
+                # typing a name a foreign symlink holds is the overwrite; the row tag says so before enter
+                old_force = row.force
+                row.force = bool(new) and (BIN_DIR / new).is_symlink() and new not in row.linked
                 why = new and taken(rows, row, new)
                 if not new or "/" in new or new.startswith("."):
-                    message = "Rename cancelled."
+                    row.force, message = old_force, "Rename cancelled."
                 elif why:
-                    message = why
+                    row.force, message = old_force, why
                 else:
                     row.name, row.want = new, True
 
@@ -430,9 +463,12 @@ def main() -> None:
     if args in (["-h"], ["--help"]):
         print(__doc__.strip())
     elif args in (["-l"], ["--list"]):
-        for r in build_rows(load_config()):
+        cfg = load_config()
+        for r in build_rows(cfg):
             if isinstance(r, ToolRow) and r.linked:
                 print(f"{', '.join(r.linked):<24} → {_short(r.path)}")
+        for name, target in broken_links(cfg.get("folders", [])):
+            print(f"{name:<24} → {_short(target)}  (broken)")
     elif args:
         sys.exit(f"unknown option: {' '.join(args)}  (try -h)")
     elif not (sys.stdin.isatty() and sys.stdout.isatty()):

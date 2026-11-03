@@ -244,7 +244,8 @@ Helper scripts (executable, not stow packages):
 - `_scripts/binlink.py` - arrow-key TUI (same keys as `freespace -c`) for
   symlinking scripts and binaries from a saved list of source folders into
   `~/.local/bin`: space links/unlinks, `r` renames, `a`/`d` add/remove a
-  folder, enter applies. Recognises +x, `#!` and `.sh` files; scans build
+  folder, `o` overwrites a symlink already holding the name (never a file), enter
+  applies. Broken links into `~/code`/the folders are listed on startup and by `-l`. Recognises +x, `#!` and `.sh` files; scans build
   output too (cargo `target/<profile>/` top level, venv `bin/` narrowed to the sibling
   `pyproject.toml` `[project.scripts]`). Folders live
   in `~/.config/binlink/config.json`, seeded on first run from existing links.
