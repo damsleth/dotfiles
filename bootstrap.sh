@@ -126,6 +126,13 @@ APT_PACKAGES=(bat golang-go snapd yt-dlp)
 # under $HOME. For files elsewhere: sudo snap connect whisper-cpp:removable-media
 SNAP_PACKAGES=(core msedit whisper-cpp)
 
+# Alpine equivalents of APT_PACKAGES (no snap on Alpine). Alpine names the
+# binary `bat` directly, so no batcat link is needed.
+APK_PACKAGES=(bat go yt-dlp)
+
+# Run as root directly when we already are (Alpine is often root-only, no sudo).
+as_root() { if [[ $EUID -eq 0 ]]; then "$@"; else sudo "$@"; fi; }
+
 # ── package selection ─────────────────────────────────────────────────────────
 SELECTED=()
 select_packages() {
@@ -192,6 +199,15 @@ install_apt_packages() {
     fi
 }
 
+install_apk_packages() {
+    if [[ $DRY_RUN -eq 1 ]]; then
+        skip "would run: apk add ${APK_PACKAGES[*]}"
+    else
+        info "Installing apk packages: ${APK_PACKAGES[*]}"
+        as_root apk add --no-progress "${APK_PACKAGES[@]}" || warn "apk add reported an issue"
+    fi
+}
+
 install_snap_packages() {
     if [[ $DRY_RUN -eq 0 ]] && ! command -v snap >/dev/null 2>&1; then
         skip "snap not found — skipping snap packages (is snapd installed/running?)"; return
@@ -248,7 +264,9 @@ if [[ -d "$DOTFILES_PRIVATE" ]]; then
     done
 fi
 
-if [[ "$PLATFORM" == "linux" ]]; then
+if [[ "$PLATFORM" == "linux" ]] && command -v apk >/dev/null 2>&1; then
+    echo; info "Installing Alpine (apk) packages..."; install_apk_packages
+elif [[ "$PLATFORM" == "linux" ]]; then
     echo; info "Installing Linux (apt) packages..."; install_apt_packages
     echo; info "Installing snap packages...";        install_snap_packages
 fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bootstrap-fresh-linux.sh - first-boot setup for a fresh Debian/Ubuntu/WSL box
+# bootstrap-fresh-linux.sh - first-boot setup for a fresh Debian/Ubuntu/WSL or Alpine box
 #
 # SKETCH / first pass - the Linux counterpart to bootstrap-fresh.sh. Where the
 # mac script leans on Homebrew + `brew bundle`, this leans on apt + the
@@ -49,14 +49,23 @@ if [[ "$(uname -s)" != "Linux" ]]; then
     err "This script is Linux-only. For macOS, run bootstrap-fresh.sh."
     exit 1
 fi
-if ! command -v apt-get >/dev/null 2>&1; then
-    err "This script targets Debian/Ubuntu/WSL (needs apt)."
+if command -v apk >/dev/null 2>&1; then
+    PKG=apk     # Alpine (musl). Fresh Alpine has no bash: `apk add bash` first.
+elif command -v apt-get >/dev/null 2>&1; then
+    PKG=apt
+else
+    err "This script targets Debian/Ubuntu/WSL (apt) or Alpine (apk)."
     exit 1
 fi
 
+# Run as root directly when we already are (Alpine is often root-only, no sudo).
+as_root() { if [[ $EUID -eq 0 ]]; then "$@"; else sudo "$@"; fi; }
+
 # Keep sudo warm for the duration (same trick as the mac script).
-sudo -v
-while true; do sudo -n true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done 2>/dev/null &
+if [[ $EUID -ne 0 ]]; then
+    sudo -v
+    while true; do sudo -n true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done 2>/dev/null &
+fi
 
 # ----------------------------------------------------------------------------
 # 1. Hostname (optional)
@@ -76,12 +85,19 @@ fi
 # ----------------------------------------------------------------------------
 # 2. Base apt prerequisites (what Xcode CLT + brew give you on mac)
 # ----------------------------------------------------------------------------
-info "Installing base prerequisites via apt"
-sudo apt-get update
-sudo apt-get install -y \
-    git curl ca-certificates gnupg \
-    stow build-essential unzip \
-    || warn "apt prerequisites reported an issue"
+info "Installing base prerequisites via $PKG"
+if [[ $PKG == apk ]]; then
+    as_root apk add --no-progress \
+        git curl ca-certificates gnupg \
+        stow build-base unzip \
+        || warn "apk prerequisites reported an issue"
+else
+    as_root apt-get update
+    as_root apt-get install -y \
+        git curl ca-certificates gnupg \
+        stow build-essential unzip \
+        || warn "apt prerequisites reported an issue"
+fi
 success "Base prerequisites installed"
 
 # ----------------------------------------------------------------------------
@@ -100,7 +116,8 @@ fi
 # 4. Stow symlinks + Linux apt/snap packages (shared bootstrap.sh)
 # ----------------------------------------------------------------------------
 # bootstrap.sh auto-detects Linux and runs the apt (bat, snapd) + snap
-# (core, msedit) blocks plus the bat->batcat symlink, then stows everything.
+# (core, msedit) blocks plus the bat->batcat symlink (or, on Alpine, the apk
+# block), then stows everything.
 if [[ -x "$DOTFILES_DIR/bootstrap.sh" ]]; then
     info "Running bootstrap.sh (stow + Linux packages)"
     "$DOTFILES_DIR/bootstrap.sh"
@@ -134,15 +151,20 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.npm-packages/bin
 # toolchains-restore.sh / lang-restore.sh expect fnm, rustup and pipx to exist.
 # Install them here so those scripts aren't no-ops on a fresh box.
 if ! command -v pipx >/dev/null 2>&1; then
-    info "Installing pipx via apt"
-    if sudo apt-get install -y pipx; then
+    info "Installing pipx via $PKG"
+    pipx_cmd=(apt-get install -y pipx); [[ $PKG == apk ]] && pipx_cmd=(apk add --no-progress pipx)
+    if as_root "${pipx_cmd[@]}"; then
         pipx ensurepath || warn "pipx ensurepath failed"
     else
         warn "pipx install failed"
     fi
 fi
 
-if ! command -v fnm >/dev/null 2>&1; then
+# Alpine is musl: fnm's Node builds are glibc and will not run, so Node comes
+# from apk instead (toolchains-restore.sh then warn-skips its fnm block).
+if [[ $PKG == apk ]]; then
+    command -v node >/dev/null 2>&1 || { info "Installing Node via apk (musl)"; as_root apk add --no-progress nodejs npm || warn "nodejs install failed"; }
+elif ! command -v fnm >/dev/null 2>&1; then
     info "Installing fnm (official installer, --skip-shell so it won't edit stowed rc)"
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell || warn "fnm install failed"
     # The installer drops the binary in ~/.local/share/fnm but, with

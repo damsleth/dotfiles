@@ -81,6 +81,7 @@ feature branches or PRs.
    - macOS (primary, zsh, Homebrew)
    - Ubuntu VPS (zsh, apt)
    - WSL on Windows (zsh)
+   - Alpine Linux (zsh, apk; often root-only, musl so Node comes from apk not fnm)
 
    macOS-only packages: `karabiner`, `vscode`
 
