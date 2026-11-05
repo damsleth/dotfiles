@@ -4,8 +4,8 @@ Cross-platform dotfiles by [@damsleth](https://github.com/damsleth), managed
 with [GNU Stow](https://www.gnu.org/software/stow/). Zsh + Starship (no
 oh-my-zsh), Neovim, modern terminals, and a batteries-included CLI toolbox.
 
-Works across macOS (zsh), Ubuntu (zsh), and WSL. Packages come from
-**Homebrew + mas** on macOS and **apt + snap** on Debian/Ubuntu/WSL.
+Works across macOS (zsh), Ubuntu (zsh), WSL and Alpine. Packages come from
+**Homebrew + mas** on macOS, **apt + snap** on Debian/Ubuntu/WSL and **apk** on Alpine.
 
 **New here?** Clone it, run `./bootstrap.sh`, and pick what you want from the
 checkbox wizard — start with the **Minimal** or **Recommended** preset and toggle
@@ -64,6 +64,9 @@ brew install stow
 
 # Ubuntu / Debian / WSL
 sudo apt install stow
+
+# Alpine
+apk add bash stow
 ```
 
 ## Quick start (just the dotfiles)
@@ -106,6 +109,7 @@ just drives the same underlying scripts you can also run on their own
 
 On Linux, `bootstrap.sh` also apt-installs `bat`, `golang-go`, `snapd` then
 `snap install`s `core`/`msedit` (the `bat` binary is symlinked from `batcat`).
+On Alpine it `apk add`s `bat`, `go`, `yt-dlp` instead (no snap).
 Restart your shell (or `source ~/.zshrc`) when it finishes.
 
 > **Coming from iTerm2 + oh-my-zsh?** This uses Starship instead of oh-my-zsh and
@@ -123,7 +127,7 @@ Recommended presets above are the friendlier starting point.
 # macOS — one shot from a fresh Mac (installs git/gh/stow, clones, hands off):
 curl -fsSL https://gist.githubusercontent.com/damsleth/b773ac8fa887e0ed0f08154ca9a725af/raw/public-bootstrap-gist.sh | bash
 
-# Debian / Ubuntu / WSL:
+# Debian / Ubuntu / WSL / Alpine:
 git clone https://github.com/damsleth/dotfiles.git ~/code/dotfiles
 ~/code/dotfiles/_scripts/bootstrap-fresh-linux.sh
 ```
@@ -135,12 +139,12 @@ grants, 1Password SSH Agent, VS Code Settings Sync).
 
 ### What gets installed where
 
-Package managers: **Homebrew + mas** on macOS, **apt + snap** on Debian/Ubuntu/WSL.
+Package managers: **Homebrew + mas** on macOS, **apt + snap** on Debian/Ubuntu/WSL, **apk** on Alpine.
 
 - `Brewfile` -> macOS formulae, casks, fonts, mas (App Store) apps. Run with `brew bundle --file=Brewfile`.
-- `bootstrap.sh` -> symlinks dotfile packages into `$HOME` via stow; on Linux also runs the apt/snap installs.
+- `bootstrap.sh` -> symlinks dotfile packages into `$HOME` via stow; on Linux also runs the apt/snap (or Alpine apk) installs.
 - `_scripts/bootstrap-fresh.sh` -> macOS first-boot orchestrator (Homebrew, brew bundle, toolchains, secrets, ...).
-- `_scripts/bootstrap-fresh-linux.sh` -> Debian/Ubuntu first-boot orchestrator (apt/snap, language managers, toolchains, ...).
+- `_scripts/bootstrap-fresh-linux.sh` -> Debian/Ubuntu/Alpine first-boot orchestrator (apt/snap or apk, language managers, toolchains, ...).
 - `_scripts/macos.sh` -> `defaults write` for Finder, Dock, keyboard, screenshots (macOS).
 - `_scripts/dock.sh` -> rebuilds Dock layout via dockutil (macOS).
 - `_scripts/secrets-restore.sh` -> restores `~/.config/zsh/.env` and SSH private keys from 1Password refs supplied by environment variables.
