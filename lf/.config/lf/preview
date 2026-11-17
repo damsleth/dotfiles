@@ -66,7 +66,7 @@ case "$file" in
             sizing=0
             [ "$TERM" = xterm-kitty ] && sizing=1
             # dawn can't query the background here (lf owns the tty), so
-            # lfcd asks the terminal before lf starts and passes LF_BG.
+            # the lf shell function (func.zsh) asks the terminal before lf starts and passes LF_BG.
             # Without it, guess from the macOS appearance.
             # ponytail: read once per lf session; a theme switch while lf
             # runs needs an lf restart.

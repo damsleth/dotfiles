@@ -405,7 +405,7 @@ term_bg () {
 # function: a child process can't change its parent shell's cwd. Output that
 # isn't a directory (lf -version, -doc) is printed instead of cd'd into.
 # LF_BG tells lf's previewer whether the terminal is light or dark.
-lfcd () {
+lf () {
     local out
     out="$(LF_BG=$(term_bg) command lf -print-last-dir "$@")" || return
     if [[ -d $out ]]; then
