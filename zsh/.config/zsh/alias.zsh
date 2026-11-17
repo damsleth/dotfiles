@@ -57,7 +57,6 @@ alias ip="dig +short myip.opendns.com @resolver1.opendns.com" # get public IP
 alias ipl="ifconfig en0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'" # get local IP for en0
 alias karabiner="code ~/.config/karabiner/" # edit Karabiner config
 alias kittyconf="code ~/.config/kitty/kitty.conf" # edit Kitty config
-alias lf="lfcd" # launch lf file manager and cd
 alias lfconfig="code ~/.config/lf" # edit lf config
 alias li='ipl | rev | cut -d"." -f2- | rev' # get local subnet prefix
 
