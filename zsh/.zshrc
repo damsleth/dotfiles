@@ -11,3 +11,5 @@ source "$ZSH_CONFIG_DIR/late.zsh"
 # >>> Codex installer >>>
 export PATH="$HOME/.local/bin:$PATH"
 # <<< Codex installer <<<
+
+. "$HOME/.local/share/../bin/env"
