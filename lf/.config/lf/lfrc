@@ -53,7 +53,15 @@ map <backspace> trash
 # state file the previewer reads, then has lf redraw the preview.
 # Arg: a line count, or half / -half for half a pane.
 cmd preview-scroll &{{
-    state="${TMPDIR:-/tmp}/lf-preview-scroll"
+    # Keep scroll state private, and refuse symlinked storage.
+    umask 077
+    preview_dir="${XDG_CACHE_HOME:-$HOME/.cache}/lf"
+    [ ! -L "$preview_dir" ] || exit 1
+    mkdir -p "$preview_dir" && chmod 700 "$preview_dir" || exit 1
+    state="$preview_dir/preview-scroll"
+    for entry in "$state" "$state.out" "$state.out.key"; do
+        [ ! -L "$entry" ] || exit 1
+    done
     { read -r p; read -r n; } < "$state" 2>/dev/null
     [ "$p" = "$f" ] || n=0
     # lf_height is the whole terminal; the pane loses the top and bottom rows

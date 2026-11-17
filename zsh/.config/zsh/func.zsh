@@ -182,7 +182,7 @@ pipe(){
     stuff="${1:=./index.html}"
     hostname="${2:=$(whoami)}"
     port="${3:=8000}"
-    (trap 'kill 0' SIGINT; ncat -lkp ${3} --sh-exec "printf 'HTTP/1.1 200\n\n<h1>';cat ${1}" & lt -p ${3} -s ${2} -l "127.0.0.1" -o)
+    (trap 'kill 0' SIGINT; ncat -lkp ${3} 127.0.0.1 --sh-exec "printf 'HTTP/1.1 200\n\n<h1>';cat ${1}" & lt -p ${3} -s ${2} -l "127.0.0.1" -o)
 }
 
 kp(){
@@ -323,24 +323,24 @@ osascript -e 'tell application "System Events" to set picture of every desktop t
 }
 
 jwt-decode() {
-  python3 - "$1" <<'EOF'
+  printf '%s' "$1" | python3 -c '
 import sys, base64, json
 
-token = sys.argv[1]
-parts = token.split('.')
+token = sys.stdin.read()
+parts = token.split(".")
 
-for i, label in enumerate(['Header', 'Payload']):
+for i, label in enumerate(["Header", "Payload"]):
     if i >= len(parts):
         break
     part = parts[i]
-    part += '=' * (4 - len(part) % 4)
+    part += "=" * (4 - len(part) % 4)
     try:
         decoded = base64.urlsafe_b64decode(part)
-        print(f'=== {label} ===')
+        print(f"=== {label} ===")
         print(json.dumps(json.loads(decoded), indent=2))
     except Exception as e:
-        print(f'Error decoding {label}: {e}', file=sys.stderr)
-EOF
+        print(f"Error decoding {label}: {e}", file=sys.stderr)
+'
 }
 
 # ULTRATHINK

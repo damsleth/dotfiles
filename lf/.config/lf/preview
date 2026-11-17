@@ -10,7 +10,15 @@ y="$5"
 # the file and a line offset in $state. Once scrolled, the rendered preview
 # is kept in $cache so each further scroll only reads it back: lf blanks the
 # pane while the previewer runs, so a re-render per keypress would blink.
-state="${TMPDIR:-/tmp}/lf-preview-scroll"
+# Keep scroll state private, and refuse symlinked storage.
+umask 077
+preview_dir="${XDG_CACHE_HOME:-$HOME/.cache}/lf"
+[ ! -L "$preview_dir" ] || exit 1
+mkdir -p "$preview_dir" && chmod 700 "$preview_dir" || exit 1
+state="$preview_dir/preview-scroll"
+for entry in "$state" "$state.out" "$state.out.key"; do
+    [ ! -L "$entry" ] || exit 1
+done
 cache="$state.out"
 { read -r p; read -r n; } < "$state" 2>/dev/null
 [ "$p" = "$file" ] && [ "${n:-0}" -gt 0 ] && scrolled=1
