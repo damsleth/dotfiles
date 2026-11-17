@@ -28,7 +28,7 @@ font-family = "0xProto Nerd Font"
 # font-family = "CascaydiaCove Nerd Font"
 font-size = 18
 
-theme = light:Adwaita,dark:3024 Day
+theme = light:Adwaita,dark:Adwaita Dark
 # macos-titlebar-style = tabs
 window-padding-y = 10
 window-padding-x = 10
