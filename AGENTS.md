@@ -200,7 +200,7 @@ Helper scripts (executable, not stow packages):
   OAuth; `--bare` would need `ANTHROPIC_API_KEY`.
 
 - `_scripts/bootstrap-fresh.sh` - **macOS-only** first-boot orchestrator.
-  Sets hostname, installs Xcode CLT + Homebrew, enables TouchID sudo, ensures
+  Sets hostname, installs Xcode CLT + Homebrew, enables TouchID + Apple Watch sudo (`pam_watchid`, pinned commit), ensures
   App Store sign-in for `mas`, then chains: `brew bundle` -> `bootstrap.sh` ->
   `macos.sh` -> `secrets-restore.sh` -> `clone-repos.sh` ->
   `toolchains-restore.sh` -> `lang-restore.sh` -> `tools-restore.sh` ->

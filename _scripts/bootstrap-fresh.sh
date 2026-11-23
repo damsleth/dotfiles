@@ -97,6 +97,21 @@ else
     success "TouchID sudo already configured"
 fi
 
+# Apple Watch for sudo: pam_tid falls through to the password with the lid
+# closed; pam_watchid is the fallback. Built from source, pinned to a reviewed
+# commit since it sits in the sudo auth path. Rebuild after a major macOS upgrade.
+PAM_WATCHID_DIR="$HOME/code/pam-watchid"
+PAM_WATCHID_REF="ce04b062ccb70ac781a68c832f9d84bb42816718"
+if grep -q pam_watchid.so /etc/pam.d/sudo_local && compgen -G '/usr/local/lib/pam/pam_watchid.so*' >/dev/null; then
+    success "Apple Watch sudo already configured"
+else
+    info "Enabling Apple Watch for sudo"
+    [[ -d "$PAM_WATCHID_DIR/.git" ]] || git clone https://github.com/Logicer16/pam-watchid "$PAM_WATCHID_DIR"
+    git -C "$PAM_WATCHID_DIR" checkout --quiet "$PAM_WATCHID_REF"
+    make -C "$PAM_WATCHID_DIR" enable
+    success "Apple Watch sudo enabled"
+fi
+
 # ----------------------------------------------------------------------------
 # 5. Clone dotfiles
 # ----------------------------------------------------------------------------
